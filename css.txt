@@ -1,0 +1,23 @@
+komunitas
+iot
+ngo
+shop
+school
+installer
+buatkan plugin untuk memasang form (terpasang di halaman formulir) bila plugin dipasang. buatkan fungsi manajemen data dari form di dasbor admin. form standar: 
+
+
+
+
+
+
+
+{ 'olive_leaf': { DEFAULT: '#606c38', 100: '#13160b', 200: '#262b16', 300: '#394121', 400: '#4c562c', 500: '#606c38', 600: '#88994f', 700: '#a9b876', 800: '#c5d0a3', 900: '#e2e7d1' }, 'black_forest': { DEFAULT: '#283618', 100: '#080b05', 200: '#101509', 300: '#18200e', 400: '#1f2a13', 500: '#283618', 600: '#547133', 700: '#80ac4d', 800: '#aac987', 900: '#d5e4c3' }, 'cornsilk': { DEFAULT: '#fefae0', 100: '#5d5103', 200: '#baa206', 300: '#f8dc27', 400: '#fbeb84', 500: '#fefae0', 600: '#fefbe7', 700: '#fefced', 800: '#fffdf3', 900: '#fffef9' }, 'sunlit_clay': { DEFAULT: '#dda15e', 100: '#34210b', 200: '#684216', 300: '#9d6321', 400: '#d1842c', 500: '#dda15e', 600: '#e4b57f', 700: '#ebc79f', 800: '#f1dabf', 900: '#f8ecdf' }, 'copperwood': { DEFAULT: '#bc6c25', 100: '#251507', 200: '#4b2b0f', 300: '#704016', 400: '#96561e', 500: '#bc6c25', 600: '#d98840', 700: '#e3a570', 800: '#ecc3a0', 900: '#f6e1cf' } }
+
+
+{ 'molten_lava': { DEFAULT: '#780000', 100: '#180000', 200: '#310000', 300: '#490000', 400: '#620000', 500: '#780000', 600: '#c80000', 700: '#ff1616', 800: '#ff6464', 900: '#ffb1b1' }, 'brick_red': { DEFAULT: '#c1121f', 100: '#260406', 200: '#4d070c', 300: '#730b12', 400: '#990e17', 500: '#c1121f', 600: '#eb2330', 700: '#f05a64', 800: '#f59198', 900: '#fac8cb' }, 'papaya_whip': { DEFAULT: '#fdf0d5', 100: '#593c04', 200: '#b17908', 300: '#f5ae22', 400: '#f9cf7b', 500: '#fdf0d5', 600: '#fdf2dc', 700: '#fef5e5', 800: '#fef9ed', 900: '#fffcf6' }, 'deep_space_blue': { DEFAULT: '#003049', 100: '#00090e', 200: '#00131d', 300: '#001c2b', 400: '#002539', 500: '#003049', 600: '#00679f', 700: '#00a0f7', 800: '#50c2ff', 900: '#a7e0ff' }, 'steel_blue': { DEFAULT: '#669bbc', 100: '#122028', 200: '#233f51', 300: '#355f79', 400: '#477fa2', 500: '#669bbc', 600: '#85afc9', 700: '#a4c3d7', 800: '#c2d7e4', 900: '#e1ebf2' } }
+
+{ 'thistle': { DEFAULT: '#cdb4db', 100: '#2b1a36', 200: '#57346b', 300: '#824ea1', 400: '#a87ec1', 500: '#cdb4db', 600: '#d6c2e2', 700: '#e0d2e9', 800: '#ebe1f0', 900: '#f5f0f8' }, 'pastel_petal': { DEFAULT: '#ffc8dd', 100: '#5b0023', 200: '#b60046', 300: '#ff116c', 400: '#ff6ca4', 500: '#ffc8dd', 600: '#ffd2e3', 700: '#ffddea', 800: '#ffe9f1', 900: '#fff4f8' }, 'baby_pink': { DEFAULT: '#ffafcc', 100: '#56001f', 200: '#ab003f', 300: '#ff025f', 400: '#ff5895', 500: '#ffafcc', 600: '#ffbed6', 700: '#ffcee0', 800: '#ffdeea', 900: '#ffeff5' }, 'icy_blue': { DEFAULT: '#bde0fe', 100: '#012f57', 200: '#035eaf', 300: '#0f8dfb', 400: '#66b6fd', 500: '#bde0fe', 600: '#cbe6fe', 700: '#d8ecfe', 800: '#e5f3ff', 900: '#f2f9ff' }, 'sky_blue': { DEFAULT: '#a2d2ff', 100: '#002b54', 200: '#0056a7', 300: '#0082fb', 400: '#50aaff', 500: '#a2d2ff', 600: '#b6dcff', 700: '#c8e4ff', 800: '#daedff', 900: '#edf6ff' } }
+
+{ 'sky_blue_(light)': { DEFAULT: '#8ecae6', 100: '#0d2e3d', 200: '#1b5c7a', 300: '#288ab7', 400: '#51aed9', 500: '#8ecae6', 600: '#a5d5eb', 700: '#bbdff0', 800: '#d2eaf5', 900: '#e8f4fa' }, 'blue_green': { DEFAULT: '#219ebc', 100: '#071f25', 200: '#0d3e4b', 300: '#145d70', 400: '#1a7d95', 500: '#219ebc', 600: '#39bcdc', 700: '#6bcce5', 800: '#9cddee', 900: '#ceeef6' }, 'deep_space_blue': { DEFAULT: '#023047', 100: '#00090e', 200: '#01131c', 300: '#011c2a', 400: '#012638', 500: '#023047', 600: '#04699b', 700: '#06a3f1', 800: '#54c3fb', 900: '#a9e1fd' }, 'amber_flame': { DEFAULT: '#ffb703', 100: '#342500', 200: '#684b00', 300: '#9c7000', 400: '#d09500', 500: '#ffb703', 600: '#ffc637', 700: '#ffd569', 800: '#ffe39b', 900: '#fff1cd' }, 'princeton_orange': { DEFAULT: '#fb8500', 100: '#321b00', 200: '#643500', 300: '#965000', 400: '#c86b00', 500: '#fb8500', 600: '#ff9e2f', 700: '#ffb663', 800: '#ffce97', 900: '#ffe7cb' } }
+

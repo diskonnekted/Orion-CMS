@@ -1,0 +1,7 @@
+orion-config.php
+debug_cat_log.txt
+orion-content/uploads/
+.vscode/
+*.log
+Thumbs.db
+.DS_Store

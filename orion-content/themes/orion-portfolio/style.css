@@ -1,0 +1,13 @@
+/*
+Theme Name: Orion Portfolio
+Theme URI: https://orion-cms.com/themes/portfolio
+Description: A clean, modern portfolio theme for showcasing your work. Features a hero section, project grid, and minimal design.
+Author: Orion Team
+Author URI: https://orion-cms.com
+Version: 1.0
+*/
+
+/* Custom CSS can go here, but we mainly use Tailwind via CDN */
+body {
+    font-family: 'Inter', sans-serif;
+}
