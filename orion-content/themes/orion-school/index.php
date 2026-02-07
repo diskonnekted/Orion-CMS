@@ -346,13 +346,17 @@ if ($post_id > 0) {
 
         default:
             // Homepage
+            $hero_bg_url = get_option('orion_school_hero_bg');
+            if (empty($hero_bg_url)) {
+                $hero_bg_url = 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
+            }
             ?>
             <!-- Hero Section -->
             <section class="relative bg-primary-900 text-white py-28 md:py-40 overflow-hidden">
                 <!-- Background Image & Gradient -->
                 <div class="absolute inset-0 z-0">
-                    <img src="<?php echo get_option('orion_school_hero_bg', 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'); ?>" alt="School Background" class="w-full h-full object-cover opacity-20">
-                    <div class="absolute inset-0 bg-gradient-to-r from-primary-900 via-primary-900/90 to-primary-800/80"></div>
+                    <img src="<?php echo $hero_bg_url; ?>" alt="School Background" class="w-full h-full object-cover opacity-40">
+                    <div class="absolute inset-0 bg-gradient-to-r from-primary-900/90 via-primary-900/80 to-primary-800/70"></div>
                 </div>
                 
                 <!-- Decorative Elements -->

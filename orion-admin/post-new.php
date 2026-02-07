@@ -311,6 +311,7 @@ require_once( 'admin-header.php' );
                     </button>
                 </div>
             </div>
+            <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="post_status">Status</label>
                 <select name="post_status" id="post_status" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                     <?php $status = $post ? $post->post_status : 'draft'; ?>
@@ -318,8 +319,8 @@ require_once( 'admin-header.php' );
                     <option value="publish" <?php echo $status == 'publish' ? 'selected' : ''; ?>>Published</option>
                 </select>
             </div>
-
-            <div class="flex justify-between">
+            
+            <div class="flex justify-between mt-4">
                 <button type="submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-2 px-4 rounded w-full">
                     <?php echo $post_id ? 'Update' : 'Save'; ?>
                 </button>

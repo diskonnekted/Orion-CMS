@@ -219,6 +219,17 @@ function update_option($option, $value) {
 }
 
 /**
+ * Delete option
+ */
+function delete_option($option) {
+    global $orion_db, $table_prefix;
+    $table = $table_prefix . 'options';
+    
+    $orion_db->query("DELETE FROM $table WHERE option_name = '$option'");
+    return true;
+}
+
+/**
  * Get template directory path
  */
 function get_template_directory() {

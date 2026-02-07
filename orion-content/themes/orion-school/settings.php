@@ -12,7 +12,12 @@ $youtube = get_option('orion_school_youtube', '#');
 
 $hero_title = get_option('orion_school_hero_title', 'Mewujudkan Generasi Emas Berkarakter');
 $hero_subtitle = get_option('orion_school_hero_subtitle', 'Orion School berkomitmen memberikan pendidikan berkualitas dengan standar internasional untuk masa depan yang gemilang.');
-$hero_bg = get_option('orion_school_hero_bg', 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+
+$hero_bg = get_option('orion_school_hero_bg');
+if (empty($hero_bg)) {
+    $hero_bg = 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80';
+}
+
 $hero_cta_text = get_option('orion_school_hero_cta_text', 'Daftar Sekarang');
 $hero_cta_link = get_option('orion_school_hero_cta_link', '?page=ppdb');
 

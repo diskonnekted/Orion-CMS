@@ -242,6 +242,7 @@ function wp_update_user($userdata) {
 /**
  * WP_User class.
  */
+#[AllowDynamicProperties]
 class WP_User {
     public $ID = 0;
     public $data;

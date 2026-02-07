@@ -194,11 +194,21 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Theme Card School -->
             <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
-                <img src="<?php echo site_url('/assets/img/smartvillage.PNG'); ?>" alt="Orion School" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <img src="<?php echo site_url('/assets/img/school.PNG'); ?>" alt="Orion School" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
                     <div>
                         <h3 class="text-white font-bold text-xl mb-1">Orion School</h3>
                         <p class="text-slate-300 text-sm">Academic & Education</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Theme Card Promo -->
+            <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
+                <img src="<?php echo site_url('/assets/img/promo.PNG'); ?>" alt="Orion Promo" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
+                    <div>
+                        <h3 class="text-white font-bold text-xl mb-1">Orion Promo</h3>
+                        <p class="text-slate-300 text-sm">Marketing & Landing Page</p>
                     </div>
                 </div>
             </div>
