@@ -112,6 +112,19 @@ function wp_get_current_user() {
 }
 
 /**
+ * Get the current user's ID
+ *
+ * @return int The current user's ID, or 0 if not logged in.
+ */
+function get_current_user_id() {
+    if ( ! function_exists( 'wp_get_current_user' ) ) {
+        return 0;
+    }
+    $user = wp_get_current_user();
+    return ( isset( $user->ID ) ? (int) $user->ID : 0 );
+}
+
+/**
  * Retrieves user info by a given field.
  *
  * @param string $field The field to retrieve the user with. id | login | email.

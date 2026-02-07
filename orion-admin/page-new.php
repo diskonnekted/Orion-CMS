@@ -75,10 +75,14 @@ require_once( 'admin-header.php' );
 </style>
 <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
 <script>
+    let editorInstance;
     document.addEventListener("DOMContentLoaded", function() {
         ClassicEditor
             .create( document.querySelector( '#post_content' ), {
                 toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertTable', 'undo', 'redo' ]
+            } )
+            .then( editor => {
+                editorInstance = editor;
             } )
             .catch( error => {
                 console.error( error );
@@ -115,8 +119,11 @@ require_once( 'admin-header.php' );
     <div class="md:col-span-1 space-y-6">
         <div class="bg-white p-6 rounded-lg shadow-sm">
             <h2 class="font-bold text-gray-800 mb-4 border-b pb-2">Publish</h2>
-            <div class="flex justify-between">
-                <button type="submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-2 px-4 rounded w-full">
+            <div class="flex justify-between gap-2">
+                <button type="button" onclick="previewPost()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded w-1/2 transition duration-200">
+                    Preview
+                </button>
+                <button type="submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-2 px-4 rounded w-1/2 transition duration-200">
                     <?php echo $post_id ? 'Update' : 'Publish'; ?>
                 </button>
             </div>
@@ -148,6 +155,44 @@ require_once( 'admin-header.php' );
 </form>
 
 <script>
+function previewPost() {
+    // Sync CKEditor
+    if (typeof editorInstance !== 'undefined' && editorInstance) {
+        editorInstance.updateSourceElement();
+    }
+
+    var form = document.querySelector('form');
+    var originalAction = form.action;
+    var originalTarget = form.target;
+    
+    form.action = '../preview.php';
+    form.target = '_blank';
+    
+    // Add post_id if editing
+    var postIdInput = document.createElement('input');
+    postIdInput.type = 'hidden';
+    postIdInput.name = 'post_id';
+    postIdInput.value = '<?php echo $post_id; ?>';
+    form.appendChild(postIdInput);
+
+    // Add post_type
+    var postTypeInput = document.createElement('input');
+    postTypeInput.type = 'hidden';
+    postTypeInput.name = 'post_type';
+    postTypeInput.value = 'page';
+    form.appendChild(postTypeInput);
+    
+    form.submit();
+    
+    // Reset after short delay
+    setTimeout(function() {
+        form.action = originalAction;
+        form.target = originalTarget;
+        form.removeChild(postIdInput);
+        form.removeChild(postTypeInput);
+    }, 500);
+}
+
 function previewFeatured(input) {
     if (input.files && input.files[0]) {
         var reader = new FileReader();

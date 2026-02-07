@@ -42,9 +42,10 @@
         </a>
         
         <div class="hidden md:flex space-x-8 items-center">
-            <a href="#features" class="text-slate-600 hover:text-brand-600 font-medium transition">Fitur</a>
-            <a href="#news" class="text-slate-600 hover:text-brand-600 font-medium transition">Berita</a>
-            <a href="#about" class="text-slate-600 hover:text-brand-600 font-medium transition">Tentang</a>
+            <a href="<?php echo site_url(); ?>" class="text-slate-600 hover:text-brand-600 font-medium transition">Beranda</a>
+            <a href="<?php echo site_url('?page=download'); ?>" class="text-slate-600 hover:text-brand-600 font-medium transition">Download</a>
+            <a href="<?php echo site_url(); ?>#features" class="text-slate-600 hover:text-brand-600 font-medium transition">Fitur</a>
+            <a href="<?php echo site_url(); ?>#news" class="text-slate-600 hover:text-brand-600 font-medium transition">Berita</a>
             <a href="<?php echo site_url('/orion-admin/'); ?>" class="px-5 py-2 bg-brand-600 text-white rounded-full font-semibold hover:bg-brand-700 transition shadow-lg shadow-brand-500/30">
                 Login Admin
             </a>

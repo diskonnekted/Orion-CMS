@@ -123,7 +123,7 @@ $current_user = wp_get_current_user();
     <!-- Sidebar -->
     <aside class="w-64 bg-slate-900 text-white flex-shrink-0 hidden md:flex flex-col border-r border-slate-800 shadow-xl z-20">
         <div class="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-900">
-            <a href="index.php" class="flex items-center gap-3">
+            <a href="<?php echo site_url('/orion-admin/index.php'); ?>" class="flex items-center gap-3">
                 <img src="<?php echo get_option('site_logo', site_url('/assets/img/orion-light.png')); ?>" alt="<?php echo htmlspecialchars(get_option('blogname', 'Orion CMS')); ?>" class="h-12 w-auto object-contain max-w-[150px]">
                 <span class="font-bold text-lg tracking-tight">V.01</span>
             </a>
@@ -131,7 +131,7 @@ $current_user = wp_get_current_user();
         
         <nav class="flex-1 py-6 space-y-1 overflow-y-auto scrollbar-hide">
             <!-- Dashboard -->
-            <a href="index.php" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">
+            <a href="<?php echo site_url('/orion-admin/index.php'); ?>" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
                 <span class="font-medium">Dashboard</span>
             </a>
@@ -146,20 +146,20 @@ $current_user = wp_get_current_user();
                     <svg :class="{'rotate-180': open}" class="w-4 h-4 transform transition-transform duration-200 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div x-show="open" x-collapse class="bg-slate-800/50 py-1">
-                    <a href="posts.php" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'posts.php' ? 'active' : ''; ?>">All Posts</a>
-                    <a href="post-new.php" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'post-new.php' ? 'active' : ''; ?>">Add New</a>
-                    <a href="categories.php" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'categories.php' ? 'active' : ''; ?>">Categories</a>
+                    <a href="<?php echo site_url('/orion-admin/posts.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'posts.php' ? 'active' : ''; ?>">All Posts</a>
+                    <a href="<?php echo site_url('/orion-admin/post-new.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'post-new.php' ? 'active' : ''; ?>">Add New</a>
+                    <a href="<?php echo site_url('/orion-admin/categories.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'categories.php' ? 'active' : ''; ?>">Categories</a>
                 </div>
             </div>
 
             <!-- Media -->
-            <a href="media.php" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'media.php' ? 'active' : ''; ?>">
+            <a href="<?php echo site_url('/orion-admin/media.php'); ?>" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'media.php' ? 'active' : ''; ?>">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 <span class="font-medium">Media</span>
             </a>
 
             <!-- Pages -->
-            <a href="pages.php" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'pages.php' ? 'active' : ''; ?>">
+            <a href="<?php echo site_url('/orion-admin/pages.php'); ?>" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'pages.php' ? 'active' : ''; ?>">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 <span class="font-medium">Pages</span>
             </a>
@@ -175,23 +175,29 @@ $current_user = wp_get_current_user();
                     <svg :class="{'rotate-180': open}" class="w-4 h-4 transform transition-transform duration-200 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div x-show="open" x-collapse class="bg-slate-800/50 py-1">
-                    <a href="themes.php" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'themes.php' ? 'active' : ''; ?>">Themes</a>
-                    <a href="nav-menus.php" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'nav-menus.php' ? 'active' : ''; ?>">Menus</a>
+                    <a href="<?php echo site_url('/orion-admin/themes.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'themes.php' ? 'active' : ''; ?>">Themes</a>
+                    <a href="<?php echo site_url('/orion-admin/nav-menus.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'nav-menus.php' ? 'active' : ''; ?>">Menus</a>
                     <?php
                     $current_theme = get_option('template', 'orion-default');
                     $theme_settings_path = ABSPATH . 'orion-content/themes/' . $current_theme . '/settings.php';
                     if (file_exists($theme_settings_path)):
                         $theme_name_display = ucwords(str_replace(['orion-', '-'], ['', ' '], $current_theme));
                     ?>
-                    <a href="theme-settings.php" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'theme-settings.php' ? 'active' : ''; ?>"><?php echo $theme_name_display; ?> Settings</a>
+                    <a href="<?php echo site_url('/orion-admin/theme-settings.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'theme-settings.php' ? 'active' : ''; ?>"><?php echo $theme_name_display; ?> Settings</a>
                     <?php endif; ?>
                 </div>
             </div>
 
             <!-- Plugins -->
-            <a href="plugins.php" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'plugins.php' ? 'active' : ''; ?>">
+            <a href="<?php echo site_url('/orion-admin/plugins.php'); ?>" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'plugins.php' ? 'active' : ''; ?>">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
                 <span class="font-medium">Plugins</span>
+            </a>
+
+            <!-- Orion Forms (Plugin) -->
+            <a href="<?php echo site_url('/orion-content/plugins/orion-form/admin/forms.php'); ?>" class="sidebar-link <?php echo strpos($_SERVER['PHP_SELF'], 'orion-form') !== false ? 'active' : ''; ?>">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <span class="font-medium">Orion Forms</span>
             </a>
 
             <!-- Users -->
@@ -207,11 +213,20 @@ $current_user = wp_get_current_user();
             </a>
             <?php endif; ?>
 
-            <!-- About -->
-            <a href="about.php" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'about.php' ? 'active' : ''; ?>">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span class="font-medium">About Orion</span>
-            </a>
+            <!-- Manual Dropdown -->
+            <div x-data="{ open: <?php echo (in_array(basename($_SERVER['PHP_SELF']), ['documentation.php', 'about.php'])) ? 'true' : 'false'; ?> }">
+                <button @click="open = !open" class="w-full sidebar-link focus:outline-none justify-between group">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <span class="font-medium">Manual</span>
+                    </div>
+                    <svg :class="{'rotate-180': open}" class="w-4 h-4 transform transition-transform duration-200 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div x-show="open" x-collapse class="bg-slate-800/50 py-1">
+                    <a href="documentation.php" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'documentation.php' ? 'active' : ''; ?>">Documentation</a>
+                    <a href="about.php" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'about.php' ? 'active' : ''; ?>">About</a>
+                </div>
+            </div>
         </nav>
         
         <div class="p-4 border-t border-slate-800 bg-slate-900">

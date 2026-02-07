@@ -42,7 +42,13 @@
                         <?php endif; ?>
 
                         <div class="prose max-w-none text-gray-800 leading-relaxed mb-8">
-                            <?php echo $post->post_content; // WYSIWYG content is usually HTML safe ?>
+                            <?php 
+                            if (function_exists('apply_filters')) {
+                                echo apply_filters('the_content', $post->post_content);
+                            } else {
+                                echo $post->post_content;
+                            }
+                            ?>
                         </div>
 
                         <!-- Gallery Section -->
