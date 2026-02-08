@@ -4,7 +4,34 @@
 // Get current values
 $banner_image = get_option('orion_one_banner_image', '');
 $banner_link = get_option('orion_one_banner_link', '#');
+
+$home_banner_image = get_option('orion_one_home_banner_image', '');
+$home_banner_link = get_option('orion_one_home_banner_link', '#');
 ?>
+
+<div class="mb-6">
+    <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Home Horizontal Banner (After 6 posts)</h2>
+    
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="orion_one_home_banner_image">
+            Horizontal Banner Image
+        </label>
+        <?php if ($home_banner_image): ?>
+        <div class="mb-2">
+            <img src="<?php echo $home_banner_image; ?>" class="w-full h-auto object-cover border rounded p-1" style="max-height: 200px;">
+        </div>
+        <?php endif; ?>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="orion_one_home_banner_image" type="file" name="orion_one_home_banner_image">
+        <p class="text-gray-500 text-xs italic mt-1">Upload a wide banner image to appear after the first 6 posts.</p>
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="orion_one_home_banner_link">
+            Banner Link URL
+        </label>
+        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="orion_one_home_banner_link" type="text" name="orion_one_home_banner_link" value="<?php echo htmlspecialchars($home_banner_link); ?>" placeholder="https://example.com/promo">
+    </div>
+</div>
 
 <div class="mb-6">
     <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Sidebar Banner Settings</h2>

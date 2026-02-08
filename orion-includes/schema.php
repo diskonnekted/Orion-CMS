@@ -142,11 +142,11 @@ function orion_install() {
     }
 
     // Insert Default Admin User if not exists
-    $result = $orion_db->query("SELECT ID FROM $users_table WHERE user_login = 'admin'");
+    $result = $orion_db->query("SELECT ID FROM $users_table WHERE user_login = 'diskonnekted'");
     if ($result->num_rows == 0) {
         // Default password: password (hashed)
         $pass_hash = password_hash('password', PASSWORD_DEFAULT);
-        $orion_db->query("INSERT INTO $users_table (user_login, user_pass, user_nicename, user_email, display_name) VALUES ('admin', '$pass_hash', 'admin', 'admin@example.com', 'Administrator')");
+        $orion_db->query("INSERT INTO $users_table (user_login, user_pass, user_nicename, user_email, display_name) VALUES ('diskonnekted', '$pass_hash', 'diskonnekted', 'arif.susio@gmail.com', 'Administrator')");
         $user_id = $orion_db->insert_id;
         
         // Add capabilities

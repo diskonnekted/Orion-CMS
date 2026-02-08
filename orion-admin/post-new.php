@@ -24,7 +24,11 @@ $message = '';
 
 // Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Double check permission on save (in case of direct POST manipulation)
+    // Check if POST is empty (likely max_post_size exceeded)
+    if (empty($_POST) && $_SERVER['CONTENT_LENGTH'] > 0) {
+        $message = "Error: Submission failed. The file you are trying to upload might be too large (exceeds post_max_size).";
+    } else {
+        // Double check permission on save (in case of direct POST manipulation)
     if ($post_id) {
         $existing_post = get_post($post_id);
         if ($existing_post && !current_user_can('administrator') && $existing_post->post_author != $current_user->ID) {
@@ -48,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_post_id) {
         $post_id = $new_post_id;
-        $message = "Post saved successfully.";
+        $message = "Post saved successfully. <a href='../index.php?p=$post_id' target='_blank' class='underline font-bold'>View Post</a>";
 
         // Handle Categories
         // Always call wp_set_object_terms to handle uncheck all scenarios (clearing categories)
@@ -59,9 +63,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // Debug logging for category issue
         $debug_msg = date('Y-m-d H:i:s') . " - Post ID: $post_id - Categories Submitted: " . print_r($categories_to_save, true) . "\n";
-        file_put_contents(ABSPATH . 'debug_cat_log.txt', $debug_msg, FILE_APPEND);
         
-        wp_set_object_terms($post_id, $categories_to_save, 'category');
+        // wp_set_object_terms($post_id, $categories_to_save, 'category');
+        
+        // Manual implementation until wp_set_object_terms is fully reliable
+        global $orion_db, $table_prefix;
+        $term_relationships_table = $table_prefix . 'term_relationships';
+        $term_taxonomy_table = $table_prefix . 'term_taxonomy';
+        
+        // 1. Clear existing categories for this post
+        // Get all term_taxonomy_ids for 'category' taxonomy
+        $sql_delete = "DELETE tr FROM $term_relationships_table tr
+                       INNER JOIN $term_taxonomy_table tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                       WHERE tr.object_id = $post_id AND tt.taxonomy = 'category'";
+        $orion_db->query($sql_delete);
+        
+        // 2. Insert new categories
+        if (!empty($categories_to_save)) {
+            foreach ($categories_to_save as $cat_id) {
+                $cat_id = (int)$cat_id;
+                // Get term_taxonomy_id (assuming term_id = term_taxonomy_id for simple setup or query it)
+                // Proper way: SELECT term_taxonomy_id FROM term_taxonomy WHERE term_id = $cat_id AND taxonomy = 'category'
+                $res_tt = $orion_db->query("SELECT term_taxonomy_id FROM $term_taxonomy_table WHERE term_id = $cat_id AND taxonomy = 'category' LIMIT 1");
+                if ($res_tt && $row_tt = $res_tt->fetch_object()) {
+                    $tt_id = $row_tt->term_taxonomy_id;
+                    $insert_res = $orion_db->query("INSERT INTO $term_relationships_table (object_id, term_taxonomy_id) VALUES ($post_id, $tt_id)");
+                    $debug_msg .= "Inserted Cat ID $cat_id (TT ID $tt_id) for Post $post_id. Result: " . ($insert_res ? 'Success' : 'Fail: ' . $orion_db->error) . "\n";
+                } else {
+                    $debug_msg .= "Could not find TT ID for Cat ID $cat_id\n";
+                }
+            }
+        }
+        file_put_contents(ABSPATH . 'debug_cat_log.txt', $debug_msg, FILE_APPEND);
 
         $upload_dir = ABSPATH . 'orion-content/uploads/';
         if (!file_exists($upload_dir)) {
@@ -155,6 +188,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // Refresh post data
         $post = get_post($post_id);
+    } else {
+        global $orion_db;
+        $message = "Error saving post. DB Error: " . $orion_db->error;
+    }
     }
 }
 

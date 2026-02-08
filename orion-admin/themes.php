@@ -187,7 +187,7 @@ include 'admin-header.php';
     </div>
 <?php endif; ?>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     <?php foreach ($themes as $slug => $theme): ?>
         <div class="bg-white rounded-xl shadow-sm overflow-hidden border <?php echo ($slug == $current_theme) ? 'border-orion-600 ring-2 ring-orion-600' : 'border-slate-200'; ?> hover:shadow-md transition-shadow">
             <div class="h-48 relative overflow-hidden group">

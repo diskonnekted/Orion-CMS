@@ -114,6 +114,31 @@ function get_posts($args = null) {
         $where .= " AND ID = $pid";
     }
 
+    // Category/Term Filter
+    if (isset($args['category']) || isset($args['taxonomy'])) {
+        $taxonomy = isset($args['taxonomy']) ? $orion_db->real_escape_string($args['taxonomy']) : 'category';
+        $cat_id = isset($args['category']) ? (int) $args['category'] : 0;
+        
+        $term_relationships = $table_prefix . 'term_relationships';
+        $term_taxonomy = $table_prefix . 'term_taxonomy';
+
+        if ($cat_id > 0) {
+            // Specific category
+            $where .= " AND ID IN (
+                SELECT object_id FROM $term_relationships tr
+                INNER JOIN $term_taxonomy tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                WHERE tt.taxonomy = '$taxonomy' AND tt.term_id = $cat_id
+            )";
+        } elseif (isset($args['taxonomy'])) {
+            // Any category in this taxonomy
+            $where .= " AND ID IN (
+                SELECT object_id FROM $term_relationships tr
+                INNER JOIN $term_taxonomy tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                WHERE tt.taxonomy = '$taxonomy'
+            )";
+        }
+    }
+
     // Search Logic
     if (isset($args['s']) && !empty($args['s'])) {
         $search_term = $orion_db->real_escape_string($args['s']);

@@ -378,9 +378,6 @@ function wp_parse_args($args, $defaults = '') {
 
 function wp_parse_str($string, &$array) {
     parse_str($string, $array);
-    if (get_magic_quotes_gpc()) {
-        $array = stripslashes_deep($array);
-    }
     return $array;
 }
 

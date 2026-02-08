@@ -275,7 +275,7 @@ function site_url($path = '') {
     
     // Assuming installation at root of domain or handling subdirectory manually for now
     // In real WP, this is fetched from DB options
-    $url = $protocol . $domainName . '/clasnet'; 
+    $url = $protocol . $domainName . '/orion'; 
     return $url . $path;
 }
 
@@ -290,7 +290,7 @@ function wp_head() {
  * Add Generator Meta Tag for Orion CMS
  */
 function orion_cms_generator() {
-    echo '<meta name="generator" content="Orion CMS by Clasnet" />' . "\n";
+    echo '<meta name="generator" content="Orion CMS by Diskonnekted" />' . "\n";
     
     // Add SEO Meta Tags if available
     $meta_desc = get_option('site_meta_description');

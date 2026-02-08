@@ -136,6 +136,22 @@ $current_user = wp_get_current_user();
                 <span class="font-medium">Dashboard</span>
             </a>
 
+            <!-- Orion Libre Book Manager (Conditional) -->
+            <?php if(get_option('template') === 'orion-libre'): ?>
+            <a href="<?php echo site_url('/orion-content/themes/orion-libre/manage-books.php'); ?>" class="sidebar-link text-amber-400 hover:text-amber-300">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <span class="font-medium">Manage Books</span>
+            </a>
+            <?php endif; ?>
+
+            <!-- Orion Shop Product Manager (Conditional) -->
+            <?php if(get_option('template') === 'orion-shop'): ?>
+            <a href="<?php echo site_url('/product-manager.php'); ?>" class="sidebar-link text-emerald-400 hover:text-emerald-300">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                <span class="font-medium">Kelola Produk Toko</span>
+            </a>
+            <?php endif; ?>
+
             <!-- Posts Dropdown -->
             <div x-data="{ open: <?php echo (in_array(basename($_SERVER['PHP_SELF']), ['posts.php', 'post-new.php', 'categories.php'])) ? 'true' : 'false'; ?> }">
                 <button @click="open = !open" class="w-full sidebar-link focus:outline-none justify-between group">

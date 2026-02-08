@@ -1,0 +1,17 @@
+/*
+Theme Name: Orion Libre
+Theme URI: http://orion-cms.com/themes/orion-libre
+Author: Orion Team
+Description: A clean, academic theme for digital libraries with PDF reading capabilities.
+Version: 1.0
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Open+Sans:wght@400;600&display=swap');
+
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Merriweather', serif;
+}

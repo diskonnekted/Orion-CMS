@@ -1,0 +1,2005 @@
+Array
+(
+    [action] => update
+    [post_id] => 8
+    [post_title] => Resep Masakan Tradisional yang Mendunia
+    [short_description] => Resep Masakan Tradisional yang Mendunia
+    [brand] => 5343
+    [series] => 6745
+    [price] => 77886
+    [stock_status] => in_stock
+    [category] => 18
+    [existing_image_url] => https://dummyimage.com/400x400/fca5a5/737373&text=Product+8
+    [specifications] => 
+    [variants] => 
+    [post_content] => Rendang dan Nasi Goreng bukan satu-satunya primadona. Kini Soto Ayam dan Gado-gado mulai dilirik oleh penikmat kuliner internasional. Berikut adalah rahasia bumbu rempah asli yang membuat masakan nusantara begitu dicintai di mancanegara.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 0866f3425afd77de486c816d08501d47.jpg
+            [full_path] => 0866f3425afd77de486c816d08501d47.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpD510.tmp
+            [error] => 0
+            [size] => 105839
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 9
+    [post_title] => Tips Investasi Saham untuk Pemula
+    [short_description] => 
+    [brand] => 
+    [series] => 
+    [price] => 0
+    [stock_status] => in_stock
+    [category] => 
+    [existing_image_url] => https://dummyimage.com/400x400/93c5fd/737373&text=Product+9
+    [specifications] => 
+    [variants] => 
+    [post_content] => Pasar modal bisa menjadi tempat yang menakutkan bagi pemula. Namun dengan strategi Dollar Cost Averaging (DCA) dan memilih saham bluechip, risiko bisa diminimalisir. Artikel ini membahas langkah awal membuka rekening saham dan cara membaca laporan keuangan sederhana.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 897fb2f6f9a3868f39f559e16b0e3b66.jpg
+            [full_path] => 897fb2f6f9a3868f39f559e16b0e3b66.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php240C.tmp
+            [error] => 0
+            [size] => 262528
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 8
+    [post_title] => Resep Masakan Tradisional yang Mendunia
+    [short_description] => Resep Masakan Tradisional yang Mendunia
+    [brand] => 5343
+    [series] => 6745
+    [price] => 77886
+    [stock_status] => in_stock
+    [category] => 18
+    [existing_image_url] => https://dummyimage.com/400x400/f3f4f6/737373&text=Product+8
+    [specifications] => 
+    [variants] => 
+    [post_content] => Rendang dan Nasi Goreng bukan satu-satunya primadona. Kini Soto Ayam dan Gado-gado mulai dilirik oleh penikmat kuliner internasional. Berikut adalah rahasia bumbu rempah asli yang membuat masakan nusantara begitu dicintai di mancanegara.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 0866f3425afd77de486c816d08501d47.jpg
+            [full_path] => 0866f3425afd77de486c816d08501d47.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php1BE1.tmp
+            [error] => 0
+            [size] => 105839
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 8
+    [post_title] => Resep Masakan Tradisional yang Mendunia
+    [short_description] => Resep Masakan Tradisional yang Mendunia
+    [brand] => 5343
+    [series] => 6745
+    [price] => 77886
+    [stock_status] => in_stock
+    [category] => 18
+    [existing_image_url] => https://dummyimage.com/400x400/f3f4f6/737373&text=Product+8
+    [specifications] => 
+    [variants] => 
+    [post_content] => Rendang dan Nasi Goreng bukan satu-satunya primadona. Kini Soto Ayam dan Gado-gado mulai dilirik oleh penikmat kuliner internasional. Berikut adalah rahasia bumbu rempah asli yang membuat masakan nusantara begitu dicintai di mancanegara.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 0866f3425afd77de486c816d08501d47.jpg
+            [full_path] => 0866f3425afd77de486c816d08501d47.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php8903.tmp
+            [error] => 0
+            [size] => 105839
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 27099e7c5bc13ddbab932778a2c2c61c.jpg
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 27099e7c5bc13ddbab932778a2c2c61c.jpg
+                )
+
+            [type] => Array
+                (
+                    [0] => image/jpeg
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => D:\xampp\tmp\php8914.tmp
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 138614
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 8
+    [post_title] => Resep Masakan Tradisional yang Mendunia
+    [short_description] => Resep Masakan Tradisional yang Mendunia
+    [brand] => 5343
+    [series] => 6745
+    [price] => 77886
+    [stock_status] => in_stock
+    [category] => 18
+    [existing_image_url] => http://localhost/orion/orion-content/uploads/products/prod_gallery_69883a7be161c.jpg
+    [existing_gallery_images] => Array
+        (
+            [0] => http://localhost/orion/orion-content/uploads/products/prod_gallery_69883a7be161c.jpg
+        )
+
+    [specifications] => 
+    [variants] => 
+    [post_content] => Rendang dan Nasi Goreng bukan satu-satunya primadona. Kini Soto Ayam dan Gado-gado mulai dilirik oleh penikmat kuliner internasional. Berikut adalah rahasia bumbu rempah asli yang membuat masakan nusantara begitu dicintai di mancanegara.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 9147b421a1cdf765c1b871842c2e4e12.jpg
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 9147b421a1cdf765c1b871842c2e4e12.jpg
+                )
+
+            [type] => Array
+                (
+                    [0] => image/jpeg
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => D:\xampp\tmp\php895.tmp
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 243735
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 9
+    [post_title] => Tips Investasi Saham untuk Pemula
+    [short_description] => 
+    [brand] => 
+    [series] => 
+    [price] => 0
+    [stock_status] => in_stock
+    [category] => 13
+    [existing_image_url] => https://dummyimage.com/400x400/93c5fd/737373&text=Product+9
+    [specifications] => 
+    [variants] => 
+    [post_content] => Pasar modal bisa menjadi tempat yang menakutkan bagi pemula. Namun dengan strategi Dollar Cost Averaging (DCA) dan memilih saham bluechip, risiko bisa diminimalisir. Artikel ini membahas langkah awal membuka rekening saham dan cara membaca laporan keuangan sederhana.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 52aebbc82ea55aa5da894fe106533db8.jpg
+            [full_path] => 52aebbc82ea55aa5da894fe106533db8.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php6201.tmp
+            [error] => 0
+            [size] => 222807
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 6edba21e918d1d0ae9fc9f5fe50a38ff.jpg
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 6edba21e918d1d0ae9fc9f5fe50a38ff.jpg
+                )
+
+            [type] => Array
+                (
+                    [0] => image/jpeg
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => D:\xampp\tmp\php6202.tmp
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 87757
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 10
+    [post_title] => Pentingnya Pendidikan Karakter Sejak Dini
+    [short_description] => 
+    [brand] => 
+    [series] => 
+    [price] => 0
+    [stock_status] => in_stock
+    [category] => 18
+    [existing_image_url] => https://dummyimage.com/400x400/fde047/737373&text=Product+10
+    [specifications] => 
+    [variants] => 
+    [post_content] => Sekolah bukan hanya tempat menuntut ilmu akademik, tetapi juga pembentukan karakter. Nilai-nilai seperti kejujuran, disiplin, dan empati harus ditanamkan sejak usia dini melalui kurikulum yang integratif dan contoh nyata dari tenaga pengajar.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 7649747ce447595532a20974ba84aa7b.jpg
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 7649747ce447595532a20974ba84aa7b.jpg
+                )
+
+            [type] => Array
+                (
+                    [0] => image/jpeg
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => D:\xampp\tmp\php9D66.tmp
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 171841
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 11
+    [post_title] => Olah Raga Ringan di Rumah Tanpa Alat
+    [short_description] => 
+    [brand] => 
+    [series] => 
+    [price] => 0
+    [stock_status] => in_stock
+    [category] => 
+    [existing_image_url] => https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=800&q=80
+    [specifications] => 
+    [variants] => 
+    [post_content] => Tidak sempat ke gym? Tidak masalah. Anda bisa melakukan push-up, sit-up, dan squat di rumah. Rutinitas 15 menit setiap pagi dapat meningkatkan metabolisme dan menjaga kebugaran tubuh agar tetap prima sepanjang hari.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => f114b3329c749242c7270fb22ccfb469.jpg
+            [full_path] => f114b3329c749242c7270fb22ccfb469.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpD805.tmp
+            [error] => 0
+            [size] => 225479
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => de29df8ccd4d808b3f88e93252602d0f.jpg
+                )
+
+            [full_path] => Array
+                (
+                    [0] => de29df8ccd4d808b3f88e93252602d0f.jpg
+                )
+
+            [type] => Array
+                (
+                    [0] => image/jpeg
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => D:\xampp\tmp\phpD806.tmp
+                )
+
+            [error] => Array
+                (
+                    [0] => 0
+                )
+
+            [size] => Array
+                (
+                    [0] => 107047
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 10
+    [post_title] => Pentingnya Pendidikan Karakter Sejak Dini
+    [short_description] => 
+    [brand] => 
+    [series] => 
+    [price] => 0
+    [stock_status] => in_stock
+    [category] => 18
+    [existing_image_url] => https://dummyimage.com/400x400/fde047/737373&text=Product+10
+    [existing_gallery_images] => Array
+        (
+            [0] => http://localhost/orion/orion-content/uploads/products/prod_gallery_69883ac2a0b1e.jpg
+        )
+
+    [specifications] => 
+    [variants] => 
+    [post_content] => Sekolah bukan hanya tempat menuntut ilmu akademik, tetapi juga pembentukan karakter. Nilai-nilai seperti kejujuran, disiplin, dan empati harus ditanamkan sejak usia dini melalui kurikulum yang integratif dan contoh nyata dari tenaga pengajar.
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => bdc85ab16ade870b16b6af6c03fb11e8.jpg
+            [full_path] => bdc85ab16ade870b16b6af6c03fb11e8.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php1E09.tmp
+            [error] => 0
+            [size] => 85620
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update_hero
+    [main_title] => Black
+    [main_subtitle] => No 1
+    [main_btn_text] => Klik
+    [main_btn_link] => #
+    [side1_title] => 
+    [side1_subtitle] => 
+    [side2_title] => 
+    [side2_subtitle] => 
+)
+
+Array
+(
+    [main_image] => Array
+        (
+            [name] => 334808d13cddc9096b09c1d28065cf8e.jpg
+            [full_path] => 334808d13cddc9096b09c1d28065cf8e.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php7FF3.tmp
+            [error] => 0
+            [size] => 47040
+        )
+
+    [side1_image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+    [side2_image] => Array
+        (
+            [name] => 
+            [full_path] => 
+            [type] => 
+            [tmp_name] => 
+            [error] => 4
+            [size] => 0
+        )
+
+)
+Array
+(
+    [action] => update_hero
+    [existing_main_image] => http://localhost/orion/orion-content/uploads/banners/banner_698882ec41c69.jpg
+    [main_title] => Black
+    [main_subtitle] => No 1
+    [main_btn_text] => Klik
+    [main_btn_link] => #
+    [side1_title] => Klik
+    [side1_subtitle] => Yes
+    [side2_title] => Yes
+    [side2_subtitle] => Klik
+)
+
+Array
+(
+    [main_image] => Array
+        (
+            [name] => Tempo-Time-Lapse-System-Upgrade-07.jpg
+            [full_path] => Tempo-Time-Lapse-System-Upgrade-07.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpDA25.tmp
+            [error] => 0
+            [size] => 108119
+        )
+
+    [side1_image] => Array
+        (
+            [name] => dreamina-2026-02-08-2419-buatkan saya mockup smartphone yang beri....jpeg
+            [full_path] => dreamina-2026-02-08-2419-buatkan saya mockup smartphone yang beri....jpeg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpDA55.tmp
+            [error] => 0
+            [size] => 546335
+        )
+
+    [side2_image] => Array
+        (
+            [name] => 61OXBeFQ8cL._AC_UF1000,1000_QL80_.jpg
+            [full_path] => 61OXBeFQ8cL._AC_UF1000,1000_QL80_.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpDA66.tmp
+            [error] => 0
+            [size] => 50439
+        )
+
+)
+Array
+(
+    [action] => update_hero
+    [existing_main_image] => http://localhost/orion/orion-content/uploads/banners/banner_69888344e9d7d.jpg
+    [main_title] => Black
+    [main_subtitle] => No 1
+    [main_btn_text] => Klik
+    [main_btn_link] => #
+    [existing_side1_image] => http://localhost/orion/orion-content/uploads/banners/banner_69888344e9f35.jpeg
+    [side1_title] => Klik
+    [side1_subtitle] => Yes
+    [existing_side2_image] => http://localhost/orion/orion-content/uploads/banners/banner_69888344ea194.jpg
+    [side2_title] => Yes
+    [side2_subtitle] => Klik
+)
+
+Array
+(
+    [main_image] => Array
+        (
+            [name] => dreamina-2026-01-22-8334-Generate a hyper-realistic photo of a pr....jpeg
+            [full_path] => dreamina-2026-01-22-8334-Generate a hyper-realistic photo of a pr....jpeg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpADCA.tmp
+            [error] => 0
+            [size] => 875748
+        )
+
+    [side1_image] => Array
+        (
+            [name] => michal-jakubowski-oQD9uq4Rd4I-unsplash-scaled.jpg
+            [full_path] => michal-jakubowski-oQD9uq4Rd4I-unsplash-scaled.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpADCB.tmp
+            [error] => 0
+            [size] => 208933
+        )
+
+    [side2_image] => Array
+        (
+            [name] => dreamina-2026-01-16-3442-buatkan foto truk pengangkut pasir denga....jpeg
+            [full_path] => dreamina-2026-01-16-3442-buatkan foto truk pengangkut pasir denga....jpeg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpADCC.tmp
+            [error] => 0
+            [size] => 875274
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 13
+    [post_title] => Opini: Perspektif Baru tentang Isu Terkini #1
+    [short_description] => Opini: Perspektif Baru tentang Isu Terkini #1 Opini: Perspektif Baru tentang Isu Terkini #1 Opini: Perspektif Baru tentang Isu Terkini #1
+    [price] => 6781
+    [category] => 13
+    [brand] => Ace
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/women/fashion?lock=13
+    [existing_gallery_images] => Array
+        (
+            [0] => http://localhost/orion/orion-content/uploads/products/prod_69880f6492bfb.jpg
+        )
+
+    [post_content] => Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    [specifications] => Katun
+    [variants] => Biru
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 722b5da674d9f975b3787dcec2d23be7.jpg
+            [full_path] => 722b5da674d9f975b3787dcec2d23be7.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php97C9.tmp
+            [error] => 0
+            [size] => 89730
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 36
+    [post_title] => Heels Pesta Glamour
+    [short_description] => 
+    [price] => 750000
+    [category] => 23
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/women/fashion?lock=36
+    [post_content] => Sepatu hak tinggi untuk acara spesial.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 10a51f23352a43fa1261b55c2dfa17ab.jpg
+            [full_path] => 10a51f23352a43fa1261b55c2dfa17ab.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php1EBD.tmp
+            [error] => 0
+            [size] => 68100
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 37
+    [post_title] => Sofa Minimalis 3 Seater
+    [short_description] => 
+    [price] => 3500000
+    [category] => 24
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/furniture/home?lock=37
+    [post_content] => Sofa nyaman untuk ruang keluarga.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 0ec7873cb357602298ec9b4c2b6a3634.jpg
+            [full_path] => 0ec7873cb357602298ec9b4c2b6a3634.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php581E.tmp
+            [error] => 0
+            [size] => 304248
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 38
+    [post_title] => Set Alat Masak Premium
+    [short_description] => 
+    [price] => 800000
+    [category] => 24
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/furniture/home?lock=38
+    [post_content] => Lengkap dengan wajan dan panci anti lengket.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => massimo-rinaldi-FmgZ5xzDG-s-unsplash.jpg
+            [full_path] => massimo-rinaldi-FmgZ5xzDG-s-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpC802.tmp
+            [error] => 0
+            [size] => 55913
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 39
+    [post_title] => Lampu Gantung Industrial
+    [short_description] => 
+    [price] => 450000
+    [category] => 24
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/furniture/home?lock=39
+    [post_content] => Lampu gantung estetik untuk ruang makan.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => md-abu-rayhan-AlftzmtmIvo-unsplash.jpg
+            [full_path] => md-abu-rayhan-AlftzmtmIvo-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php7848.tmp
+            [error] => 0
+            [size] => 25682
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 33
+    [post_title] => Sepatu Sneakers Urban
+    [short_description] => 
+    [price] => 600000
+    [category] => 22
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/men/fashion?lock=33
+    [post_content] => Sneakers desain modern untuk gaya kasual.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => luis-felipe-lins-LG88A2XgIXY-unsplash.jpg
+            [full_path] => luis-felipe-lins-LG88A2XgIXY-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpE442.tmp
+            [error] => 0
+            [size] => 31631
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 34
+    [post_title] => Dress Floral Summer
+    [short_description] => 
+    [price] => 350000
+    [category] => 23
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/women/fashion?lock=34
+    [post_content] => Dress motif bunga yang cantik dan sejuk.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 0ec7873cb357602298ec9b4c2b6a3634.jpg
+            [full_path] => 0ec7873cb357602298ec9b4c2b6a3634.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php3E3A.tmp
+            [error] => 0
+            [size] => 304248
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 35
+    [post_title] => Tas Kulit Elegan
+    [short_description] => 
+    [price] => 1200000
+    [category] => 23
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/women/fashion?lock=35
+    [post_content] => Tas kulit asli dengan desain minimalis.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => mostafa-mahmoudi-J4DnKxz_3sA-unsplash.jpg
+            [full_path] => mostafa-mahmoudi-J4DnKxz_3sA-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpB271.tmp
+            [error] => 0
+            [size] => 32919
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 30
+    [post_title] => Kamera Mirrorless 4K
+    [short_description] => 
+    [price] => 8500000
+    [category] => 21
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/tech/electronics?lock=30
+    [post_content] => Abadikan momen terbaik dengan kualitas 4K.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => chuttersnap-CuLzFor2c4M-unsplash.jpg
+            [full_path] => chuttersnap-CuLzFor2c4M-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpE50B.tmp
+            [error] => 0
+            [size] => 23332
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 31
+    [post_title] => Kemeja Flanel Premium
+    [short_description] => 
+    [price] => 250000
+    [category] => 22
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/men/fashion?lock=31
+    [post_content] => Kemeja flanel nyaman dipakai sehari-hari.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => tamara-bellis-68csPWTnafo-unsplash.jpg
+            [full_path] => tamara-bellis-68csPWTnafo-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php8757.tmp
+            [error] => 0
+            [size] => 57712
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 32
+    [post_title] => Jaket Denim Klasik
+    [short_description] => 
+    [price] => 450000
+    [category] => 22
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/men/fashion?lock=32
+    [post_content] => Jaket denim yang tak lekang oleh waktu.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => 99c5dec566f163eddaa0aead4a623c9a.jpg
+            [full_path] => 99c5dec566f163eddaa0aead4a623c9a.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpF2B4.tmp
+            [error] => 0
+            [size] => 119187
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 28
+    [post_title] => Laptop Gaming Pro
+    [short_description] => 
+    [price] => 15000000
+    [category] => 21
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/tech/electronics?lock=28
+    [post_content] => Laptop gaming dengan performa tinggi untuk profesional.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => masakaze-kawakami-lVLUnkPoQWw-unsplash.jpg
+            [full_path] => masakaze-kawakami-lVLUnkPoQWw-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php25FA.tmp
+            [error] => 0
+            [size] => 30621
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 29
+    [post_title] => Smartphone Flagship X
+    [short_description] => 
+    [price] => 12000000
+    [category] => 21
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/tech/electronics?lock=29
+    [post_content] => Smartphone terbaru dengan kamera terbaik.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => andrey-matveev-jVaQjaQA4aw-unsplash.jpg
+            [full_path] => andrey-matveev-jVaQjaQA4aw-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php5132.tmp
+            [error] => 0
+            [size] => 41018
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 27
+    [post_title] => 6743WQ
+    [short_description] => 
+    [price] => 600000
+    [category] => 9
+    [brand] => 
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/entertainment?lock=27
+    [existing_gallery_images] => Array
+        (
+            [0] => http://localhost/orion/orion-content/uploads/products/prod_69880e4de099f.jpg
+        )
+
+    [post_content] => 
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => henry-ascroft-7OFnb7NOvjw-unsplash.jpg
+            [full_path] => henry-ascroft-7OFnb7NOvjw-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpA1D3.tmp
+            [error] => 0
+            [size] => 58038
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 8
+    [post_title] => Resep Masakan Tradisional yang Mendunia
+    [short_description] => Resep Masakan Tradisional yang Mendunia
+    [price] => 77886
+    [category] => 18
+    [brand] => 5343
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/health/beauty?lock=8
+    [existing_gallery_images] => Array
+        (
+            [0] => http://localhost/orion/orion-content/uploads/products/prod_gallery_69883a7be161c.jpg
+            [1] => http://localhost/orion/orion-content/uploads/products/prod_gallery_69883a9c8a944.jpg
+        )
+
+    [post_content] => Rendang dan Nasi Goreng bukan satu-satunya primadona. Kini Soto Ayam dan Gado-gado mulai dilirik oleh penikmat kuliner internasional. Berikut adalah rahasia bumbu rempah asli yang membuat masakan nusantara begitu dicintai di mancanegara.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => content-pixie-m-gqDRzbJLQ-unsplash.jpg
+            [full_path] => content-pixie-m-gqDRzbJLQ-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpE94D.tmp
+            [error] => 0
+            [size] => 57946
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 9
+    [post_title] => Tips Investasi Saham untuk Pemula
+    [short_description] => 
+    [price] => 0
+    [category] => 13
+    [brand] => 
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/women/fashion?lock=9
+    [existing_gallery_images] => Array
+        (
+            [0] => http://localhost/orion/orion-content/uploads/products/prod_gallery_69883ab36fff5.jpg
+        )
+
+    [post_content] => Pasar modal bisa menjadi tempat yang menakutkan bagi pemula. Namun dengan strategi Dollar Cost Averaging (DCA) dan memilih saham bluechip, risiko bisa diminimalisir. Artikel ini membahas langkah awal membuka rekening saham dan cara membaca laporan keuangan sederhana.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => debby-hudson-FO4gzqI2t84-unsplash.jpg
+            [full_path] => debby-hudson-FO4gzqI2t84-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php23C7.tmp
+            [error] => 0
+            [size] => 23981
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 10
+    [post_title] => Pentingnya Pendidikan Karakter Sejak Dini
+    [short_description] => 
+    [price] => 0
+    [category] => 18
+    [brand] => 
+    [stock_status] => in_stock
+    [existing_image_url] => https://loremflickr.com/800/800/health/beauty?lock=10
+    [existing_gallery_images] => Array
+        (
+            [0] => http://localhost/orion/orion-content/uploads/products/prod_gallery_69883ac2a0b1e.jpg
+        )
+
+    [post_content] => Sekolah bukan hanya tempat menuntut ilmu akademik, tetapi juga pembentukan karakter. Nilai-nilai seperti kejujuran, disiplin, dan empati harus ditanamkan sejak usia dini melalui kurikulum yang integratif dan contoh nyata dari tenaga pengajar.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => akhil-yerabati-Q2uV5TkjNz8-unsplash.jpg
+            [full_path] => akhil-yerabati-Q2uV5TkjNz8-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php55E4.tmp
+            [error] => 0
+            [size] => 39881
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 13
+    [post_title] => Opini: Perspektif Baru tentang Isu Terkini #1
+    [short_description] => Opini: Perspektif Baru tentang Isu Terkini #1 Opini: Perspektif Baru tentang Isu Terkini #1 Opini: Perspektif Baru tentang Isu Terkini #1
+    [price] => 6781
+    [category] => 13
+    [brand] => Ace
+    [stock_status] => in_stock
+    [existing_image_url] => http://localhost/orion/orion-content/uploads/products/prod_6988920cf35e7.jpg
+    [existing_gallery_images] => Array
+        (
+            [0] => http://localhost/orion/orion-content/uploads/products/prod_69880f6492bfb.jpg
+        )
+
+    [post_content] => Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    [specifications] => Katun
+    [variants] => Biru
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => andrey-matveev-ivyhvsgIJ1o-unsplash.jpg
+            [full_path] => andrey-matveev-ivyhvsgIJ1o-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpE592.tmp
+            [error] => 0
+            [size] => 60228
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)
+Array
+(
+    [action] => update_hero
+    [existing_main_image] => http://localhost/orion/orion-content/uploads/banners/banner_698883fe2a9a6.jpeg
+    [main_title] => Orange Shoes
+    [main_subtitle] => No 1 In Heaven
+    [main_btn_text] => Klik beli
+    [main_btn_link] => #
+    [existing_side1_image] => http://localhost/orion/orion-content/uploads/banners/banner_698883fe2ac39.jpg
+    [side1_title] => Kamera Hitam
+    [side1_subtitle] => Yes or No
+    [existing_side2_image] => http://localhost/orion/orion-content/uploads/banners/banner_698883fe2b0dc.jpeg
+    [side2_title] => Alpukat Palsu
+    [side2_subtitle] => Hiasan Dinding
+)
+
+Array
+(
+    [main_image] => Array
+        (
+            [name] => luis-felipe-lins-LG88A2XgIXY-unsplash.jpg
+            [full_path] => luis-felipe-lins-LG88A2XgIXY-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpBC29.tmp
+            [error] => 0
+            [size] => 31631
+        )
+
+    [side1_image] => Array
+        (
+            [name] => chuttersnap-CuLzFor2c4M-unsplash.jpg
+            [full_path] => chuttersnap-CuLzFor2c4M-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpBC2A.tmp
+            [error] => 0
+            [size] => 23332
+        )
+
+    [side2_image] => Array
+        (
+            [name] => thought-catalog-9aOswReDKPo-unsplash.jpg
+            [full_path] => thought-catalog-9aOswReDKPo-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\phpBC2B.tmp
+            [error] => 0
+            [size] => 22752
+        )
+
+)
+Array
+(
+    [action] => update
+    [post_id] => 37
+    [post_title] => Sofa Minimalis 3 Seater
+    [short_description] => 
+    [price] => 3500000
+    [category] => 24
+    [brand] => Orion Brand
+    [stock_status] => in_stock
+    [existing_image_url] => http://localhost/orion/orion-content/uploads/products/prod_6988923e37cde.jpg
+    [post_content] => Sofa nyaman untuk ruang keluarga.
+    [specifications] => 
+    [variants] => 
+)
+
+Array
+(
+    [product_image] => Array
+        (
+            [name] => taufiq-hasan-Aj9jg0QdA9U-unsplash.jpg
+            [full_path] => taufiq-hasan-Aj9jg0QdA9U-unsplash.jpg
+            [type] => image/jpeg
+            [tmp_name] => D:\xampp\tmp\php152A.tmp
+            [error] => 0
+            [size] => 41782
+        )
+
+    [gallery_images] => Array
+        (
+            [name] => Array
+                (
+                    [0] => 
+                )
+
+            [full_path] => Array
+                (
+                    [0] => 
+                )
+
+            [type] => Array
+                (
+                    [0] => 
+                )
+
+            [tmp_name] => Array
+                (
+                    [0] => 
+                )
+
+            [error] => Array
+                (
+                    [0] => 4
+                )
+
+            [size] => Array
+                (
+                    [0] => 0
+                )
+
+        )
+
+)

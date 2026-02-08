@@ -1,21 +1,21 @@
 <?php
 /**
- * Orion One Theme Functions
+ * Orion Wall Theme Functions
  */
 
-function orion_one_setup() {
+function orion_wall_setup() {
     // Register Navigation Menus
     register_nav_menus(array(
         'primary' => 'Primary Menu',
         'footer'  => 'Footer Menu'
     ));
 }
-add_action('after_setup_theme', 'orion_one_setup');
+add_action('after_setup_theme', 'orion_wall_setup');
 
 /**
- * Visitor Tracking System
+ * Visitor Tracking System (Copied from Orion One)
  */
-function orion_one_track_visitor() {
+function orion_wall_track_visitor() {
     global $orion_db, $table_prefix;
     
     // Ensure table exists (Lazy check)
@@ -44,33 +44,4 @@ function orion_one_track_visitor() {
         setcookie('orion_visitor_tracked', '1', time() + 3600, '/');
     }
 }
-add_action('wp_head', 'orion_one_track_visitor');
-
-/**
- * Get Visitor Stats
- */
-function orion_one_get_stats() {
-    global $orion_db, $table_prefix;
-    $table_name = $table_prefix . 'visitor_log';
-    
-    $stats = array('today' => 0, 'total' => 0);
-    
-    // Check if table exists first
-    $check = $orion_db->query("SHOW TABLES LIKE '$table_name'");
-    if ($check && $check->num_rows > 0) {
-        // Total
-        $res_total = $orion_db->query("SELECT COUNT(*) as count FROM $table_name");
-        if ($res_total && $row = $res_total->fetch_object()) {
-            $stats['total'] = $row->count;
-        }
-        
-        // Today
-        $today = date('Y-m-d');
-        $res_today = $orion_db->query("SELECT COUNT(*) as count FROM $table_name WHERE DATE(visit_date) = '$today'");
-        if ($res_today && $row = $res_today->fetch_object()) {
-            $stats['today'] = $row->count;
-        }
-    }
-    
-    return $stats;
-}
+add_action('wp_head', 'orion_wall_track_visitor');

@@ -86,7 +86,8 @@ if (!is_front_page() && is_single()) {
     <?php 
     // Custom query for the first post
     $args = array(
-        'numberposts' => 1
+        'numberposts' => 1,
+        'taxonomy' => 'category'
     );
     $hero_query = new WP_Query($args);
     $hero_post_id = 0;
@@ -170,7 +171,8 @@ if (!is_front_page() && is_single()) {
                 $latest_args = array(
                     'numberposts' => 7,
                     'post_type' => 'post',
-                    'post_status' => 'publish'
+                    'post_status' => 'publish',
+                    'taxonomy' => 'category'
                 );
                 $latest_query = new WP_Query($latest_args);
 
@@ -275,7 +277,8 @@ if (!is_front_page() && is_single()) {
                     <?php
                     $popular_args = array(
                         'numberposts' => 4,
-                        'orderby' => 'rand'
+                        'orderby' => 'rand',
+                        'taxonomy' => 'category'
                     );
                     $popular_posts = get_posts($popular_args);
                     
