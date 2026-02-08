@@ -64,7 +64,8 @@ Follow these steps to set up Orion CMS on your local or production environment.
 
 ## Development Tools
 
-The repository includes several utility scripts for developers (moved to `tmp/` folder):
+The repository includes several utility scripts for developers:
+- `product-manager.php`: Main product management interface (Root).
 - `tmp/fix_dummy_images.php`: Updates dummy product images using LoremFlickr service.
 - `tmp/check_products.php`: Verifies product-category relationships.
 - `tmp/sync-product-categories.php`: Synchronizes category term data.
