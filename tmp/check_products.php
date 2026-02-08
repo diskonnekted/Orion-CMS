@@ -1,7 +1,7 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-require_once 'orion-load.php';
+require_once '../orion-load.php';
 
 $args = array(
     'post_type' => 'post',
@@ -25,3 +25,4 @@ if ($query->have_posts()) {
 } else {
     echo "No products found.\n";
 }
+

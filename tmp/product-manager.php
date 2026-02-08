@@ -5,7 +5,7 @@
 
 // Bootstrap Orion Core
 // Path: product-manager.php -> orion-load.php (in same root directory)
-$bootstrap_path = __DIR__ . '/orion-load.php';
+$bootstrap_path = __DIR__ . '/../orion-load.php';
 if (file_exists($bootstrap_path)) {
     require_once $bootstrap_path;
 } else {
@@ -875,3 +875,4 @@ $products = get_posts(array('numberposts' => -1, 'post_status' => 'publish'));
 
 </body>
 </html>
+

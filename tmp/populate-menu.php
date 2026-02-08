@@ -1,6 +1,6 @@
 <?php
 define('ABSPATH', __DIR__ . '/');
-require_once 'orion-load.php';
+require_once '../orion-load.php';
 
 echo "=== Populating Menu ===\n";
 
@@ -86,3 +86,4 @@ update_option('nav_menu_locations', $locations);
 echo "Menu location 'primary' updated.\n";
 
 echo "Done.\n";
+

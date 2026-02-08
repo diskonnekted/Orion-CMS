@@ -1,7 +1,7 @@
 <?php
 // Verify Menu System Integrity
 define('ABSPATH', __DIR__ . '/');
-require_once 'orion-load.php';
+require_once '../orion-load.php';
 
 echo "=== Menu System Verification ===\n";
 
@@ -84,3 +84,4 @@ if (!empty($output)) {
 } else {
     echo "[FAIL] No HTML generated for primary menu.\n";
 }
+

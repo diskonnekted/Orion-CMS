@@ -7,3 +7,4 @@ require_once 'orion-settings.php';
 orion_install();
 
 echo "Database updated successfully. Default admin user created.";
+

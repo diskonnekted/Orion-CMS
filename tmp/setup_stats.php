@@ -1,5 +1,5 @@
 <?php
-require_once('orion-load.php');
+require_once('../orion-load.php');
 
 global $orion_db, $table_prefix;
 

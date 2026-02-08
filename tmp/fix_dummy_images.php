@@ -1,7 +1,7 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-require_once 'orion-load.php';
+require_once '../orion-load.php';
 
 // Unsplash Direct URLs (Reliable)
 $images = [
@@ -67,3 +67,4 @@ foreach ($posts as $post) {
 }
 
 echo "Done.\n";
+

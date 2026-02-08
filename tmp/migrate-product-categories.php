@@ -7,7 +7,7 @@
  * News (others) will remain in 'category' taxonomy.
  */
 
-require_once 'orion-load.php';
+require_once '../orion-load.php';
 
 // if (!function_exists('is_user_logged_in') || !is_user_logged_in()) {
 //    die("Please log in as admin to run this script.");
@@ -77,3 +77,4 @@ foreach ($product_ids as $pid => $title) {
 }
 
 echo "Migration complete. $migrated_count products updated.\n";
+

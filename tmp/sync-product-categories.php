@@ -1,6 +1,6 @@
 <?php
 // Load Orion Core
-require_once 'orion-load.php';
+require_once '../orion-load.php';
 
 // Categories for Products
 $categories = [
