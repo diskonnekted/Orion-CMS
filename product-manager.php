@@ -290,7 +290,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) 
 $categories = function_exists('get_terms') ? get_terms('product_cat') : array();
 
 // Get All Products
-$products = get_posts(array('numberposts' => -1, 'post_status' => 'publish'));
+$args = array(
+    'numberposts' => -1,
+    'post_type'   => 'post',
+    'post_status' => 'publish'
+);
+
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $args['s'] = $_GET['search'];
+}
+
+$products = get_posts($args);
 
 ?>
 <!DOCTYPE html>
@@ -593,10 +603,20 @@ $products = get_posts(array('numberposts' => -1, 'post_status' => 'publish'));
                         <h2 class="text-2xl font-bold text-gray-900">Daftar Produk</h2>
                         <p class="text-sm text-gray-500 mt-1">Kelola inventaris dan katalog produk Anda.</p>
                     </div>
-                    <button onclick="window.location.href='product-manager.php?action=create'" class="bg-shop-600 hover:bg-shop-700 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-shop-600/30 font-medium transition-all transform hover:-translate-y-0.5 flex items-center group">
-                        <svg class="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Tambah Produk
-                    </button>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        <form action="" method="GET" class="relative w-full sm:w-64">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                            <input type="text" name="search" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-shop-500 focus:border-shop-500 sm:text-sm transition duration-150 ease-in-out" placeholder="Cari produk...">
+                        </form>
+                        <button onclick="window.location.href='product-manager.php?action=create'" class="bg-shop-600 hover:bg-shop-700 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-shop-600/30 font-medium transition-all transform hover:-translate-y-0.5 flex items-center justify-center group whitespace-nowrap">
+                            <svg class="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Tambah Produk
+                        </button>
+                    </div>
                 </div>
 
                 <?php if ($message): ?>
@@ -693,7 +713,11 @@ $products = get_posts(array('numberposts' => -1, 'post_status' => 'publish'));
                                 <?php if (empty($products)): ?>
                                     <tr>
                                         <td colspan="5" class="px-6 py-10 text-center text-gray-500">
-                                            Belum ada produk. Silakan tambahkan produk baru.
+                                            <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
+                                                Tidak ada produk yang cocok dengan pencarian "<strong><?php echo htmlspecialchars($_GET['search']); ?></strong>". <a href="product-manager.php" class="text-shop-600 hover:text-shop-700 font-medium">Reset pencarian</a>
+                                            <?php else: ?>
+                                                Belum ada produk. Silakan tambahkan produk baru.
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endif; ?>

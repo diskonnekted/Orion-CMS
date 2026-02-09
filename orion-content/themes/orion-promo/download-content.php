@@ -247,10 +247,13 @@ if ($has_core):
 
                     // Image mapping for zips without installed theme
                     $image_map = [
-                        'orion-magazine.zip' => 'magazine.PNG',
-                        'orion-one.zip' => 'one.PNG',
-                        'orion-portfolio.zip' => 'portfolio.PNG',
-                        'orion-smartvillage.zip' => 'smartvillage.PNG',
+                        'orion-magazine.zip' => 'magazine.png',
+                        'orion-one.zip' => 'one.png',
+                        'orion-portfolio.zip' => 'portfolio.png',
+                        'orion-smartvillage.zip' => 'smartvillage.png',
+                        'orion-shop.zip' => 'shop.png',
+                        'orion-wall.zip' => 'wall.png',
+                        'orion-libre.zip' => 'libre.png',
                     ];
                     
                     $img_file = isset($image_map[$filename]) ? $image_map[$filename] : 'orion-logo.png';

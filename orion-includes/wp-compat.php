@@ -573,6 +573,50 @@ function the_ID() {
     echo isset($post->ID) ? $post->ID : 0;
 }
 
+function get_the_ID() {
+    global $post;
+    return isset($post->ID) ? $post->ID : 0;
+}
+
+function get_the_date($format = 'd M Y', $post_id = 0) {
+    $post_obj = null;
+    
+    if (empty($post_id)) {
+        global $post;
+        $post_obj = $post;
+    } elseif (is_numeric($post_id)) {
+        $post_obj = get_post($post_id);
+    } else {
+        $post_obj = $post_id;
+    }
+    
+    if ( ! $post_obj || ! isset($post_obj->post_date) ) {
+        return '';
+    }
+    return date($format, strtotime($post_obj->post_date));
+}
+
+function the_date($format = 'd M Y', $before = '', $after = '', $echo = true) {
+    $date = get_the_date($format);
+    if ($echo) {
+        echo $before . $date . $after;
+    }
+    return $date;
+}
+
+function get_the_author() {
+    global $post;
+    if (empty($post->post_author)) {
+        return '';
+    }
+    $user = get_user_by('id', $post->post_author);
+    return $user ? $user->display_name : '';
+}
+
+function the_author() {
+    echo get_the_author();
+}
+
 function the_title($before = '', $after = '', $echo = true) {
     global $post;
     $title = isset($post->post_title) ? $post->post_title : '';

@@ -254,17 +254,32 @@ $inactive_count = $total_plugins - $active_count;
         ?>
         <div class="bg-white rounded-xl shadow-sm overflow-hidden border <?php echo $border_class; ?> hover:shadow-md transition-shadow">
             <div class="h-48 relative overflow-hidden group">
-                <!-- Background -->
-                <div class="absolute inset-0 bg-indigo-50 flex items-center justify-center overflow-hidden">
-                    <!-- Large Faded Background Icon -->
-                    <div class="absolute -right-4 -bottom-8 text-indigo-200 opacity-20 transform rotate-12">
-                        <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+                <?php 
+                $plugin_dir = dirname($path);
+                $has_image = false;
+                $image_url = '';
+                
+                if ($plugin_dir != '.' && file_exists(ABSPATH . 'orion-content/plugins/' . $plugin_dir . '/logo.png')) {
+                    $has_image = true;
+                    $image_url = site_url('/orion-content/plugins/' . $plugin_dir . '/logo.png');
+                }
+                ?>
+                
+                <?php if ($has_image): ?>
+                    <img src="<?php echo $image_url; ?>" alt="<?php echo htmlspecialchars($plugin['Name']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                <?php else: ?>
+                    <!-- Background -->
+                    <div class="absolute inset-0 bg-indigo-50 flex items-center justify-center overflow-hidden">
+                        <!-- Large Faded Background Icon -->
+                        <div class="absolute -right-4 -bottom-8 text-indigo-200 opacity-20 transform rotate-12">
+                            <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+                        </div>
+                        <!-- Foreground Icon -->
+                        <div class="relative z-10 w-24 h-24 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-md group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
+                        </div>
                     </div>
-                    <!-- Foreground Icon -->
-                    <div class="relative z-10 w-24 h-24 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-md group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
-                    </div>
-                </div>
+                <?php endif; ?>
 
                 <?php if ($is_active): ?>
                     <div class="absolute top-2 right-2 z-10">

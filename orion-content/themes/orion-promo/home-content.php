@@ -127,7 +127,7 @@
         <div class="flex flex-col md:flex-row items-center gap-16 mb-24">
             <div class="md:w-1/2 relative">
                 <div class="absolute inset-0 bg-gradient-to-tr from-brand-100 to-purple-100 rounded-full filter blur-3xl opacity-50 transform -translate-x-10"></div>
-                <img src="<?php echo site_url('/assets/img/magazine.PNG'); ?>" alt="Theme Showcase" class="relative rounded-2xl shadow-2xl border border-slate-100 transform hover:scale-105 transition duration-500">
+                <img src="<?php echo site_url('/assets/img/magazine.png'); ?>" alt="Theme Showcase" class="relative rounded-2xl shadow-2xl border border-slate-100 transform hover:scale-105 transition duration-500">
             </div>
             <div class="md:w-1/2">
                 <div class="w-12 h-12 bg-brand-100 rounded-xl flex items-center justify-center text-brand-600 mb-6">
@@ -158,7 +158,7 @@
         <div class="flex flex-col md:flex-row-reverse items-center gap-16">
             <div class="md:w-1/2 relative">
                 <div class="absolute inset-0 bg-gradient-to-tr from-blue-100 to-green-100 rounded-full filter blur-3xl opacity-50 transform translate-x-10"></div>
-                <img src="<?php echo site_url('/assets/img/smartvillage.PNG'); ?>" alt="Plugin System" class="relative rounded-2xl shadow-2xl border border-slate-100 transform hover:scale-105 transition duration-500">
+                <img src="<?php echo site_url('/assets/img/smartvillage.png'); ?>" alt="Plugin System" class="relative rounded-2xl shadow-2xl border border-slate-100 transform hover:scale-105 transition duration-500">
             </div>
             <div class="md:w-1/2">
                 <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-6">
@@ -194,7 +194,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Theme Card School -->
             <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
-                <img src="<?php echo site_url('/assets/img/school.PNG'); ?>" alt="Orion School" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <img src="<?php echo site_url('/assets/img/school.png'); ?>" alt="Orion School" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
                     <div>
                         <h3 class="text-white font-bold text-xl mb-1">Orion School</h3>
@@ -204,7 +204,7 @@
             </div>
             <!-- Theme Card Promo -->
             <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
-                <img src="<?php echo site_url('/assets/img/promo.PNG'); ?>" alt="Orion Promo" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <img src="<?php echo site_url('/assets/img/promo.png'); ?>" alt="Orion Promo" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
                     <div>
                         <h3 class="text-white font-bold text-xl mb-1">Orion Promo</h3>
@@ -214,7 +214,7 @@
             </div>
             <!-- Theme Card 1 -->
             <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
-                <img src="<?php echo site_url('/assets/img/one.PNG'); ?>" alt="Theme One" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <img src="<?php echo site_url('/assets/img/one.png'); ?>" alt="Theme One" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
                     <div>
                         <h3 class="text-white font-bold text-xl mb-1">Orion One</h3>
@@ -224,7 +224,7 @@
             </div>
              <!-- Theme Card 2 -->
              <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
-                <img src="<?php echo site_url('/assets/img/portfolio.PNG'); ?>" alt="Theme Portfolio" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <img src="<?php echo site_url('/assets/img/portfolio.png'); ?>" alt="Theme Portfolio" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
                     <div>
                         <h3 class="text-white font-bold text-xl mb-1">Creative Portfolio</h3>
@@ -234,11 +234,21 @@
             </div>
              <!-- Theme Card 3 -->
              <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
-                <img src="<?php echo site_url('/assets/img/magazine.PNG'); ?>" alt="Theme Magazine" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <img src="<?php echo site_url('/assets/img/magazine.png'); ?>" alt="Theme Magazine" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
                     <div>
                         <h3 class="text-white font-bold text-xl mb-1">News Magazine</h3>
                         <p class="text-slate-300 text-sm">Content Heavy Sites</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Theme Card Shop -->
+             <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
+                <img src="<?php echo site_url('/assets/img/shop.png'); ?>" alt="Orion Shop" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
+                    <div>
+                        <h3 class="text-white font-bold text-xl mb-1">Orion Shop</h3>
+                        <p class="text-slate-300 text-sm">E-Commerce Solution</p>
                     </div>
                 </div>
             </div>
@@ -316,10 +326,16 @@
 </section>
 
 <!-- Call to Action -->
-<section class="py-24 bg-brand-600 relative overflow-hidden">
+<section class="py-24 bg-brand-900 relative overflow-hidden">
+    <!-- Background Image -->
+    <div class="absolute inset-0 z-0">
+        <img src="<?php echo site_url('/assets/img/promo.png'); ?>" alt="Background" class="w-full h-full object-cover opacity-60">
+        <div class="absolute inset-0 bg-gradient-to-br from-brand-900/80 via-brand-800/70 to-purple-900/80"></div>
+    </div>
+
     <!-- Abstract Shapes -->
-    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-purple-500 opacity-20 rounded-full blur-3xl"></div>
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white opacity-10 rounded-full blur-3xl z-0"></div>
+    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-purple-500 opacity-20 rounded-full blur-3xl z-0"></div>
     
     <div class="container mx-auto px-6 text-center relative z-10">
         <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Mulai Website Impian Anda</h2>

@@ -19,6 +19,12 @@ if (is_user_logged_in()) {
 
 $error = '';
 
+// Security: Check Brute Force
+global $orion_security;
+if (isset($orion_security) && !$orion_security->check_login_attempts($_SERVER['REMOTE_ADDR'])) {
+    die("<h1>Too many failed login attempts. Please try again in 15 minutes.</h1>");
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp-submit'])) {
     $username = isset($_POST['log']) ? trim($_POST['log']) : '';
     $password = isset($_POST['pwd']) ? $_POST['pwd'] : '';
@@ -31,9 +37,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp-submit'])) {
     ));
     
     if ($user instanceof WP_User) {
+        // Security: Clear failed attempts
+        if (isset($orion_security)) {
+            $orion_security->clear_login_attempts($_SERVER['REMOTE_ADDR']);
+        }
+        
         header('Location: orion-admin/index.php');
         exit;
     } else {
+        // Security: Log failed attempt
+        if (isset($orion_security)) {
+            $orion_security->log_failed_login($_SERVER['REMOTE_ADDR']);
+        }
         $error = 'Invalid username or password.';
     }
 }

@@ -14,3 +14,8 @@ if ( file_exists( ABSPATH . 'orion-config.php') ) {
     // Error handling if config missing
     die("orion-config.php missing.");
 }
+
+// Load Security Module
+if ( file_exists( ABSPATH . 'orion-includes/security.php' ) ) {
+    require_once( ABSPATH . 'orion-includes/security.php' );
+}

@@ -61,6 +61,19 @@ function wp_insert_post($postarr) {
 }
 
 /**
+ * Update a post in the database.
+ *
+ * @param array $postarr
+ * @return int|false Post ID on success, false on failure.
+ */
+function wp_update_post($postarr = array()) {
+    if ( isset($postarr['ID']) ) {
+        return wp_insert_post($postarr);
+    }
+    return false;
+}
+
+/**
  * Retrieve list of posts.
  *
  * @param array $args
@@ -80,20 +93,43 @@ function get_posts($args = null) {
     // Merge args logic simpler for now
     $limit = isset($args['numberposts']) ? (int) $args['numberposts'] : 5;
     $offset = isset($args['offset']) ? (int) $args['offset'] : 0;
-    $post_type = isset($args['post_type']) ? $orion_db->real_escape_string($args['post_type']) : 'post';
-    $post_status = isset($args['post_status']) ? $orion_db->real_escape_string($args['post_status']) : 'publish';
-    
     $table = $table_prefix . 'posts';
     
     // Build Where Clause
     $where = "WHERE 1=1";
     
-    if ($post_type !== 'any') {
-        $where .= " AND post_type = '$post_type'";
+    // Post Type Handling
+    if (isset($args['post_type'])) {
+        if (is_array($args['post_type'])) {
+            $types = array_map(function($t) use ($orion_db) { return "'" . $orion_db->real_escape_string($t) . "'"; }, $args['post_type']);
+            if (!empty($types)) {
+                $where .= " AND post_type IN (" . implode(',', $types) . ")";
+            }
+        } else {
+            $post_type = $orion_db->real_escape_string($args['post_type']);
+            if ($post_type !== 'any') {
+                $where .= " AND post_type = '$post_type'";
+            }
+        }
+    } else {
+        $where .= " AND post_type = 'post'";
     }
 
-    if ($post_status !== 'any') {
-        $where .= " AND post_status = '$post_status'";
+    // Post Status Handling
+    if (isset($args['post_status'])) {
+        if (is_array($args['post_status'])) {
+            $statuses = array_map(function($s) use ($orion_db) { return "'" . $orion_db->real_escape_string($s) . "'"; }, $args['post_status']);
+            if (!empty($statuses)) {
+                $where .= " AND post_status IN (" . implode(',', $statuses) . ")";
+            }
+        } else {
+            $post_status = $orion_db->real_escape_string($args['post_status']);
+            if ($post_status !== 'any') {
+                $where .= " AND post_status = '$post_status'";
+            }
+        }
+    } else {
+        $where .= " AND post_status = 'publish'";
     }
     
     // Handle specific IDs

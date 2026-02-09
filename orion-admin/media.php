@@ -54,7 +54,7 @@ $files = array();
 if (is_dir($upload_dir)) {
     $scandir = scandir($upload_dir);
     foreach($scandir as $file) {
-        if ($file !== '.' && $file !== '..') {
+        if ($file !== '.' && $file !== '..' && !is_dir($upload_dir . $file)) {
             $files[] = array(
                 'name' => $file,
                 'path' => $upload_dir . $file,

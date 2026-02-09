@@ -59,6 +59,9 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
 
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-gray-800">Settings</h1>
+    <button type="submit" name="submit" form="settings-form" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded shadow">
+        Save Changes
+    </button>
 </div>
 
 <?php if (isset($message)): ?>
@@ -68,7 +71,7 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
 <?php endif; ?>
 
 <div class="bg-white rounded-lg shadow overflow-hidden p-6">
-    <form method="POST" action="settings.php" enctype="multipart/form-data">
+    <form id="settings-form" method="POST" action="settings.php" enctype="multipart/form-data">
         <div class="grid grid-cols-1 gap-6">
             
             <!-- Logo Settings -->
@@ -146,12 +149,17 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
                     <div>
                         <label for="admin_color_scheme" class="block text-sm font-medium text-gray-700 mb-1">Admin Color Scheme</label>
                         <select name="admin_color_scheme" id="admin_color_scheme" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-orion-500 focus:border-orion-500">
-                            <option value="default" <?php echo $admin_color_scheme == 'default' ? 'selected' : ''; ?>>Default (Orion Blue)</option>
-                            <option value="olive_leaf" <?php echo $admin_color_scheme == 'olive_leaf' ? 'selected' : ''; ?>>Olive Leaf (Green)</option>
-                            <option value="molten_lava" <?php echo $admin_color_scheme == 'molten_lava' ? 'selected' : ''; ?>>Molten Lava (Red)</option>
-                            <option value="deep_space_blue" <?php echo $admin_color_scheme == 'deep_space_blue' ? 'selected' : ''; ?>>Deep Space Blue</option>
-                            <option value="cornsilk" <?php echo $admin_color_scheme == 'cornsilk' ? 'selected' : ''; ?>>Cornsilk (Yellow)</option>
-                            <option value="thistle" <?php echo $admin_color_scheme == 'thistle' ? 'selected' : ''; ?>>Thistle (Purple)</option>
+                            <?php 
+                            $schemes = function_exists('orion_get_color_schemes') ? orion_get_color_schemes() : [];
+                            foreach ($schemes as $key => $scheme): 
+                            ?>
+                                <option value="<?php echo $key; ?>" <?php echo $admin_color_scheme == $key ? 'selected' : ''; ?>>
+                                    <?php echo isset($scheme['name']) ? $scheme['name'] : ucfirst(str_replace('_', ' ', $key)); ?>
+                                </option>
+                            <?php endforeach; ?>
+                            <?php if (empty($schemes)): ?>
+                                <option value="default" selected>Default</option>
+                            <?php endif; ?>
                         </select>
                         <p class="text-xs text-gray-500 mt-1">Select the color scheme for the admin dashboard.</p>
                     </div>
@@ -177,9 +185,9 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
                 </div>
             </div>
 
-            <div class="mt-6">
-                <button type="submit" name="submit" class="bg-orion-600 hover:bg-orion-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors">
-                    Save Changes
+            <div class="mt-6 border-t pt-6" style="padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid #e2e8f0;">
+                <button type="submit" name="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg" style="background-color: #2563eb; color: #ffffff; padding: 0.5rem 1rem; display: inline-block;">
+                    Save Changes (Bottom)
                 </button>
             </div>
 

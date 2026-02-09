@@ -1,0 +1,14 @@
+/*
+Theme Name: Orion Member
+Theme URI: http://orion-cms.com/themes/orion-member
+Description: Tema khusus untuk manajemen keanggotaan dan pendaftaran member.
+Author: Orion Team
+Author URI: http://orion-cms.com
+Version: 1.0
+*/
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+}

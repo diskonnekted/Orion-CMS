@@ -145,41 +145,6 @@ for ($i = 29; $i >= 0; $i--) {
     .delay-500 { animation-delay: 500ms; }
 </style>
 
-
-
-
-<!-- Visitor Statistics Chart -->
-<div class="bg-white rounded-xl shadow-sm border border-slate-200 mb-6 overflow-hidden animate-fade-in-up delay-500">
-    <div class="px-5 py-4 border-b border-slate-100 flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-slate-50/50">
-        <div class="flex items-center gap-3 w-full md:w-auto md:flex-1 min-w-0">
-            <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg flex-shrink-0">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-            </div>
-            <div class="min-w-0 flex-1">
-                <h2 class="text-base font-semibold text-slate-800 flex items-center flex-wrap gap-2">
-                    Traffic Overview
-                    <span class="relative flex h-2.5 w-2.5 flex-shrink-0">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                    </span>
-                </h2>
-                <p class="text-xs text-slate-500 mt-0.5 break-words leading-relaxed">Real-time visitor statistics for the last 30 days</p>
-            </div>
-        </div>
-        <div class="flex gap-2 w-full md:w-auto flex-shrink-0">
-            <button class="flex-1 md:flex-none inline-flex justify-center items-center px-2.5 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm hover:bg-slate-50 transition-colors">
-                <span class="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span> Visitors
-            </button>
-            <button class="flex-1 md:flex-none inline-flex justify-center items-center px-2.5 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm hover:bg-slate-50 transition-colors">
-                <span class="w-2 h-2 rounded-full bg-slate-400 mr-1.5"></span> Page Views
-            </button>
-        </div>
-    </div>
-    <div class="p-5 relative" style="height: 760px !important; min-height: 760px;">
-        <canvas id="visitorChart" class="w-full h-full block"></canvas>
-    </div>
-</div>
-
 <!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <!-- Posts -->
@@ -271,37 +236,41 @@ for ($i = 29; $i >= 0; $i--) {
     </div>
 </div>
 
-
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up delay-500">
-    <!-- Quick Draft -->
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 h-fit overflow-hidden">
-        <div class="px-5 py-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
-            <h2 class="text-base font-semibold text-slate-800 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-orion-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                Quick Draft
-            </h2>
-        </div>
-        <div class="p-5">
-            <form>
-                <div class="mb-3">
-                    <label class="block text-slate-700 text-sm font-medium mb-1.5" for="title">Title</label>
-                    <input class="w-full rounded-lg border-slate-200 bg-slate-50/50 shadow-sm focus:border-orion-500 focus:ring-orion-500 focus:bg-white text-sm transition-all p-2.5" id="title" type="text" placeholder="Enter post title...">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in-up delay-500">
+    <!-- Visitor Statistics Chart (Moved from Top) -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden h-fit">
+        <div class="px-5 py-4 border-b border-slate-100 flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-slate-50/50">
+            <div class="flex items-center gap-3 w-full md:w-auto md:flex-1 min-w-0">
+                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg flex-shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-slate-700 text-sm font-medium mb-1.5" for="content">Content</label>
-                    <textarea class="w-full rounded-lg border-slate-200 bg-slate-50/50 shadow-sm focus:border-orion-500 focus:ring-orion-500 focus:bg-white text-sm h-32 resize-none transition-all p-2.5" id="content" placeholder="What's on your mind?"></textarea>
+                <div class="min-w-0 flex-1">
+                    <h2 class="text-base font-semibold text-slate-800 flex items-center flex-wrap gap-2">
+                        Traffic Overview
+                        <span class="relative flex h-2.5 w-2.5 flex-shrink-0">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5 break-words leading-relaxed">Real-time visitor statistics for the last 30 days</p>
                 </div>
-                <button class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium py-2.5 px-4 rounded-lg shadow-sm hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-800 flex justify-center items-center group transform active:scale-95" type="button">
-                    <span>Save Draft</span>
-                    <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </div>
+            <div class="flex gap-2 w-full md:w-auto flex-shrink-0">
+                <button class="flex-1 md:flex-none inline-flex justify-center items-center px-2.5 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm hover:bg-slate-50 transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span> Visitors
                 </button>
-            </form>
+                <button class="flex-1 md:flex-none inline-flex justify-center items-center px-2.5 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm hover:bg-slate-50 transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-slate-400 mr-1.5"></span> Page Views
+                </button>
+            </div>
+        </div>
+        <div class="p-5 relative" style="height: 400px !important; min-height: 400px;">
+            <canvas id="visitorChart" class="w-full h-full block"></canvas>
         </div>
     </div>
 
     <!-- Recent Activity -->
-    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
         <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <h2 class="text-base font-semibold text-slate-800 flex items-center">
                 <svg class="w-5 h-5 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -356,12 +325,12 @@ for ($i = 29; $i >= 0; $i--) {
         const ctx = document.getElementById('visitorChart').getContext('2d');
         
         // Gradient for Visitors
-        let gradientVisitors = ctx.createLinearGradient(0, 0, 0, 760);
+        let gradientVisitors = ctx.createLinearGradient(0, 0, 0, 400);
         gradientVisitors.addColorStop(0, 'rgba(59, 130, 246, 0.4)'); // orion-500 with more opacity
         gradientVisitors.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
 
         // Gradient for Page Views
-        let gradientViews = ctx.createLinearGradient(0, 0, 0, 760);
+        let gradientViews = ctx.createLinearGradient(0, 0, 0, 400);
         gradientViews.addColorStop(0, 'rgba(148, 163, 184, 0.3)'); // slate-400
         gradientViews.addColorStop(1, 'rgba(148, 163, 184, 0.05)');
 
@@ -398,8 +367,7 @@ for ($i = 29; $i >= 0; $i--) {
                         pointHoverBackgroundColor: '#94a3b8',
                         pointHoverBorderColor: '#ffffff',
                         fill: true,
-                        tension: 0.4,
-                        hidden: true
+                        tension: 0.4
                     }
                 ]
             },
@@ -408,74 +376,67 @@ for ($i = 29; $i >= 0; $i--) {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false // Hidden because we have custom legend buttons
+                        display: false
                     },
                     tooltip: {
-                        mode: 'index',
-                        intersect: false,
                         backgroundColor: 'rgba(255, 255, 255, 0.95)',
                         titleColor: '#1e293b',
                         bodyColor: '#475569',
                         borderColor: '#e2e8f0',
                         borderWidth: 1,
-                        padding: 12,
+                        padding: 10,
                         displayColors: true,
-                        boxPadding: 6,
-                        titleFont: {
-                            size: 14,
-                            family: "'Inter', sans-serif"
-                        },
-                        bodyFont: {
-                            size: 13,
-                            family: "'Inter', sans-serif"
-                        },
+                        boxWidth: 8,
+                        boxHeight: 8,
                         callbacks: {
-                            labelTextColor: function(context) {
-                                return '#475569';
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
+                                return label;
                             }
                         }
                     }
                 },
                 scales: {
-                    y: {
-                        beginAtZero: true,
+                    x: {
                         grid: {
-                            display: true,
-                            color: '#f1f5f9',
+                            display: false,
                             drawBorder: false
                         },
                         ticks: {
                             font: {
-                                family: "'Inter', sans-serif",
-                                size: 11
+                                size: 10
                             },
                             color: '#94a3b8',
-                            padding: 10
+                            maxTicksLimit: 8
                         }
                     },
-                    x: {
+                    y: {
                         grid: {
-                            display: false
+                            color: '#f1f5f9',
+                            drawBorder: false,
+                            borderDash: [5, 5]
                         },
                         ticks: {
                             font: {
-                                family: "'Inter', sans-serif",
-                                size: 11
+                                size: 10
                             },
                             color: '#94a3b8',
-                            maxTicksLimit: 8,
                             padding: 10
                         }
                     }
                 },
                 interaction: {
-                    mode: 'nearest',
-                    axis: 'x',
-                    intersect: false
-                }
+                    intersect: false,
+                    mode: 'index',
+                },
             }
         });
     });
 </script>
-
 <?php require_once( 'admin-footer.php' ); ?>

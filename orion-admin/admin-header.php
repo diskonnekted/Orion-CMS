@@ -23,39 +23,7 @@ $current_user = wp_get_current_user();
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
     <script>
         <?php
-        $admin_color_scheme = get_option('admin_color_scheme', 'default');
-        
-        // Define Color Schemes (Inverted mapping: 100=Darkest -> 900=Lightest in CSS.txt, mapped to Tailwind 900=Dark -> 50=Light)
-        // Slate mapping: 900 -> CSS 100, 800 -> CSS 200
-        // Orion mapping: 900 -> CSS 100, 800 -> CSS 200, 700 -> CSS 300, 600 -> CSS 400, 500 -> CSS 500, 400 -> CSS 600, 100 -> CSS 800, 50 -> CSS 900
-        $schemes = [
-            'default' => [
-                'slate' => ['800' => '#1e293b', '900' => '#0f172a'],
-                'orion' => ['50' => '#eff6ff', '100' => '#dbeafe', '400' => '#60a5fa', '500' => '#3b82f6', '600' => '#2563eb', '700' => '#1d4ed8', '800' => '#1e40af', '900' => '#1e3a8a']
-            ],
-            'olive_leaf' => [
-                'slate' => ['800' => '#262b16', '900' => '#13160b'],
-                'orion' => ['50' => '#e2e7d1', '100' => '#c5d0a3', '400' => '#88994f', '500' => '#606c38', '600' => '#4c562c', '700' => '#394121', '800' => '#262b16', '900' => '#13160b']
-            ],
-            'molten_lava' => [
-                'slate' => ['800' => '#310000', '900' => '#180000'],
-                'orion' => ['50' => '#ffb1b1', '100' => '#ff6464', '400' => '#c80000', '500' => '#780000', '600' => '#620000', '700' => '#490000', '800' => '#310000', '900' => '#180000']
-            ],
-            'deep_space_blue' => [
-                'slate' => ['800' => '#01131c', '900' => '#00090e'],
-                'orion' => ['50' => '#a9e1fd', '100' => '#54c3fb', '400' => '#04699b', '500' => '#023047', '600' => '#012638', '700' => '#011c2a', '800' => '#01131c', '900' => '#00090e']
-            ],
-            'cornsilk' => [
-                'slate' => ['800' => '#baa206', '900' => '#5d5103'],
-                'orion' => ['50' => '#fffef9', '100' => '#fffdf3', '400' => '#fefbe7', '500' => '#fefae0', '600' => '#fbeb84', '700' => '#f8dc27', '800' => '#baa206', '900' => '#5d5103']
-            ],
-            'thistle' => [
-                'slate' => ['800' => '#57346b', '900' => '#2b1a36'],
-                'orion' => ['50' => '#f5f0f8', '100' => '#ebe1f0', '400' => '#d6c2e2', '500' => '#cdb4db', '600' => '#a87ec1', '700' => '#824ea1', '800' => '#57346b', '900' => '#2b1a36']
-            ]
-        ];
-        
-        $selected_scheme = isset($schemes[$admin_color_scheme]) ? $schemes[$admin_color_scheme] : $schemes['default'];
+        $selected_scheme = orion_get_current_scheme();
         ?>
 
         tailwind.config = {
@@ -149,6 +117,14 @@ $current_user = wp_get_current_user();
             <a href="<?php echo site_url('/product-manager.php'); ?>" class="sidebar-link text-emerald-400 hover:text-emerald-300">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                 <span class="font-medium">Kelola Produk Toko</span>
+            </a>
+            <?php endif; ?>
+
+            <!-- Orion Member Management (Conditional) -->
+            <?php if(get_option('template') === 'orion-member'): ?>
+            <a href="<?php echo site_url('/orion-content/themes/orion-member/manage-members.php'); ?>" class="sidebar-link text-blue-400 hover:text-blue-300">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <span class="font-medium">Manajemen Anggota</span>
             </a>
             <?php endif; ?>
 

@@ -201,22 +201,62 @@ function update_option($option, $value) {
     global $orion_db, $table_prefix;
     $table = $table_prefix . 'options';
     
+    // Check if exists
+    $existing = get_option($option, null);
+    
+    // Serialize if array/object
     if (is_array($value) || is_object($value)) {
         $value = serialize($value);
     }
     
-    $value = $orion_db->real_escape_string($value);
+    $escaped_value = $orion_db->real_escape_string($value);
     
-    // Check if exists
-    $check = $orion_db->query("SELECT option_id FROM $table WHERE option_name = '$option' LIMIT 1");
-    
-    if ($check && $check->num_rows > 0) {
-        $orion_db->query("UPDATE $table SET option_value = '$value' WHERE option_name = '$option'");
+    if ($existing !== null) {
+        // Update
+        $sql = "UPDATE $table SET option_value = '$escaped_value' WHERE option_name = '$option'";
     } else {
-        $orion_db->query("INSERT INTO $table (option_name, option_value) VALUES ('$option', '$value')");
+        // Insert
+        $sql = "INSERT INTO $table (option_name, option_value, autoload) VALUES ('$option', '$escaped_value', 'yes')";
     }
-    return true;
+    
+    return $orion_db->query($sql);
 }
+
+/**
+ * Sanitize Hex Color
+ * 
+ * @param string $color
+ * @return string
+ */
+function sanitize_hex_color($color) {
+    if ('' === $color) {
+        return '';
+    }
+
+    // 3 or 6 hex digits, or the empty string.
+    if (preg_match('|^#([A-Fa-f0-9]{3}){1,2}$|', $color)) {
+        return $color;
+    }
+
+    return '';
+}
+
+/**
+ * Get first image from content
+ * 
+ * @param string $content
+ * @return string|false Image URL or false
+ */
+function get_first_image_from_content($content) {
+    $output = preg_match_all('/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content, $matches);
+    $first_img = false;
+    if (isset($matches[1][0])) {
+        $first_img = $matches[1][0];
+    }
+    return $first_img;
+}
+
+
 
 /**
  * Delete option
@@ -340,4 +380,51 @@ function have_posts() {
 function the_post() {
     global $orion_query;
     $orion_query->the_post();
+}
+
+/**
+ * Get available color schemes
+ */
+function orion_get_color_schemes() {
+    return [
+        'default' => [
+            'name' => 'Default (Orion Blue)',
+            'slate' => ['800' => '#1e293b', '900' => '#0f172a'],
+            'orion' => ['50' => '#eff6ff', '100' => '#dbeafe', '200' => '#bfdbfe', '300' => '#93c5fd', '400' => '#60a5fa', '500' => '#3b82f6', '600' => '#2563eb', '700' => '#1d4ed8', '800' => '#1e40af', '900' => '#1e3a8a']
+        ],
+        'olive_leaf' => [
+            'name' => 'Olive Leaf (Green)',
+            'slate' => ['800' => '#262b16', '900' => '#13160b'],
+            'orion' => ['50' => '#e2e7d1', '100' => '#c5d0a3', '200' => '#aab87a', '300' => '#9ba86a', '400' => '#88994f', '500' => '#606c38', '600' => '#4c562c', '700' => '#394121', '800' => '#262b16', '900' => '#13160b']
+        ],
+        'molten_lava' => [
+            'name' => 'Molten Lava (Red)',
+            'slate' => ['800' => '#310000', '900' => '#180000'],
+            'orion' => ['50' => '#ffb1b1', '100' => '#ff6464', '200' => '#ff3232', '300' => '#e60000', '400' => '#c80000', '500' => '#780000', '600' => '#620000', '700' => '#490000', '800' => '#310000', '900' => '#180000']
+        ],
+        'deep_space_blue' => [
+            'name' => 'Deep Space Blue',
+            'slate' => ['800' => '#01131c', '900' => '#00090e'],
+            'orion' => ['50' => '#a9e1fd', '100' => '#54c3fb', '200' => '#2bb0f3', '300' => '#0691d4', '400' => '#04699b', '500' => '#023047', '600' => '#012638', '700' => '#011c2a', '800' => '#01131c', '900' => '#00090e']
+        ],
+        'cornsilk' => [
+            'name' => 'Cornsilk (Yellow)',
+            'slate' => ['800' => '#baa206', '900' => '#5d5103'],
+            'orion' => ['50' => '#fffef9', '100' => '#fffdf3', '200' => '#fffbe0', '300' => '#fff9c4', '400' => '#fefbe7', '500' => '#fefae0', '600' => '#fbeb84', '700' => '#f8dc27', '800' => '#baa206', '900' => '#5d5103']
+        ],
+        'thistle' => [
+            'name' => 'Thistle (Purple)',
+            'slate' => ['800' => '#57346b', '900' => '#2b1a36'],
+            'orion' => ['50' => '#f5f0f8', '100' => '#ebe1f0', '200' => '#e0d1e6', '300' => '#dccae6', '400' => '#d6c2e2', '500' => '#cdb4db', '600' => '#a87ec1', '700' => '#824ea1', '800' => '#57346b', '900' => '#2b1a36']
+        ]
+    ];
+}
+
+/**
+ * Get current color scheme
+ */
+function orion_get_current_scheme() {
+    $schemes = orion_get_color_schemes();
+    $current = get_option('admin_color_scheme', 'default');
+    return isset($schemes[$current]) ? $schemes[$current] : $schemes['default'];
 }
