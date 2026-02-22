@@ -20,11 +20,9 @@
             <!-- Logo / Branding -->
             <div class="mb-4 md:mb-0 text-center md:text-left">
                 <a href="<?php echo site_url(); ?>" class="flex items-center gap-3 group">
-                    <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:bg-emerald-400 transition-colors">
-                        O
-                    </div>
+                    <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
                     <div>
-                        <h1 class="text-2xl font-bold leading-none tracking-tight"><?php echo get_bloginfo('name'); ?></h1>
+                        <h1 class="text-2xl font-bold leading-none tracking-tight">Orion Magazine</h1>
                         <p class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-medium"><?php echo get_bloginfo('description'); ?></p>
                     </div>
                 </a>

@@ -19,7 +19,13 @@ require( dirname( __FILE__ ) . '/orion-load.php' );
 if ( WP_USE_THEMES ) {
     $template = get_template_directory() . '/index.php';
     if ( file_exists( $template ) ) {
-        require_once( $template );
+        if (function_exists('orion_normalize_html_output')) {
+            ob_start('orion_normalize_html_output');
+            require_once( $template );
+            ob_end_flush();
+        } else {
+            require_once( $template );
+        }
     } else {
         echo "Theme not found or index.php missing.";
     }

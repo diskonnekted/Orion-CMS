@@ -17,13 +17,15 @@ if ($post_id > 0) {
     $categories = get_the_terms($single_post->ID, 'category');
     $gallery = get_post_meta($single_post->ID, '_gallery_images', true);
     $attachments = get_post_meta($single_post->ID, '_attachments', true);
+    $single_title_raw = htmlspecialchars_decode($single_post->post_title, ENT_QUOTES);
+    $single_title_clean = strip_tags($single_title_raw);
     ?>
 
     <article class="bg-white min-h-screen">
         <!-- Project Hero -->
         <div class="relative h-96 w-full bg-slate-900 overflow-hidden">
             <?php if ($thumb_url): ?>
-                <img src="<?php echo $thumb_url; ?>" alt="<?php echo htmlspecialchars($single_post->post_title); ?>" class="w-full h-full object-cover opacity-50">
+                <img src="<?php echo $thumb_url; ?>" alt="<?php echo htmlspecialchars($single_title_clean, ENT_QUOTES); ?>" class="w-full h-full object-cover opacity-50">
             <?php else: ?>
                 <div class="w-full h-full bg-gradient-to-r from-blue-900 to-slate-900 opacity-50"></div>
             <?php endif; ?>
@@ -32,11 +34,15 @@ if ($post_id > 0) {
                     <?php if ($categories): ?>
                         <div class="flex justify-center gap-2 mb-4">
                             <?php foreach($categories as $cat): ?>
-                                <span class="bg-blue-600/90 text-white text-xs px-3 py-1 rounded-full font-medium uppercase tracking-wider backdrop-blur-sm"><?php echo htmlspecialchars($cat->name); ?></span>
+                                <?php
+                                $cat_name_raw = htmlspecialchars_decode($cat->name, ENT_QUOTES);
+                                $cat_name_clean = strip_tags($cat_name_raw);
+                                ?>
+                                <span class="bg-blue-600/90 text-white text-xs px-3 py-1 rounded-full font-medium uppercase tracking-wider backdrop-blur-sm"><?php echo htmlspecialchars($cat_name_clean, ENT_QUOTES); ?></span>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
-                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2"><?php echo htmlspecialchars($single_post->post_title); ?></h1>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2"><?php echo htmlspecialchars($single_title_clean, ENT_QUOTES); ?></h1>
                     <p class="text-slate-300"><?php echo date('F Y', strtotime($single_post->post_date)); ?></p>
                 </div>
             </div>
@@ -218,7 +224,11 @@ if ($post_id > 0) {
                     <!-- Project Card -->
                     <article class="group bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                         <div class="relative aspect-video overflow-hidden bg-slate-200">
-                            <img src="<?php echo $thumb_url; ?>" alt="<?php echo htmlspecialchars($post->post_title); ?>" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                            <?php
+                            $card_title_raw = htmlspecialchars_decode($post->post_title, ENT_QUOTES);
+                            $card_title_clean = strip_tags($card_title_raw);
+                            ?>
+                            <img src="<?php echo $thumb_url; ?>" alt="<?php echo htmlspecialchars($card_title_clean, ENT_QUOTES); ?>" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition duration-300"></div>
                             <div class="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition duration-300">
                                 <span class="bg-blue-600 text-xs px-2 py-1 rounded font-bold uppercase tracking-wide mb-2 inline-block"><?php echo htmlspecialchars($cat_name); ?></span>
@@ -227,11 +237,15 @@ if ($post_id > 0) {
                         <div class="p-6">
                             <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition">
                                 <a href="index.php?p=<?php echo $post->ID; ?>">
-                                    <?php echo htmlspecialchars($post->post_title); ?>
+                                    <?php echo htmlspecialchars($card_title_clean, ENT_QUOTES); ?>
                                 </a>
                             </h3>
                             <div class="text-slate-500 text-sm line-clamp-3 mb-4">
-                                <?php echo strip_tags(substr($post->post_content, 0, 150)) . '...'; ?>
+                                <?php
+                                $content_raw = htmlspecialchars_decode($post->post_content, ENT_QUOTES);
+                                $content_clean = strip_tags($content_raw);
+                                echo mb_substr($content_clean, 0, 150) . '...';
+                                ?>
                             </div>
                             <a href="index.php?p=<?php echo $post->ID; ?>" class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800">
                                 View Case Study

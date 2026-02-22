@@ -19,12 +19,10 @@
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <?php $logo = get_option('site_logo'); ?>
-                    <?php if ($logo): ?>
-                        <img src="<?php echo $logo; ?>" alt="Logo" class="h-10 w-auto">
-                    <?php else: ?>
-                        <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Portfolio.</span>
-                    <?php endif; ?>
+                    <a href="<?php echo site_url(); ?>" class="flex items-center gap-3">
+                        <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
+                        <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Orion Portfolio</span>
+                    </a>
                 </div>
 
                 <!-- Desktop Menu -->

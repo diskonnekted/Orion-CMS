@@ -101,8 +101,8 @@ if (!$is_single && !$search_query && !$category_filter) {
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
                 <div class="md:flex">
                     <div class="md:flex-shrink-0 md:w-1/2 bg-gray-50 flex flex-col">
-                        <div class="relative flex-grow">
-                            <img id="main-product-image" class="h-full w-full object-cover" src="<?php echo orion_shop_get_image($post->ID); ?>" alt="<?php echo $post->post_title; ?>">
+                        <div class="relative w-full aspect-square md:aspect-video">
+                            <img id="main-product-image" class="absolute inset-0 w-full h-full object-cover" src="<?php echo orion_shop_get_image($post->ID); ?>" alt="<?php echo $post->post_title; ?>">
                             <div class="absolute top-4 left-4">
                                 <a href="index.php" class="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition text-gray-700">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>

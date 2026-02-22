@@ -295,28 +295,142 @@ function get_template_directory_uri() {
     return site_url() . '/orion-content/themes/' . $theme;
 }
 
-/**
- * Site URL
- */
 function site_url($path = '') {
-    // Check DB first
     $db_url = get_option('siteurl');
     if ($db_url) {
         return rtrim($db_url, '/') . $path;
     }
 
-    // Simple protocol check
     $protocol = "http://";
-    if ( (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ) {
+    if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) {
         $protocol = "https://";
     }
+
+    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
     
-    $domainName = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-    
-    // Assuming installation at root of domain or handling subdirectory manually for now
-    // In real WP, this is fetched from DB options
-    $url = $protocol . $domainName; 
-    return $url . $path;
+    $basePath = '';
+
+    if (!empty($_SERVER['DOCUMENT_ROOT'])) {
+        $docRoot = rtrim(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'])), '/');
+        $absPath = rtrim(str_replace('\\', '/', realpath(ABSPATH)), '/');
+        if ($docRoot && $absPath && strpos($absPath, $docRoot) === 0) {
+            $sub = trim(substr($absPath, strlen($docRoot)), '/');
+            if ($sub !== '') {
+                $basePath = '/' . $sub;
+            }
+        }
+    }
+
+    if ($basePath === '') {
+        $script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
+        $dir = rtrim(str_replace('\\', '/', dirname($script_name)), '/');
+        if ($dir && $dir !== '/') {
+            $basePath = $dir;
+        }
+    }
+
+    $base = $protocol . $host . $basePath;
+
+    return rtrim($base, '/') . $path;
+}
+
+function orion_normalize_internal_url($url) {
+    if (!$url) {
+        return $url;
+    }
+
+    $parts = @parse_url($url);
+    if ($parts === false || !isset($parts['path'])) {
+        return $url;
+    }
+
+    $path = $parts['path'];
+
+    if (strpos($path, '/orion-content/') === 0 || strpos($path, '/assets/') === 0) {
+        $new = rtrim(site_url(), '/') . $path;
+        if (isset($parts['query'])) {
+            $new .= '?' . $parts['query'];
+        }
+        if (isset($parts['fragment'])) {
+            $new .= '#' . $parts['fragment'];
+        }
+        return $new;
+    }
+
+    return $url;
+}
+
+function orion_normalize_content_urls($content) {
+    if (!$content) {
+        return $content;
+    }
+
+    $content = preg_replace_callback('/<img[^>]+src=[\'"]([^\'"]+)[\'"][^>]*>/i', function ($matches) {
+        $original = $matches[0];
+        $src = $matches[1];
+        $normalized = orion_normalize_internal_url($src);
+        if ($normalized === $src) {
+            return $original;
+        }
+        return str_replace($src, htmlspecialchars($normalized, ENT_QUOTES, 'UTF-8'), $original);
+    }, $content);
+
+    return $content;
+}
+add_filter('the_content', 'orion_normalize_content_urls', 5, 1);
+
+function orion_normalize_meta_value($value) {
+    if (!is_string($value) || $value === '') {
+        return $value;
+    }
+
+    if (strpos($value, '/orion-content/') === false && strpos($value, '/assets/') === false) {
+        return $value;
+    }
+
+    $decoded = json_decode($value, true);
+    if (is_array($decoded)) {
+        $changed = false;
+        foreach ($decoded as $key => $item) {
+            if (is_string($item)) {
+                $new = orion_normalize_internal_url($item);
+                if ($new !== $item) {
+                    $decoded[$key] = $new;
+                    $changed = true;
+                }
+            } elseif (is_array($item) && isset($item['url']) && is_string($item['url'])) {
+                $new = orion_normalize_internal_url($item['url']);
+                if ($new !== $item['url']) {
+                    $decoded[$key]['url'] = $new;
+                    $changed = true;
+                }
+            }
+        }
+        if ($changed) {
+            return json_encode($decoded);
+        }
+        return $value;
+    }
+
+    return orion_normalize_internal_url($value);
+}
+
+function orion_normalize_html_output($html) {
+    if ($html === '' || $html === null) {
+        return $html;
+    }
+
+    $base = rtrim(site_url(), '/');
+
+    $html = preg_replace_callback(
+        '#https?://[^"\'\s]+(/(orion-content|assets)/[^"\'\s]+)#i',
+        function ($matches) use ($base) {
+            return $base . $matches[1];
+        },
+        $html
+    );
+
+    return $html;
 }
 
 /**
@@ -388,32 +502,42 @@ function the_post() {
 function orion_get_color_schemes() {
     return [
         'default' => [
-            'name' => 'Default (Orion Blue)',
+            'name' => 'Orion Blue (Default)',
             'slate' => ['800' => '#1e293b', '900' => '#0f172a'],
             'orion' => ['50' => '#eff6ff', '100' => '#dbeafe', '200' => '#bfdbfe', '300' => '#93c5fd', '400' => '#60a5fa', '500' => '#3b82f6', '600' => '#2563eb', '700' => '#1d4ed8', '800' => '#1e40af', '900' => '#1e3a8a']
         ],
+        'emerald_forest' => [
+            'name' => 'Emerald Forest',
+            'slate' => ['800' => '#022c22', '900' => '#01140f'],
+            'orion' => ['50' => '#ecfdf5', '100' => '#d1fae5', '200' => '#a7f3d0', '300' => '#6ee7b7', '400' => '#34d399', '500' => '#10b981', '600' => '#059669', '700' => '#047857', '800' => '#065f46', '900' => '#064e3b']
+        ],
+        'amber_sunset' => [
+            'name' => 'Amber Sunset',
+            'slate' => ['800' => '#451a03', '900' => '#1f0a02'],
+            'orion' => ['50' => '#fffbeb', '100' => '#fef3c7', '200' => '#fde68a', '300' => '#fcd34d', '400' => '#fbbf24', '500' => '#f59e0b', '600' => '#d97706', '700' => '#b45309', '800' => '#92400e', '900' => '#78350f']
+        ],
+        'rose_mauve' => [
+            'name' => 'Rose Mauve',
+            'slate' => ['800' => '#4a044e', '900' => '#2b022e'],
+            'orion' => ['50' => '#fff1f2', '100' => '#ffe4e6', '200' => '#fecdd3', '300' => '#fda4af', '400' => '#fb7185', '500' => '#f43f5e', '600' => '#e11d48', '700' => '#be123c', '800' => '#9f1239', '900' => '#881337']
+        ],
+        'teal_cyan' => [
+            'name' => 'Teal Cyan Mix',
+            'slate' => ['800' => '#042f2e', '900' => '#022121'],
+            'orion' => ['50' => '#ecfeff', '100' => '#cffafe', '200' => '#a5f3fc', '300' => '#67e8f9', '400' => '#22d3ee', '500' => '#06b6d4', '600' => '#0891b2', '700' => '#0e7490', '800' => '#115e59', '900' => '#134e4a']
+        ],
         'olive_leaf' => [
-            'name' => 'Olive Leaf (Green)',
+            'name' => 'Olive Leaf',
             'slate' => ['800' => '#262b16', '900' => '#13160b'],
             'orion' => ['50' => '#e2e7d1', '100' => '#c5d0a3', '200' => '#aab87a', '300' => '#9ba86a', '400' => '#88994f', '500' => '#606c38', '600' => '#4c562c', '700' => '#394121', '800' => '#262b16', '900' => '#13160b']
-        ],
-        'molten_lava' => [
-            'name' => 'Molten Lava (Red)',
-            'slate' => ['800' => '#310000', '900' => '#180000'],
-            'orion' => ['50' => '#ffb1b1', '100' => '#ff6464', '200' => '#ff3232', '300' => '#e60000', '400' => '#c80000', '500' => '#780000', '600' => '#620000', '700' => '#490000', '800' => '#310000', '900' => '#180000']
         ],
         'deep_space_blue' => [
             'name' => 'Deep Space Blue',
             'slate' => ['800' => '#01131c', '900' => '#00090e'],
-            'orion' => ['50' => '#a9e1fd', '100' => '#54c3fb', '200' => '#2bb0f3', '300' => '#0691d4', '400' => '#04699b', '500' => '#023047', '600' => '#012638', '700' => '#011c2a', '800' => '#01131c', '900' => '#00090e']
-        ],
-        'cornsilk' => [
-            'name' => 'Cornsilk (Yellow)',
-            'slate' => ['800' => '#baa206', '900' => '#5d5103'],
-            'orion' => ['50' => '#fffef9', '100' => '#fffdf3', '200' => '#fffbe0', '300' => '#fff9c4', '400' => '#fefbe7', '500' => '#fefae0', '600' => '#fbeb84', '700' => '#f8dc27', '800' => '#baa206', '900' => '#5d5103']
+            'orion' => ['50' => '#e0f2fe', '100' => '#bae6fd', '200' => '#7dd3fc', '300' => '#38bdf8', '400' => '#0ea5e9', '500' => '#0284c7', '600' => '#0369a1', '700' => '#075985', '800' => '#0c4a6e', '900' => '#082f49']
         ],
         'thistle' => [
-            'name' => 'Thistle (Purple)',
+            'name' => 'Thistle Pastel',
             'slate' => ['800' => '#57346b', '900' => '#2b1a36'],
             'orion' => ['50' => '#f5f0f8', '100' => '#ebe1f0', '200' => '#e0d1e6', '300' => '#dccae6', '400' => '#d6c2e2', '500' => '#cdb4db', '600' => '#a87ec1', '700' => '#824ea1', '800' => '#57346b', '900' => '#2b1a36']
         ]

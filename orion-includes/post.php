@@ -318,11 +318,21 @@ function get_post_meta($post_id, $meta_key = '', $single = false) {
     if ($result) {
         if ($single) {
             $row = $result->fetch_object();
-            return $row ? $row->meta_value : '';
+            if (!$row) {
+                return '';
+            }
+            if (function_exists('orion_normalize_meta_value')) {
+                return orion_normalize_meta_value($row->meta_value);
+            }
+            return $row->meta_value;
         } else {
             $arr = array();
-            while($row = $result->fetch_object()) {
-                $arr[] = $row->meta_value;
+            while ($row = $result->fetch_object()) {
+                $value = $row->meta_value;
+                if (function_exists('orion_normalize_meta_value')) {
+                    $value = orion_normalize_meta_value($value);
+                }
+                $arr[] = $value;
             }
             return $arr;
         }

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Petunjuk Pengaturan Tema Orion Garage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0f172a;color:#e5e7eb;margin:0;padding:24px}
+        .page{max-width:800px;margin:0 auto;background:#020617;border-radius:16px;padding:24px 24px 32px;border:1px solid rgba(148,163,184,.4);box-shadow:0 24px 60px rgba(15,23,42,.9)}
+        h1{font-size:24px;margin:0 0 12px;color:#f9fafb}
+        h2{font-size:18px;margin:24px 0 8px;color:#f9fafb}
+        p{font-size:14px;line-height:1.7;margin:4px 0 8px}
+        ul{padding-left:18px;font-size:14px;line-height:1.7;margin:4px 0 8px}
+        li{margin-bottom:4px}
+        .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;background:rgba(248,250,252,.05);border:1px solid rgba(248,250,252,.18);color:#f97373}
+        .badge-dot{width:6px;height:6px;border-radius:999px;background:#f97373}
+        .section{border-radius:12px;border:1px solid rgba(148,163,184,.4);background:rgba(15,23,42,.9);padding:16px 16px 18px;margin-top:14px}
+        .label{font-weight:600;font-size:13px;color:#f9fafb}
+        .code{font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;padding:2px 6px;border-radius:999px;background:rgba(15,23,42,1);border:1px solid rgba(148,163,184,.5);color:#e5e7eb}
+        .pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;background:rgba(15,23,42,1);border:1px solid rgba(148,163,184,.5);margin-top:4px}
+        .muted{font-size:12px;color:#9ca3af}
+        .strong{font-weight:600;color:#e5e7eb}
+        .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+        @media (min-width:768px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px">
+            <div>
+                <div class="badge">
+                    <span class="badge-dot"></span>
+                    Orion Garage Theme Guide
+                </div>
+                <h1>Petunjuk Pengaturan Tema Orion Garage</h1>
+                <p class="muted">Dokumen ini menjelaskan fungsi setiap kolom di halaman pengaturan tema Orion Garage.</p>
+            </div>
+            <div>
+                <img src="../../../assets/img/orion-light.png" alt="Orion CMS" style="height:40px;width:auto;display:block;opacity:.9">
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>1. Front Page Content (Hero)</h2>
+            <p>Bagian ini mengatur konten utama di halaman depan (hero section) tema Orion Garage.</p>
+            <div class="grid">
+                <div>
+                    <p class="label">Judul Utama</p>
+                    <p>Judul besar di tengah halaman depan. Contoh: <span class="strong">“Rawat mobil lebih mudah dengan bengkel yang mengerti kebutuhanmu”</span>.</p>
+                </div>
+                <div>
+                    <p class="label">Subjudul</p>
+                    <p>Teks penjelas singkat di bawah judul utama. Gunakan 1–2 kalimat singkat yang menjelaskan layanan bengkel.</p>
+                </div>
+                <div>
+                    <p class="label">Teks Tombol (CTA)</p>
+                    <p>Teks pada tombol aksi utama, misalnya <span class="strong">“Booking Servis via WhatsApp”</span> atau <span class="strong">“Konsultasi Gratis”</span>.</p>
+                </div>
+                <div>
+                    <p class="label">Link Tombol (CTA URL)</p>
+                    <p>Tujuan saat tombol diklik.</p>
+                    <ul>
+                        <li>Biarkan <span class="code">kosong</span> untuk otomatis mengarah ke WhatsApp toko.</li>
+                        <li>Isi dengan <span class="code">#kontak</span> atau URL lain jika ingin mengarah ke halaman tertentu.</li>
+                    </ul>
+                </div>
+                <div style="grid-column:1/-1">
+                    <p class="label">URL Gambar Hero Front Page</p>
+                    <p>URL penuh gambar hero yang tampil di sisi kanan. Contoh: gambar bengkel, mekanik, atau mobil.</p>
+                    <p class="muted">Ambil URL dari Media Library atau upload ke hosting/CDN lalu tempel link-nya di sini.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>2. Informasi Toko</h2>
+            <p>Semua data di bagian ini dipakai di beberapa tempat sekaligus: halaman Kontak, sidebar jam operasional, dan footer.</p>
+            <div class="grid">
+                <div>
+                    <p class="label">Nama Toko</p>
+                    <p>Nama bengkel yang akan tampil di footer dan area lain. Contoh: <span class="strong">“Orion Garage”</span>.</p>
+                </div>
+                <div>
+                    <p class="label">Telepon Toko</p>
+                    <p>Nomor telepon utama bengkel. Otomatis dibuat menjadi link <span class="code">tel:</span> sehingga bisa diklik dari HP.</p>
+                </div>
+                <div>
+                    <p class="label">WhatsApp Toko</p>
+                    <p>Nomor WhatsApp tanpa tanda <span class="code">+</span> dan tanpa spasi. Contoh penulisan: <span class="code">62812xxxxxxx</span>.</p>
+                    <p class="muted">Nomor ini dipakai untuk semua tombol WhatsApp, termasuk form booking di halaman Kontak.</p>
+                </div>
+                <div>
+                    <p class="label">Jam Operasional</p>
+                    <p>Jadwal buka bengkel. Anda boleh menulis beberapa baris, misalnya:</p>
+                    <ul>
+                        <li>Senin–Jumat: 08.00–17.00</li>
+                        <li>Sabtu: 08.00–15.00</li>
+                        <li>Minggu/Libur: By appointment</li>
+                    </ul>
+                    <p class="muted">Setiap baris akan otomatis ditampilkan terpisah di situs.</p>
+                </div>
+                <div style="grid-column:1/-1">
+                    <p class="label">Alamat Lengkap</p>
+                    <p>Alamat bengkel yang akan tampil di halaman Kontak dan footer. Boleh menggunakan beberapa baris, misalnya:</p>
+                    <ul>
+                        <li>Jl. Otomotif Raya No. 123</li>
+                        <li>Kota Anda, Indonesia</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>3. Peta Toko (Google Maps)</h2>
+            <p>Bagian ini mengatur peta lokasi bengkel yang muncul di halaman Kontak.</p>
+            <p class="label">Langkah menempelkan Google Maps:</p>
+            <ul>
+                <li>Buka lokasi bengkel di Google Maps.</li>
+                <li>Pilih menu <span class="strong">Bagikan</span> → tab <span class="strong">Sematkan peta</span>.</li>
+                <li>Pilih ukuran peta, lalu klik <span class="strong">Salin HTML</span>.</li>
+                <li>Tempel seluruh kode <span class="code">&lt;iframe ...&gt;&lt;/iframe&gt;</span> ke kolom <span class="strong">Embed Code / Iframe</span> di pengaturan tema.</li>
+            </ul>
+            <p class="muted">Jika kolom ini dikosongkan, peta tidak akan ditampilkan.</p>
+        </div>
+
+        <div class="section">
+            <h2>4. Tips Pengaturan</h2>
+            <ul>
+                <li>Gunakan kalimat singkat dan jelas untuk judul dan subjudul.</li>
+                <li>Pastikan nomor WhatsApp menggunakan format internasional tanpa nol di depan (contoh: <span class="code">6281...</span>).</li>
+                <li>Uji setiap perubahan dengan membuka halaman depan dan halaman Kontak di browser.</li>
+                <li>Jika tampilan belum berubah, coba refresh dengan <span class="code">Ctrl + F5</span> untuk menghapus cache browser.</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
