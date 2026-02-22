@@ -84,6 +84,7 @@ $current_user = wp_get_current_user();
             font-weight: 500;
         }
     </style>
+    <?php if (function_exists('do_action')) { do_action('orion_admin_head'); } ?>
 </head>
 <body class="bg-slate-50 font-sans antialiased text-slate-800">
 
@@ -251,11 +252,11 @@ $current_user = wp_get_current_user();
                 <button class="text-slate-500 focus:outline-none md:hidden p-2 rounded-md hover:bg-slate-100">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
-                <a href="../" target="_blank" class="ml-4 text-slate-500 hover:text-orion-600 flex items-center text-sm font-medium transition-colors group">
-                    <div class="p-1.5 bg-slate-100 rounded-md group-hover:bg-orion-50 text-slate-400 group-hover:text-orion-600 mr-2 transition-colors">
+                <a href="<?php echo site_url(); ?>" target="_blank" class="ml-4 text-slate-600 hover:text-orion-600 flex items-center text-sm font-medium transition-colors group">
+                    <div class="p-1.5 bg-slate-100 rounded-md group-hover:bg-orion-50 text-slate-500 group-hover:text-orion-600 mr-2 transition-colors">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                     </div>
-                    Visit Site
+                    Lihat Website
                 </a>
             </div>
             <div class="flex items-center gap-4">

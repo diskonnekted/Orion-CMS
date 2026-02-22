@@ -1,5 +1,5 @@
 <?php
 // Redirect to new location in root
-header("Location: /orion/product-manager.php");
+header("Location: /product-manager.php");
 exit;
 ?>

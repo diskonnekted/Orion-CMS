@@ -22,177 +22,183 @@ if ($post_id) {
 
 $message = '';
 
-// Handle Form Submission
+// Handle Form Submission (PRG)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Check if POST is empty (likely max_post_size exceeded)
     if (empty($_POST) && $_SERVER['CONTENT_LENGTH'] > 0) {
         $message = "Error: Submission failed. The file you are trying to upload might be too large (exceeds post_max_size).";
     } else {
         // Double check permission on save (in case of direct POST manipulation)
-    if ($post_id) {
-        $existing_post = get_post($post_id);
-        if ($existing_post && !current_user_can('administrator') && $existing_post->post_author != $current_user->ID) {
-            die('Access Denied');
+        if ($post_id) {
+            $existing_post = get_post($post_id);
+            if ($existing_post && !current_user_can('administrator') && $existing_post->post_author != $current_user->ID) {
+                die('Access Denied');
+            }
         }
-    }
 
-    $post_data = array(
-        'ID' => $post_id,
-        'post_title' => $_POST['post_title'],
-        'post_content' => $_POST['post_content'],
-        'post_status' => isset($_POST['post_status']) ? $_POST['post_status'] : 'draft',
-    );
-    
-    // Set author for new posts
-    if (!$post_id) {
-        $post_data['post_author'] = $current_user->ID;
-    }
+        $post_data = array(
+            'ID' => $post_id,
+            'post_title' => $_POST['post_title'],
+            'post_content' => $_POST['post_content'],
+            'post_status' => isset($_POST['post_status']) ? $_POST['post_status'] : 'draft',
+        );
+        
+        // Set author for new posts
+        if (!$post_id) {
+            $post_data['post_author'] = $current_user->ID;
+        }
 
-    $new_post_id = wp_insert_post($post_data);
+        $new_post_id = wp_insert_post($post_data);
 
-    if ($new_post_id) {
-        $post_id = $new_post_id;
-        $message = "Post saved successfully. <a href='../index.php?p=$post_id' target='_blank' class='underline font-bold'>View Post</a>";
+        if ($new_post_id) {
+            $post_id = $new_post_id;
 
-        // Handle Categories
-        // Always call wp_set_object_terms to handle uncheck all scenarios (clearing categories)
-        $categories_to_save = isset($_POST['post_category']) ? $_POST['post_category'] : array();
-        
-        // Sanitize categories to integers to avoid them being treated as new tag names
-        $categories_to_save = array_map('intval', $categories_to_save);
-        
-        // Debug logging for category issue
-        $debug_msg = date('Y-m-d H:i:s') . " - Post ID: $post_id - Categories Submitted: " . print_r($categories_to_save, true) . "\n";
-        
-        // wp_set_object_terms($post_id, $categories_to_save, 'category');
-        
-        // Manual implementation until wp_set_object_terms is fully reliable
-        global $orion_db, $table_prefix;
-        $term_relationships_table = $table_prefix . 'term_relationships';
-        $term_taxonomy_table = $table_prefix . 'term_taxonomy';
-        
-        // 1. Clear existing categories for this post
-        // Get all term_taxonomy_ids for 'category' taxonomy
-        $sql_delete = "DELETE tr FROM $term_relationships_table tr
-                       INNER JOIN $term_taxonomy_table tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
-                       WHERE tr.object_id = $post_id AND tt.taxonomy = 'category'";
-        $orion_db->query($sql_delete);
-        
-        // 2. Insert new categories
-        if (!empty($categories_to_save)) {
-            foreach ($categories_to_save as $cat_id) {
-                $cat_id = (int)$cat_id;
-                // Get term_taxonomy_id (assuming term_id = term_taxonomy_id for simple setup or query it)
-                // Proper way: SELECT term_taxonomy_id FROM term_taxonomy WHERE term_id = $cat_id AND taxonomy = 'category'
-                $res_tt = $orion_db->query("SELECT term_taxonomy_id FROM $term_taxonomy_table WHERE term_id = $cat_id AND taxonomy = 'category' LIMIT 1");
-                if ($res_tt && $row_tt = $res_tt->fetch_object()) {
-                    $tt_id = $row_tt->term_taxonomy_id;
-                    $insert_res = $orion_db->query("INSERT INTO $term_relationships_table (object_id, term_taxonomy_id) VALUES ($post_id, $tt_id)");
-                    $debug_msg .= "Inserted Cat ID $cat_id (TT ID $tt_id) for Post $post_id. Result: " . ($insert_res ? 'Success' : 'Fail: ' . $orion_db->error) . "\n";
-                } else {
-                    $debug_msg .= "Could not find TT ID for Cat ID $cat_id\n";
+            // Handle Categories
+            // Always call wp_set_object_terms to handle uncheck all scenarios (clearing categories)
+            $categories_to_save = isset($_POST['post_category']) ? $_POST['post_category'] : array();
+            
+            // Sanitize categories to integers to avoid them being treated as new tag names
+            $categories_to_save = array_map('intval', $categories_to_save);
+            
+            // Debug logging for category issue
+            $debug_msg = date('Y-m-d H:i:s') . " - Post ID: $post_id - Categories Submitted: " . print_r($categories_to_save, true) . "\n";
+            
+            // wp_set_object_terms($post_id, $categories_to_save, 'category');
+            
+            // Manual implementation until wp_set_object_terms is fully reliable
+            global $orion_db, $table_prefix;
+            $term_relationships_table = $table_prefix . 'term_relationships';
+            $term_taxonomy_table = $table_prefix . 'term_taxonomy';
+            
+            // 1. Clear existing categories for this post
+            // Get all term_taxonomy_ids for 'category' taxonomy
+            $sql_delete = "DELETE tr FROM $term_relationships_table tr
+                           INNER JOIN $term_taxonomy_table tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                           WHERE tr.object_id = $post_id AND tt.taxonomy = 'category'";
+            $orion_db->query($sql_delete);
+            
+            // 2. Insert new categories
+            if (!empty($categories_to_save)) {
+                foreach ($categories_to_save as $cat_id) {
+                    $cat_id = (int)$cat_id;
+                    // Get term_taxonomy_id (assuming term_id = term_taxonomy_id for simple setup or query it)
+                    // Proper way: SELECT term_taxonomy_id FROM term_taxonomy WHERE term_id = $cat_id AND taxonomy = 'category'
+                    $res_tt = $orion_db->query("SELECT term_taxonomy_id FROM $term_taxonomy_table WHERE term_id = $cat_id AND taxonomy = 'category' LIMIT 1");
+                    if ($res_tt && $row_tt = $res_tt->fetch_object()) {
+                        $tt_id = $row_tt->term_taxonomy_id;
+                        $insert_res = $orion_db->query("INSERT INTO $term_relationships_table (object_id, term_taxonomy_id) VALUES ($post_id, $tt_id)");
+                        $debug_msg .= "Inserted Cat ID $cat_id (TT ID $tt_id) for Post $post_id. Result: " . ($insert_res ? 'Success' : 'Fail: ' . $orion_db->error) . "\n";
+                    } else {
+                        $debug_msg .= "Could not find TT ID for Cat ID $cat_id\n";
+                    }
                 }
             }
-        }
-        file_put_contents(ABSPATH . 'debug_cat_log.txt', $debug_msg, FILE_APPEND);
+            file_put_contents(ABSPATH . 'debug_cat_log.txt', $debug_msg, FILE_APPEND);
 
-        $upload_dir = ABSPATH . 'orion-content/uploads/';
-        if (!file_exists($upload_dir)) {
-            mkdir($upload_dir, 0755, true);
-        }
-
-        // Handle Featured Image
-        // Priority: 1. New File Upload, 2. Selected from Library, 3. Keep Existing (handled by not updating if both empty, but we might want to clear)
-        // Note: If user wants to remove, we might need a specific flag or empty url.
-        // Current implementation: if URL provided (hidden input), use it. If File provided, upload and use it.
-        
-        $feat_img_url = '';
-        if (isset($_POST['featured_image_url'])) {
-            $feat_img_url = $_POST['featured_image_url'];
-        }
-
-        if (!empty($_FILES['featured_image']['name'])) {
-            $file_name = time() . '_feat_' . basename($_FILES['featured_image']['name']);
-            $target_file = $upload_dir . $file_name;
-            if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
-                $feat_img_url = site_url('/orion-content/uploads/' . $file_name);
+            $upload_dir = ABSPATH . 'orion-content/uploads/';
+            if (!file_exists($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
             }
-        }
-        
-        // Update if we have a value (even empty string if clearing is desired, though here we only update if we have a new value or if it's explicitly cleared? 
-        // For now, let's assume if hidden input is present, it reflects the desired state unless a file is uploaded)
-        if (isset($_POST['featured_image_url']) || !empty($_FILES['featured_image']['name'])) {
-             update_post_meta($post_id, '_thumbnail_url', $feat_img_url);
-        }
 
-        // Handle Gallery (Multiple)
-        // Reconstruct from existing (submitted via hidden inputs) + new uploads
-        $gallery_urls = array();
-        
-        if (isset($_POST['gallery_images_existing']) && is_array($_POST['gallery_images_existing'])) {
-            $gallery_urls = $_POST['gallery_images_existing'];
-        }
+            // Handle Featured Image
+            // Priority: 1. New File Upload, 2. Selected from Library, 3. Keep Existing (handled by not updating if both empty, but we might want to clear)
+            // Note: If user wants to remove, we might need a specific flag or empty url.
+            // Current implementation: if URL provided (hidden input), use it. If File provided, upload and use it.
+            
+            $feat_img_url = '';
+            if (isset($_POST['featured_image_url'])) {
+                $feat_img_url = $_POST['featured_image_url'];
+            }
 
-        if (!empty($_FILES['gallery_images']['name'][0])) {
-            foreach($_FILES['gallery_images']['name'] as $key => $val){
-                if ($_FILES['gallery_images']['name'][$key]) {
-                     $file_name = time() . '_gal_' . basename($_FILES['gallery_images']['name'][$key]);
-                     $target_file = $upload_dir . $file_name;
-                     if (move_uploaded_file($_FILES['gallery_images']['tmp_name'][$key], $target_file)) {
-                         $gallery_urls[] = site_url('/orion-content/uploads/' . $file_name);
-                     }
+            if (!empty($_FILES['featured_image']['name'])) {
+                $file_name = time() . '_feat_' . basename($_FILES['featured_image']['name']);
+                $target_file = $upload_dir . $file_name;
+                if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
+                    $feat_img_url = site_url('/orion-content/uploads/' . $file_name);
                 }
             }
-        }
-        update_post_meta($post_id, '_gallery_images', json_encode($gallery_urls));
+            
+            // Update if we have a value (even empty string if clearing is desired, though here we only update if we have a new value or if it's explicitly cleared? 
+            // For now, let's assume if hidden input is present, it reflects the desired state unless a file is uploaded)
+            if (isset($_POST['featured_image_url']) || !empty($_FILES['featured_image']['name'])) {
+                 update_post_meta($post_id, '_thumbnail_url', $feat_img_url);
+            }
 
-        // Handle Attachments (Multiple)
-        $attachment_urls = array();
-        
-        // Recover existing attachments from hidden inputs? Or just keep simple for now. 
-        // To support "Select from Library" for attachments, we need similar logic.
-        // Assuming we might have existing attachments passed back.
-        // For now, let's just append new ones to existing ones IF we don't have a way to manage them fully yet.
-        // BUT, if we want to support "Select from Library", we should treat it like Gallery.
-        
-        // NOTE: The previous code read from DB then appended. This prevents deletion.
-        // We should switch to full state management via hidden inputs.
-        
-        if (isset($_POST['attachments_existing']) && is_array($_POST['attachments_existing'])) {
-             // We need to decode the JSON strings passed back or handle array structure
-             // The hidden inputs will likely pass URL. We might lose the "name" if we just pass URL.
-             // Let's assume we pass JSON string or just URL.
-             // If we only pass URL, we lose the original filename if it was stored separately.
-             // Let's try to pass the full object encoded in hidden input?
-             foreach($_POST['attachments_existing'] as $att_json) {
-                 $att = json_decode(stripslashes($att_json), true);
-                 if ($att) $attachment_urls[] = $att;
-             }
-        }
+            // Handle Gallery (Multiple)
+            // Reconstruct from existing (submitted via hidden inputs) + new uploads
+            $gallery_urls = array();
+            
+            if (isset($_POST['gallery_images_existing']) && is_array($_POST['gallery_images_existing'])) {
+                $gallery_urls = $_POST['gallery_images_existing'];
+            }
 
-        if (!empty($_FILES['attachments']['name'][0])) {
-            foreach($_FILES['attachments']['name'] as $key => $val){
-                 if ($_FILES['attachments']['name'][$key]) {
-                     $file_name = time() . '_att_' . basename($_FILES['attachments']['name'][$key]);
-                     $target_file = $upload_dir . $file_name;
-                     if (move_uploaded_file($_FILES['attachments']['tmp_name'][$key], $target_file)) {
-                         $attachment_urls[] = array(
-                             'url' => site_url('/orion-content/uploads/' . $file_name),
-                             'name' => $_FILES['attachments']['name'][$key]
-                         );
-                     }
+            if (!empty($_FILES['gallery_images']['name'][0])) {
+                foreach($_FILES['gallery_images']['name'] as $key => $val){
+                    if ($_FILES['gallery_images']['name'][$key]) {
+                         $file_name = time() . '_gal_' . basename($_FILES['gallery_images']['name'][$key]);
+                         $target_file = $upload_dir . $file_name;
+                         if (move_uploaded_file($_FILES['gallery_images']['tmp_name'][$key], $target_file)) {
+                             $gallery_urls[] = site_url('/orion-content/uploads/' . $file_name);
+                         }
+                    }
                 }
             }
+            update_post_meta($post_id, '_gallery_images', json_encode($gallery_urls));
+
+            // Handle Attachments (Multiple)
+            $attachment_urls = array();
+            
+            // Recover existing attachments from hidden inputs? Or just keep simple for now. 
+            // To support "Select from Library" for attachments, we need similar logic.
+            // Assuming we might have existing attachments passed back.
+            // For now, let's just append new ones to existing ones IF we don't have a way to manage them fully yet.
+            // BUT, if we want to support "Select from Library", we should treat it like Gallery.
+            
+            // NOTE: The previous code read from DB then appended. This prevents deletion.
+            // We should switch to full state management via hidden inputs.
+            
+            if (isset($_POST['attachments_existing']) && is_array($_POST['attachments_existing'])) {
+                 // We need to decode the JSON strings passed back or handle array structure
+                 // The hidden inputs will likely pass URL. We might lose the "name" if we just pass URL.
+                 // Let's assume we pass JSON string or just URL.
+                 // If we only pass URL, we lose the original filename if it was stored separately.
+                 // Let's try to pass the full object encoded in hidden input?
+                 foreach($_POST['attachments_existing'] as $att_json) {
+                     $att = json_decode(stripslashes($att_json), true);
+                     if ($att) $attachment_urls[] = $att;
+                 }
+            }
+
+            if (!empty($_FILES['attachments']['name'][0])) {
+                foreach($_FILES['attachments']['name'] as $key => $val){
+                     if ($_FILES['attachments']['name'][$key]) {
+                         $file_name = time() . '_att_' . basename($_FILES['attachments']['name'][$key]);
+                         $target_file = $upload_dir . $file_name;
+                         if (move_uploaded_file($_FILES['attachments']['tmp_name'][$key], $target_file)) {
+                             $attachment_urls[] = array(
+                                 'url' => site_url('/orion-content/uploads/' . $file_name),
+                                 'name' => $_FILES['attachments']['name'][$key]
+                             );
+                         }
+                    }
+                }
+            }
+            update_post_meta($post_id, '_attachments', json_encode($attachment_urls));
+            
+            // PRG redirect after successful save
+            $redirect_url = 'post-new.php?id=' . $post_id . '&updated=1';
+            header('Location: ' . $redirect_url);
+            exit;
+        } else {
+            global $orion_db;
+            $message = "Error saving post. DB Error: " . $orion_db->error;
         }
-        update_post_meta($post_id, '_attachments', json_encode($attachment_urls));
-        
-        // Refresh post data
-        $post = get_post($post_id);
-    } else {
-        global $orion_db;
-        $message = "Error saving post. DB Error: " . $orion_db->error;
     }
-    }
+}
+
+// Message from query string (PRG)
+if (isset($_GET['updated']) && $_GET['updated'] == '1' && $post_id) {
+    $message = "Post saved successfully. <a href='../index.php?p=$post_id' target='_blank' class='underline font-bold'>View Post</a>";
 }
 
 // Ensure default categories exist
@@ -234,11 +240,39 @@ require_once( 'admin-header.php' );
             } )
             .then( editor => {
                 editorInstance = editor;
+
+                editor.model.schema.extend( '$text', { allowAttributes: 'fontJawa' } );
+                editor.conversion.attributeToElement( {
+                    model: 'fontJawa',
+                    view: {
+                        name: 'span',
+                        classes: 'font-jawa'
+                    },
+                    upcastAlso: [
+                        { name: 'span', classes: 'font-jawa' }
+                    ]
+                } );
             } )
             .catch( error => {
                 console.error( error );
             } );
     });
+
+    function toggleAksaraJawa() {
+        if (!editorInstance) return;
+        const selection = editorInstance.model.document.selection;
+        if (selection.isCollapsed) {
+            return;
+        }
+        editorInstance.model.change( writer => {
+            const isOn = selection.hasAttribute('fontJawa');
+            if (isOn) {
+                writer.removeSelectionAttribute('fontJawa');
+            } else {
+                writer.setSelectionAttribute('fontJawa', true);
+            }
+        });
+    }
 </script>
 
 <div class="mb-6">
@@ -260,8 +294,29 @@ require_once( 'admin-header.php' );
                 <input name="post_title" id="post_title" type="text" value="<?php echo $post ? htmlspecialchars($post->post_title) : ''; ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-xl font-bold" placeholder="Enter title here" required>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="post_content">Content</label>
-                <textarea name="post_content" id="post_content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-96" placeholder="Start writing..."><?php echo $post ? htmlspecialchars($post->post_content) : ''; ?></textarea>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-gray-700 text-sm font-bold" for="post_content">Content</label>
+                    <div class="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onclick="openMediaSelector('editor-image')"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-orion-600 hover:bg-orion-700 text-white text-xs font-semibold shadow-sm focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-orion-600 transition-colors duration-150"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586A2 2 0 0118.414 12H20m-4-8H8a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V6a2 2 0 00-2-2z" />
+                            </svg>
+                            <span>Sisipkan Gambar dari Media</span>
+                        </button>
+                        <button
+                            type="button"
+                            onclick="toggleAksaraJawa()"
+                            class="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-slate-300 text-slate-700 text-xs font-semibold bg-white hover:bg-slate-50 shadow-sm focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-slate-300 transition-colors duration-150"
+                        >
+                            <span>Aksara Jawa</span>
+                        </button>
+                    </div>
+                </div>
+                <textarea name="post_content" id="post_content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-96" placeholder="Start writing..."><?php echo $post ? $post->post_content : ''; ?></textarea>
             </div>
         </div>
 
@@ -634,7 +689,7 @@ function selectMedia(file) {
         document.getElementById('featured-image-preview').innerHTML = `<img src="${file.url}" class="w-full h-auto mb-2 rounded border">`;
         closeMediaSelector();
     } else if (currentMediaType === 'gallery') {
-         if (!file.is_image) {
+        if (!file.is_image) {
             alert('Please select an image for gallery.');
             return;
         }
@@ -647,9 +702,7 @@ function selectMedia(file) {
             <button type="button" onclick="this.parentElement.remove()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">&times;</button>
         `;
         container.appendChild(div);
-        closeMediaSelector(); // Or keep open for multiple? Let's close for now or add "Done" button.
-        // User might want to select multiple.
-        // Let's modify: Clicking adds it, and we show visual feedback.
+        closeMediaSelector();
     } else if (currentMediaType === 'attachment') {
         const container = document.getElementById('attachments-preview');
         const att = { name: file.name, url: file.url };
@@ -663,6 +716,18 @@ function selectMedia(file) {
             <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 text-sm ml-2">Remove</button>
         `;
         container.appendChild(div);
+        closeMediaSelector();
+    } else if (currentMediaType === 'editor-image') {
+        if (!file.is_image) {
+            alert('Please select an image.');
+            return;
+        }
+        if (typeof editorInstance !== 'undefined' && editorInstance) {
+            const html = '<img src="' + file.url + '" alt="">';
+            const viewFragment = editorInstance.data.processor.toView(html);
+            const modelFragment = editorInstance.data.toModel(viewFragment);
+            editorInstance.model.insertContent(modelFragment, editorInstance.model.document.selection);
+        }
         closeMediaSelector();
     }
 }

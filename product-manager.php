@@ -21,7 +21,30 @@ if (file_exists($bootstrap_path)) {
 $message = '';
 $error = '';
 
-// Handle Form Submissions
+// Map query parameters to messages (PRG)
+if (isset($_GET['notice'])) {
+    if ($_GET['notice'] === 'product_created') {
+        $message = "Produk berhasil ditambahkan.";
+    } elseif ($_GET['notice'] === 'product_updated') {
+        $message = "Produk berhasil diperbarui.";
+    } elseif ($_GET['notice'] === 'product_deleted') {
+        $message = "Produk berhasil dihapus.";
+    } elseif ($_GET['notice'] === 'hero_updated') {
+        $message = "Pengaturan Hero berhasil diperbarui.";
+    }
+}
+
+if (isset($_GET['error'])) {
+    if ($_GET['error'] === 'delete_failed') {
+        $error = "Gagal menghapus produk.";
+    } elseif ($_GET['error'] === 'save_failed') {
+        $error = "Gagal menyimpan produk.";
+    } elseif ($_GET['error'] === 'missing_title') {
+        $error = "Judul produk wajib diisi.";
+    }
+}
+
+// Handle Form Submissions (PRG)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // DEBUG: Log request
@@ -31,10 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['post_id'])) {
         $post_id = (int)$_POST['post_id'];
         if (wp_delete_post($post_id)) {
-            $message = "Produk berhasil dihapus.";
+            header("Location: product-manager.php?notice=product_deleted");
         } else {
-            $error = "Gagal menghapus produk.";
+            header("Location: product-manager.php?error=delete_failed");
         }
+        exit;
     }
 
     // Add/Edit Product
@@ -133,56 +157,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'post_title' => $title,
                 'post_content' => $content,
                 'post_status' => 'publish',
-                'post_type' => 'post'
+                'post_type' => 'product'
             );
 
             if ($_POST['action'] === 'update' && isset($_POST['post_id'])) {
                 $post_data['ID'] = (int)$_POST['post_id'];
                 $post_id = wp_insert_post($post_data); // Updates if ID exists
-                $message = "Produk berhasil diperbarui.";
+                if ($post_id) {
+                    // Save Meta
+                    update_post_meta($post_id, 'shop_price', $price);
+                    update_post_meta($post_id, 'shop_stock_status', $stock_status);
+                    
+                    // Save New Meta Fields
+                    update_post_meta($post_id, 'shop_brand', $brand);
+                    update_post_meta($post_id, 'shop_series', $series);
+                    update_post_meta($post_id, 'shop_short_description', $short_description);
+                    update_post_meta($post_id, 'shop_specifications', $specifications);
+                    update_post_meta($post_id, 'shop_variants', $variants);
+                    
+                    // Handle Image
+                    if ($image_url) {
+                        update_post_meta($post_id, '_thumbnail_url', $image_url); // Main image
+                    }
+                    
+                    // Handle Gallery
+                    if (!empty($gallery_images)) {
+                        update_post_meta($post_id, '_gallery_images', json_encode(array_values($gallery_images)));
+                    } else {
+                        update_post_meta($post_id, '_gallery_images', json_encode(array()));
+                    }
+
+                    // Handle Category
+                    if ($category_id > 0) {
+                        wp_set_object_terms($post_id, array($category_id), 'product_cat');
+                    }
+
+                    header("Location: product-manager.php?notice=product_updated");
+                    exit;
+                } else {
+                    $error = "Gagal menyimpan produk.";
+                }
             } else {
                 $post_id = wp_insert_post($post_data);
-                $message = "Produk berhasil ditambahkan.";
-            }
+                if ($post_id) {
+                    // Save Meta
+                    update_post_meta($post_id, 'shop_price', $price);
+                    update_post_meta($post_id, 'shop_stock_status', $stock_status);
+                    
+                    // Save New Meta Fields
+                    update_post_meta($post_id, 'shop_brand', $brand);
+                    update_post_meta($post_id, 'shop_series', $series);
+                    update_post_meta($post_id, 'shop_short_description', $short_description);
+                    update_post_meta($post_id, 'shop_specifications', $specifications);
+                    update_post_meta($post_id, 'shop_variants', $variants);
+                    
+                    // Handle Image
+                    if ($image_url) {
+                        update_post_meta($post_id, '_thumbnail_url', $image_url); // Main image
+                    }
+                    
+                    // Handle Gallery
+                    if (!empty($gallery_images)) {
+                        update_post_meta($post_id, '_gallery_images', json_encode(array_values($gallery_images)));
+                    } else {
+                        update_post_meta($post_id, '_gallery_images', json_encode(array()));
+                    }
 
-            if ($post_id) {
-                // Save Meta
-                update_post_meta($post_id, 'shop_price', $price);
-                update_post_meta($post_id, 'shop_stock_status', $stock_status);
-                
-                // Save New Meta Fields
-                update_post_meta($post_id, 'shop_brand', $brand);
-                update_post_meta($post_id, 'shop_series', $series);
-                update_post_meta($post_id, 'shop_short_description', $short_description);
-                update_post_meta($post_id, 'shop_specifications', $specifications);
-                update_post_meta($post_id, 'shop_variants', $variants);
-                
-                // Handle Image
-                if ($image_url) {
-                    update_post_meta($post_id, '_thumbnail_url', $image_url); // Main image
-                }
-                
-                // Handle Gallery (Merge main image if not present, but user logic might differ)
-                // We keep _gallery_images as the full list of additional images + maybe main image if desired
-                // But typically gallery is separate. Let's save the array.
-                
-                if (!empty($gallery_images)) {
-                    update_post_meta($post_id, '_gallery_images', json_encode(array_values($gallery_images)));
+                    // Handle Category
+                    if ($category_id > 0) {
+                        wp_set_object_terms($post_id, array($category_id), 'product_cat');
+                    }
+
+                    header("Location: product-manager.php?notice=product_created");
+                    exit;
                 } else {
-                     // If empty, maybe clear it? Or keep it if we didn't touch it?
-                     // Logic above handles "existing", so if user deleted all, it's empty.
-                     update_post_meta($post_id, '_gallery_images', json_encode(array()));
+                    $error = "Gagal menyimpan produk.";
                 }
-
-                // Handle Category
-                if ($category_id > 0) {
-                    wp_set_object_terms($post_id, array($category_id), 'product_cat');
-                }
-            } else {
-                $error = "Gagal menyimpan produk.";
             }
         } else {
-            $error = "Judul produk wajib diisi.";
+            if (!$title) {
+                $error = "Judul produk wajib diisi.";
+            }
         }
     }
 
@@ -244,7 +299,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         update_option('orion_shop_hero_settings', $hero_settings);
-        $message = "Pengaturan Hero berhasil diperbarui.";
+        header("Location: product-manager.php?view=hero&notice=hero_updated");
+        exit;
     }
 }
 
@@ -260,6 +316,10 @@ $edit_short_desc = '';
 $edit_specs = '';
 $edit_variants = '';
 $edit_gallery = array();
+
+// Filters
+$search_term = isset($_GET['search']) ? trim($_GET['search']) : '';
+$filter_cat = isset($_GET['cat']) ? (int)$_GET['cat'] : 0;
 
 if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
     $edit_post = get_post($_GET['id']);
@@ -292,12 +352,17 @@ $categories = function_exists('get_terms') ? get_terms('product_cat') : array();
 // Get All Products
 $args = array(
     'numberposts' => -1,
-    'post_type'   => 'post',
+    'post_type'   => array('post', 'product'),
     'post_status' => 'publish'
 );
 
-if (isset($_GET['search']) && !empty($_GET['search'])) {
-    $args['s'] = $_GET['search'];
+if ($search_term !== '') {
+    $args['s'] = $search_term;
+}
+
+if ($filter_cat > 0) {
+    $args['taxonomy'] = 'product_cat';
+    $args['category'] = $filter_cat;
 }
 
 $products = get_posts($args);
@@ -699,7 +764,7 @@ $products = get_posts($args);
                                             <a href="product-manager.php?action=edit&id=<?php echo $p->ID; ?>" class="text-slate-400 hover:text-shop-600 transition-colors p-1 rounded-md hover:bg-shop-50" title="Edit">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             </a>
-                                            <form action="product-manager.php" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus produk ini?');">
+                                            <form action="product-manager.php" method="POST" class="inline-block" data-orion-confirm="Yakin ingin menghapus produk ini?">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="post_id" value="<?php echo $p->ID; ?>">
                                                 <button type="submit" class="text-slate-400 hover:text-red-600 transition-colors p-1 rounded-md hover:bg-red-50" title="Hapus">
@@ -846,7 +911,7 @@ $products = get_posts($args);
                                             <div class="relative group aspect-square" id="gallery-item-<?php echo $idx; ?>">
                                                 <img src="<?php echo htmlspecialchars($g_img); ?>" class="w-full h-full object-cover rounded-lg shadow-sm border border-gray-200">
                                                 <input type="hidden" name="existing_gallery_images[]" value="<?php echo htmlspecialchars($g_img); ?>">
-                                                <button type="button" onclick="if(confirm('Hapus foto ini?')) { document.getElementById('gallery-item-<?php echo $idx; ?>').remove(); }" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-transform transform hover:scale-110">
+                                                <button type="button" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:bg-red-600 transition-transform transform hover:scale-110" data-orion-confirm="Hapus foto ini?" data-orion-confirm-action="remove" data-orion-target="#gallery-item-<?php echo $idx; ?>">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                                 </button>
                                             </div>

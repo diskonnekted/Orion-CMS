@@ -11,6 +11,14 @@
                 <a href="https://github.com/diskonnekted/Orion-CMS" class="hover:text-brand-400 transition">GitHub</a>
             </div>
         </div>
+        <div class="mt-8">
+            <nav class="flex flex-wrap justify-center gap-6 text-sm text-slate-400">
+                <a href="<?php echo site_url('/?page=About'); ?>" class="hover:text-brand-400 transition">About</a>
+                <a href="<?php echo site_url('/?page=Manual'); ?>" class="hover:text-brand-400 transition">Manual</a>
+                <a href="<?php echo site_url('/?page=Privacy'); ?>" class="hover:text-brand-400 transition">Privacy Policy</a>
+                <a href="<?php echo site_url('/?page=Terms'); ?>" class="hover:text-brand-400 transition">Terms</a>
+            </nav>
+        </div>
         <div class="border-t border-slate-800 mt-8 pt-8 text-center text-sm text-slate-500">
             &copy; <?php echo date('Y'); ?> Orion CMS. All rights reserved. ❤️ From <a href="https://www.clasnet.co.id" class="text-brand-400 hover:text-brand-300 transition">Clasnet</a> to You.
         </div>

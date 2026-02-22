@@ -78,7 +78,7 @@ $result = $orion_db->query($sql);
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <a href="user-new.php?user_id=<?php echo $user->ID; ?>" class="text-orion-600 hover:text-orion-900 mr-3">Edit</a>
                         <?php if ($user->ID != $current_user->ID): ?>
-                        <a href="users.php?action=delete&user=<?php echo $user->ID; ?>" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a>
+                        <a href="users.php?action=delete&user=<?php echo $user->ID; ?>" class="text-red-600 hover:text-red-900" data-orion-confirm="Are you sure you want to delete this user?">Delete</a>
                         <?php endif; ?>
                     </td>
                 </tr>

@@ -24,6 +24,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 
 require_once( 'admin-header.php' );
 
+// Filters
+$search_term = isset($_GET['s']) ? trim($_GET['s']) : '';
+$filter_cat = isset($_GET['cat']) ? (int) $_GET['cat'] : 0;
+
 // Pagination Setup
 $paged = isset($_GET['paged']) ? max(1, (int)$_GET['paged']) : 1;
 $posts_per_page = 10;
@@ -34,28 +38,97 @@ $args = array(
     'numberposts' => $posts_per_page,
     'offset' => $offset,
     'orderby' => 'post_date',
-    'order' => 'DESC'
+    'order' => 'DESC',
+    'post_type' => 'post',
+    'post_status' => 'any'
 );
+
+if ($search_term !== '') {
+    $args['s'] = $search_term;
+}
+
+if ($filter_cat > 0) {
+    $args['category'] = $filter_cat;
+}
+
 $posts = get_posts($args);
 
 // Get Total Posts for Pagination
 global $orion_db, $table_prefix;
-$count_sql = "SELECT COUNT(*) as count FROM {$table_prefix}posts WHERE post_type = 'post' AND post_status != 'trash'";
+$where_count = "WHERE post_type = 'post' AND post_status != 'trash'";
+
+if ($search_term !== '') {
+    $esc_search = $orion_db->real_escape_string($search_term);
+    $where_count .= " AND (post_title LIKE '%$esc_search%' OR post_content LIKE '%$esc_search%')";
+}
+
+if ($filter_cat > 0) {
+    $term_relationships = $table_prefix . 'term_relationships';
+    $term_taxonomy = $table_prefix . 'term_taxonomy';
+    $where_count .= " AND ID IN (
+        SELECT object_id FROM $term_relationships tr
+        INNER JOIN $term_taxonomy tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+        WHERE tt.taxonomy = 'category' AND tt.term_id = $filter_cat
+    )";
+}
+
+$count_sql = "SELECT COUNT(*) as count FROM {$table_prefix}posts $where_count";
 $count_res = $orion_db->query($count_sql);
 $total_posts = ($count_res) ? $count_res->fetch_object()->count : 0;
 $total_pages = ceil($total_posts / $posts_per_page);
 
 ?>
 
-<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Posts</h1>
-        <p class="text-gray-500 mt-1">Manage your news articles and content.</p>
+<div class="flex flex-col gap-4 mb-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Posts</h1>
+            <p class="text-gray-500 mt-1">Manage your news articles and content.</p>
+        </div>
+        <a href="post-new.php" class="inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-orion-600 hover:bg-orion-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orion-500 shadow-sm transition-all duration-200">
+            <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            Add New Post
+        </a>
     </div>
-    <a href="post-new.php" class="inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-orion-600 hover:bg-orion-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orion-500 shadow-sm transition-all duration-200">
-        <svg class="w-5 h-5 mr-2 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-        Add New Post
-    </a>
+    <form method="GET" action="posts.php" class="bg-white border border-gray-200 rounded-xl px-4 py-3 flex flex-col md:flex-row gap-3 md:items-center">
+        <div class="relative flex-1">
+            <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
+                <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+            <input
+                type="text"
+                name="s"
+                value="<?php echo htmlspecialchars($search_term); ?>"
+                class="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-orion-500 focus:border-orion-500"
+                placeholder="Cari judul atau konten..."
+            >
+        </div>
+        <div class="flex items-center gap-2">
+            <select
+                name="cat"
+                class="block w-full md:w-56 border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-orion-500 focus:border-orion-500"
+            >
+                <option value="0">Semua Kategori</option>
+                <?php
+                $cats = get_terms('category', array('hide_empty' => false));
+                if ($cats && !is_wp_error($cats)) {
+                    foreach ($cats as $cat) {
+                        $selected = $filter_cat === (int) $cat->term_id ? 'selected' : '';
+                        echo '<option value="' . (int) $cat->term_id . '" ' . $selected . '>' . htmlspecialchars($cat->name) . '</option>';
+                    }
+                }
+                ?>
+            </select>
+            <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-orion-600 hover:bg-orion-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-orion-500">
+                Filter
+            </button>
+            <?php if ($search_term !== '' || $filter_cat > 0): ?>
+            <a href="posts.php" class="text-xs text-gray-500 hover:text-orion-600">Reset</a>
+            <?php endif; ?>
+        </div>
+    </form>
 </div>
 
 <?php if(isset($_GET['deleted'])): ?>
@@ -207,7 +280,7 @@ $total_pages = ceil($total_posts / $posts_per_page);
                                 <a href="post-new.php?id=<?php echo $post->ID; ?>" class="text-gray-400 hover:text-orion-600 transition-colors" title="Edit">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </a>
-                                <a href="posts.php?action=delete&id=<?php echo $post->ID; ?>" onclick="return confirm('Are you sure you want to delete this post?');" class="text-gray-400 hover:text-red-600 transition-colors" title="Delete">
+                                <a href="posts.php?action=delete&id=<?php echo $post->ID; ?>" data-orion-confirm="Are you sure you want to delete this post?" class="text-gray-400 hover:text-red-600 transition-colors" title="Delete">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
                                 </a>

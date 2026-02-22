@@ -2,14 +2,14 @@
 
 <!-- Hero Section -->
 <section class="relative bg-pmc-dark h-[600px] flex items-center overflow-hidden">
+    <!-- Background Image -->
+    <div class="absolute inset-0 z-0 opacity-40">
+        <img src="orion1.jpeg" alt="Tactical Ops" class="w-full h-full object-cover">
+    </div>
+    
     <!-- Overlay Pattern -->
     <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 z-0"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-pmc-dark via-pmc-dark/90 to-transparent z-10"></div>
-    
-    <!-- Background Image -->
-    <div class="absolute inset-0 z-0 opacity-40">
-        <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" alt="Tactical Ops" class="w-full h-full object-cover">
-    </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
         <div class="max-w-2xl">
@@ -68,7 +68,7 @@
             <!-- Service 1 -->
             <div class="bg-white border-b-4 border-pmc-green shadow-lg group hover:-translate-y-2 transition-transform duration-300">
                 <div class="h-48 overflow-hidden relative">
-                    <img src="https://images.unsplash.com/photo-1595590424283-b8f17842773f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Close Protection" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                    <img src="close.jpeg" alt="Close Protection" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
                     <div class="absolute top-0 right-0 bg-pmc-green text-white text-xs font-bold px-3 py-1">SEC-01</div>
                 </div>
                 <div class="p-8">
@@ -85,7 +85,7 @@
             <!-- Service 2 -->
             <div class="bg-white border-b-4 border-pmc-khaki shadow-lg group hover:-translate-y-2 transition-transform duration-300">
                 <div class="h-48 overflow-hidden relative">
-                    <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Logistics" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                    <img src="logistic.jpeg" alt="Logistics" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
                     <div class="absolute top-0 right-0 bg-pmc-khaki text-pmc-dark text-xs font-bold px-3 py-1">LOG-02</div>
                 </div>
                 <div class="p-8">
@@ -102,7 +102,7 @@
             <!-- Service 3 -->
             <div class="bg-white border-b-4 border-pmc-dark shadow-lg group hover:-translate-y-2 transition-transform duration-300">
                 <div class="h-48 overflow-hidden relative">
-                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Cyber" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                    <img src="intel.jpeg" alt="Cyber" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
                     <div class="absolute top-0 right-0 bg-pmc-dark text-white text-xs font-bold px-3 py-1">CYB-03</div>
                 </div>
                 <div class="p-8">
@@ -147,7 +147,7 @@
             </div>
             <div class="relative">
                 <div class="absolute -inset-4 border-2 border-pmc-khaki/30"></div>
-                <img src="https://images.unsplash.com/photo-1542282088-fe8426682b8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Team Briefing" class="w-full grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl relative z-10">
+                <img src="pmc.jpeg" alt="Team Briefing" class="w-full grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl relative z-10">
             </div>
         </div>
     </div>

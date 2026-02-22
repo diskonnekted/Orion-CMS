@@ -212,6 +212,16 @@
                     </div>
                 </div>
             </div>
+            <!-- Theme Card PMC -->
+            <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
+                <img src="pmc.jpeg" alt="Orion PMC" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
+                    <div>
+                        <h3 class="text-white font-bold text-xl mb-1">Orion PMC</h3>
+                        <p class="text-slate-300 text-sm">Private Military Contractor Theme</p>
+                    </div>
+                </div>
+            </div>
             <!-- Theme Card 1 -->
             <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
                 <img src="<?php echo site_url('/assets/img/one.png'); ?>" alt="Theme One" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
@@ -266,37 +276,62 @@
 <!-- Latest News -->
 <section id="news" class="py-20 bg-white">
     <div class="container mx-auto px-6">
-        <div class="flex justify-between items-end mb-12">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
             <div>
                 <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Berita & Artikel</h2>
                 <p class="text-slate-600">Tips, trik, dan update seputar pengembangan web.</p>
             </div>
+            <div class="md:text-right">
+                <a href="index.php?page=news" class="inline-flex items-center text-sm font-semibold text-brand-600 hover:text-brand-700">
+                    Lihat Semua Berita
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <?php 
-            $posts = get_posts(array('numberposts' => 3, 'post_status' => 'publish'));
+            <?php
+            $news_per_page = (int) get_option('orion_promo_news_per_page', 6);
+            if ($news_per_page < 1) {
+                $news_per_page = 1;
+            }
+            if ($news_per_page > 20) {
+                $news_per_page = 20;
+            }
+
+            $news_layout = get_option('orion_promo_news_layout', 'grid');
+            if (!in_array($news_layout, array('grid', 'featured_1_2'))) {
+                $news_layout = 'grid';
+            }
+
+            $posts = get_posts(array('numberposts' => $news_per_page, 'post_status' => 'publish'));
             if ($posts):
+                $index = 0;
                 foreach ($posts as $post):
                     $thumb_url = get_the_post_thumbnail_url($post->ID);
+                    $is_featured = ($news_layout === 'featured_1_2' && $index === 0);
+                    $article_classes = 'bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-slate-100 flex flex-col h-full group';
+                    if ($is_featured) {
+                        $article_classes .= ' md:col-span-2 lg:col-span-2';
+                    }
             ?>
-            <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-slate-100 flex flex-col h-full group">
+            <article class="<?php echo $article_classes; ?>">
                 <?php if ($thumb_url): ?>
-                <div class="h-56 overflow-hidden relative">
+                <div class="<?php echo $is_featured ? 'h-64 md:h-80 overflow-hidden relative' : 'h-56 overflow-hidden relative'; ?>">
                     <img src="<?php echo $thumb_url; ?>" alt="<?php echo htmlspecialchars($post->post_title); ?>" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-500">
                     <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-brand-600 uppercase tracking-wide">
                         News
                     </div>
                 </div>
                 <?php else: ?>
-                <div class="h-56 bg-slate-100 flex items-center justify-center text-slate-400 relative">
+                <div class="<?php echo $is_featured ? 'h-64 md:h-80 bg-slate-100 flex items-center justify-center text-slate-400 relative' : 'h-56 bg-slate-100 flex items-center justify-center text-slate-400 relative'; ?>">
                     <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                     <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-brand-600 uppercase tracking-wide">
+                    <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-brand-600 uppercase tracking-wide">
                         Article
                     </div>
                 </div>
                 <?php endif; ?>
-                
+
                 <div class="p-8 flex-grow flex flex-col">
                     <div class="text-sm text-slate-500 mb-3 flex items-center">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -308,7 +343,7 @@
                         </a>
                     </h3>
                     <p class="text-slate-600 mb-4 line-clamp-3 flex-grow leading-relaxed">
-                        <?php echo substr(strip_tags($post->post_content), 0, 100) . '...'; ?>
+                        <?php echo wp_trim_words(htmlspecialchars_decode($post->post_content, ENT_QUOTES), 20); ?>
                     </p>
                     <a href="?p=<?php echo $post->ID; ?>" class="text-brand-600 font-bold hover:text-brand-700 inline-flex items-center mt-auto uppercase text-sm tracking-wide">
                         Baca Selengkapnya
@@ -316,7 +351,11 @@
                     </a>
                 </div>
             </article>
-            <?php endforeach; else: ?>
+            <?php
+                    $index++;
+                endforeach;
+            else:
+            ?>
                 <div class="col-span-3 text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
                     <p class="text-slate-500 text-lg">Belum ada konten yang tersedia.</p>
                 </div>

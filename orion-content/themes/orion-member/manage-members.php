@@ -28,15 +28,35 @@ if (!function_exists('is_user_logged_in') || !is_user_logged_in() || !current_us
 $message = '';
 $error = '';
 
-// Handle Actions
+// Map query parameters to messages (PRG)
+if (isset($_GET['message'])) {
+    if ($_GET['message'] === 'deleted') {
+        $message = "Member berhasil dihapus.";
+    } elseif ($_GET['message'] === 'approved') {
+        $message = "Member disetujui.";
+    } elseif ($_GET['message'] === 'card_saved') {
+        $message = "Pengaturan kartu berhasil disimpan.";
+    } elseif ($_GET['message'] === 'updated') {
+        $message = "Member berhasil diperbarui.";
+    }
+}
+
+if (isset($_GET['error'])) {
+    if ($_GET['error'] === 'delete_failed') {
+        $error = "Gagal menghapus member.";
+    }
+}
+
+// Handle Actions (PRG)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['member_id'])) {
         $member_id = (int)$_POST['member_id'];
         if (wp_delete_post($member_id)) {
-            $message = "Member berhasil dihapus.";
+            header("Location: manage-members.php?message=deleted");
         } else {
-            $error = "Gagal menghapus member.";
+            header("Location: manage-members.php?error=delete_failed");
         }
+        exit;
     }
 
     if (isset($_POST['action']) && $_POST['action'] === 'approve' && isset($_POST['member_id'])) {
@@ -46,7 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'post_status'   => 'publish'
         );
         wp_update_post($update_post);
-        $message = "Member disetujui.";
+        header("Location: manage-members.php?message=approved");
+        exit;
     }
 
     if (isset($_POST['action']) && $_POST['action'] === 'save_card_settings') {
@@ -77,7 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
         }
-        $message = "Pengaturan kartu berhasil disimpan.";
+        header("Location: manage-members.php?message=card_saved");
+        exit;
     }
 
     if (isset($_POST['action']) && $_POST['action'] === 'update_member') {
@@ -111,7 +133,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              }
         }
 
-        $message = "Member berhasil diperbarui.";
+        header("Location: manage-members.php?message=updated");
+        exit;
     }
 }
 
@@ -310,8 +333,7 @@ endif;
                             
                             <a href="?action=edit&member_id=<?php echo $member->ID; ?>" class="text-blue-600 hover:text-blue-900 mr-2">Edit</a>
 
-                            <form method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus member ini?');">
-
+                            <form method="POST" class="inline" data-orion-confirm="Apakah Anda yakin ingin menghapus member ini?">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="member_id" value="<?php echo $member->ID; ?>">
                                 <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>

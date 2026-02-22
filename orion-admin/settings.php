@@ -42,10 +42,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         }
     }
 
-    $message = "Settings saved successfully.";
+    // Redirect to avoid form resubmission
+    if (!isset($error)) {
+        header("Location: settings.php?updated=true");
+        exit;
+    }
 }
 
 require_once 'admin-header.php';
+
+// Check for success message
+if (isset($_GET['updated']) && $_GET['updated'] === 'true') {
+    $message = "Settings saved successfully.";
+}
 
 // Retrieve current options
 $blogname = get_option('blogname', 'Orion Site');
@@ -59,7 +68,7 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
 
 <div class="flex justify-between items-center mb-6">
     <h1 class="text-3xl font-bold text-gray-800">Settings</h1>
-    <button type="submit" name="submit" form="settings-form" class="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded shadow">
+    <button type="submit" name="submit" form="settings-form" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-2 px-4 rounded shadow transition-colors duration-200">
         Save Changes
     </button>
 </div>
@@ -70,9 +79,9 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
     </div>
 <?php endif; ?>
 
-<div class="bg-white rounded-lg shadow overflow-hidden p-6">
-    <form id="settings-form" method="POST" action="settings.php" enctype="multipart/form-data">
-        <div class="grid grid-cols-1 gap-6">
+<div class="bg-white rounded-lg shadow overflow-hidden p-6 flex-1 flex flex-col">
+    <form id="settings-form" method="POST" action="settings.php" enctype="multipart/form-data" class="flex-1 flex flex-col">
+        <div class="grid grid-cols-1 gap-6 flex-1">
             
             <!-- Logo Settings -->
             <div>
@@ -145,24 +154,38 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
             <!-- Appearance Settings -->
             <div class="mt-4">
                 <h2 class="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">Appearance Settings</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="admin_color_scheme" class="block text-sm font-medium text-gray-700 mb-1">Admin Color Scheme</label>
-                        <select name="admin_color_scheme" id="admin_color_scheme" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-orion-500 focus:border-orion-500">
-                            <?php 
-                            $schemes = function_exists('orion_get_color_schemes') ? orion_get_color_schemes() : [];
-                            foreach ($schemes as $key => $scheme): 
-                            ?>
-                                <option value="<?php echo $key; ?>" <?php echo $admin_color_scheme == $key ? 'selected' : ''; ?>>
-                                    <?php echo isset($scheme['name']) ? $scheme['name'] : ucfirst(str_replace('_', ' ', $key)); ?>
-                                </option>
-                            <?php endforeach; ?>
-                            <?php if (empty($schemes)): ?>
-                                <option value="default" selected>Default</option>
-                            <?php endif; ?>
-                        </select>
-                        <p class="text-xs text-gray-500 mt-1">Select the color scheme for the admin dashboard.</p>
+                <div class="mb-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Admin Color Scheme</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <?php 
+                        $schemes = function_exists('orion_get_color_schemes') ? orion_get_color_schemes() : [];
+                        foreach ($schemes as $key => $scheme): 
+                            $isActive = ($admin_color_scheme == $key);
+                            $slateColor = isset($scheme['slate']['900']) ? $scheme['slate']['900'] : '#0f172a';
+                            $primaryColor = isset($scheme['orion']['500']) ? $scheme['orion']['500'] : '#3b82f6';
+                        ?>
+                            <label class="relative cursor-pointer group">
+                                <input type="radio" name="admin_color_scheme" value="<?php echo $key; ?>" class="peer sr-only" <?php echo $isActive ? 'checked' : ''; ?>>
+                                <div class="p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md <?php echo $isActive ? 'border-blue-500 ring-2 ring-blue-200 bg-blue-50/10' : 'border-gray-200 hover:border-blue-300'; ?>">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="font-medium text-gray-900"><?php echo isset($scheme['name']) ? $scheme['name'] : ucfirst(str_replace('_', ' ', $key)); ?></span>
+                                        <?php if ($isActive): ?>
+                                            <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="flex h-8 rounded-md overflow-hidden border border-gray-100 shadow-sm">
+                                        <div class="w-1/3 h-full" style="background-color: <?php echo $slateColor; ?>"></div>
+                                        <div class="w-2/3 h-full relative bg-white">
+                                            <div class="absolute inset-0 opacity-10" style="background-color: <?php echo $primaryColor; ?>"></div>
+                                            <div class="absolute top-2 left-2 right-2 h-1.5 rounded-full" style="background-color: <?php echo $primaryColor; ?>"></div>
+                                            <div class="absolute top-5 left-2 w-1/2 h-1.5 rounded-full bg-gray-200"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
+                    <p class="text-xs text-gray-500 mt-2">Select a color theme to customize your dashboard experience.</p>
                 </div>
             </div>
 
@@ -185,14 +208,51 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
                 </div>
             </div>
 
-            <div class="mt-6 border-t pt-6" style="padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid #e2e8f0;">
-                <button type="submit" name="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded shadow-lg" style="background-color: #2563eb; color: #ffffff; padding: 0.5rem 1rem; display: inline-block;">
-                    Save Changes (Bottom)
+            <div class="mt-auto border-t pt-6 border-slate-200">
+                <button type="submit" name="submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-2 px-4 rounded shadow-lg transition-colors duration-200">
+                    Save Changes
                 </button>
             </div>
 
         </div>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const colorInputs = document.querySelectorAll('input[name="admin_color_scheme"]');
+    
+    colorInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            // Reset all
+            document.querySelectorAll('input[name="admin_color_scheme"]').forEach(inp => {
+                const container = inp.nextElementSibling;
+                const checkIcon = container.querySelector('svg');
+                
+                // Remove active classes
+                container.classList.remove('border-blue-500', 'ring-2', 'ring-blue-200', 'bg-blue-50/10');
+                
+                // Add inactive classes
+                container.classList.add('border-gray-200', 'hover:border-blue-300');
+                
+                // Hide check icon
+                if (checkIcon) checkIcon.remove();
+            });
+            
+            // Set active
+            const activeContainer = this.nextElementSibling;
+            activeContainer.classList.remove('border-gray-200', 'hover:border-blue-300');
+            activeContainer.classList.add('border-blue-500', 'ring-2', 'ring-blue-200', 'bg-blue-50/10');
+            
+            // Add check icon if not exists
+            if (!activeContainer.querySelector('svg')) {
+                const titleContainer = activeContainer.querySelector('.flex.items-center.justify-between');
+                const iconHtml = '<svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>';
+                titleContainer.insertAdjacentHTML('beforeend', iconHtml);
+            }
+        });
+    });
+});
+</script>
 
 <?php require_once 'admin-footer.php'; ?>

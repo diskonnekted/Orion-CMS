@@ -305,7 +305,7 @@ $books = get_posts($args);
                                     </td>
                                     <td class="px-6 py-4 text-right space-x-2">
                                         <a href="manage-books.php?action=edit&id=<?php echo $book->ID; ?>" class="text-blue-600 hover:text-blue-900 font-semibold text-sm">Edit</a>
-                                        <form method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this book?');">
+                                        <form method="POST" class="inline-block" data-orion-confirm="Are you sure you want to delete this book?">
                                             <input type="hidden" name="action" value="delete_book">
                                             <input type="hidden" name="post_id" value="<?php echo $book->ID; ?>">
                                             <button type="submit" class="text-red-600 hover:text-red-900 font-semibold text-sm">Delete</button>

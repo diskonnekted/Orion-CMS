@@ -66,7 +66,7 @@ $forms = $orion_db->query("SELECT * FROM $table_forms ORDER BY created_at DESC")
                             <span class="text-slate-300">|</span>
                             <a href="form-edit.php?id=<?php echo $form['id']; ?>" class="text-slate-600 hover:text-slate-800 font-medium text-sm">Edit</a>
                             <span class="text-slate-300">|</span>
-                            <a href="?action=delete&id=<?php echo $form['id']; ?>" onclick="return confirm('Are you sure?');" class="text-red-600 hover:text-red-800 font-medium text-sm">Delete</a>
+                            <a href="?action=delete&id=<?php echo $form['id']; ?>" data-orion-confirm="Are you sure?" class="text-red-600 hover:text-red-800 font-medium text-sm">Delete</a>
                         </td>
                     </tr>
                     <?php endwhile; ?>

@@ -315,7 +315,7 @@ function site_url($path = '') {
     
     // Assuming installation at root of domain or handling subdirectory manually for now
     // In real WP, this is fetched from DB options
-    $url = $protocol . $domainName . '/orion'; 
+    $url = $protocol . $domainName; 
     return $url . $path;
 }
 
@@ -427,4 +427,100 @@ function orion_get_current_scheme() {
     $schemes = orion_get_color_schemes();
     $current = get_option('admin_color_scheme', 'default');
     return isset($schemes[$current]) ? $schemes[$current] : $schemes['default'];
+}
+
+global $wp_post_types;
+if (!isset($wp_post_types) || !is_array($wp_post_types)) {
+    $wp_post_types = array();
+}
+
+function register_post_type($post_type, $args = array()) {
+    global $wp_post_types;
+    if (!is_string($post_type) || $post_type === '') {
+        return false;
+    }
+    $defaults = array(
+        'label' => ucfirst($post_type),
+        'public' => true,
+        'show_in_menu' => true,
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'taxonomies' => array()
+    );
+    if (function_exists('wp_parse_args')) {
+        $merged = wp_parse_args($args, $defaults);
+    } else {
+        $merged = array_merge($defaults, (array) $args);
+    }
+    $merged['name'] = $post_type;
+    $wp_post_types[$post_type] = (object) $merged;
+    return $wp_post_types[$post_type];
+}
+
+function get_post_types($args = array(), $output = 'names', $operator = 'and') {
+    global $wp_post_types;
+    if (!is_array($wp_post_types)) {
+        $wp_post_types = array();
+    }
+    $types = $wp_post_types;
+    if ($output === 'objects') {
+        return $types;
+    }
+    return array_keys($types);
+}
+
+function get_post_type_object($post_type) {
+    global $wp_post_types;
+    if (isset($wp_post_types[$post_type])) {
+        return $wp_post_types[$post_type];
+    }
+    return null;
+}
+
+global $wp_taxonomies;
+if (!isset($wp_taxonomies) || !is_array($wp_taxonomies)) {
+    $wp_taxonomies = array();
+}
+
+function register_taxonomy($taxonomy, $object_type, $args = array()) {
+    global $wp_taxonomies;
+    if (!is_string($taxonomy) || $taxonomy === '') {
+        return false;
+    }
+    if (!is_array($object_type)) {
+        $object_type = array($object_type);
+    }
+    $defaults = array(
+        'label' => ucfirst(str_replace('_', ' ', $taxonomy)),
+        'public' => true,
+        'hierarchical' => true
+    );
+    if (function_exists('wp_parse_args')) {
+        $merged = wp_parse_args($args, $defaults);
+    } else {
+        $merged = array_merge($defaults, (array) $args);
+    }
+    $merged['name'] = $taxonomy;
+    $merged['object_type'] = $object_type;
+    $wp_taxonomies[$taxonomy] = (object) $merged;
+    return $wp_taxonomies[$taxonomy];
+}
+
+function get_taxonomies($args = array(), $output = 'names', $operator = 'and') {
+    global $wp_taxonomies;
+    if (!is_array($wp_taxonomies)) {
+        $wp_taxonomies = array();
+    }
+    $tax = $wp_taxonomies;
+    if ($output === 'objects') {
+        return $tax;
+    }
+    return array_keys($tax);
+}
+
+function get_taxonomy($taxonomy) {
+    global $wp_taxonomies;
+    if (isset($wp_taxonomies[$taxonomy])) {
+        return $wp_taxonomies[$taxonomy];
+    }
+    return null;
 }

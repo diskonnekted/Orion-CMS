@@ -298,8 +298,7 @@ require_once 'admin-header.php';
                                         <div class="text-xs text-gray-500"><?php echo ucfirst($item->type); ?></div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <!-- <button class="text-gray-400 hover:text-gray-600">Edit</button> -->
-                                        <a href="nav-menus.php?menu=<?php echo $current_menu_id; ?>&action=delete-item&item_id=<?php echo $item->ID; ?>" class="text-red-400 hover:text-red-600" onclick="return confirm('Remove this item?');">Remove</a>
+                                        <a href="nav-menus.php?menu=<?php echo $current_menu_id; ?>&action=delete-item&item_id=<?php echo $item->ID; ?>" class="text-red-400 hover:text-red-600" data-orion-confirm="Remove this item?">Remove</a>
                                     </div>
                                 </div>
                             <?php endforeach; ?>

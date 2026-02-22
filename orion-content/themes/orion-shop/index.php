@@ -16,14 +16,14 @@ if ($is_single) {
     // Single Product Query
     $args = array(
         'p' => (int)$_GET['p'],
-        'post_type' => 'post',
+        'post_type' => array('post', 'product'),
         'post_status' => 'publish'
     );
     $orion_query = new WP_Query($args);
 } else {
     // List Query
     $args = array(
-        'post_type' => 'post',
+        'post_type' => array('post', 'product'),
         'post_status' => 'publish',
         'numberposts' => -1,
         'taxonomy' => 'product_cat'
@@ -75,7 +75,7 @@ $categories = function_exists('orion_shop_get_categories') ? orion_shop_get_cate
 $flash_products = array();
 if (!$is_single && !$search_query && !$category_filter) {
     $flash_args = array(
-        'post_type' => 'post',
+        'post_type' => array('post', 'product'),
         'post_status' => 'publish',
         'numberposts' => 5,
         'orderby' => 'rand',
@@ -220,7 +220,7 @@ if (!$is_single && !$search_query && !$category_filter) {
                     <?php
                     $current_id = $post->ID;
                     $related_args = array(
-                        'post_type' => 'post',
+                        'post_type' => array('post', 'product'),
                         'post_status' => 'publish',
                         'numberposts' => 5
                     );

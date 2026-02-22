@@ -59,9 +59,9 @@
             </div>
             <div class="hidden md:flex items-center space-x-8">
                 <a href="index.php" class="text-gray-300 hover:text-pmc-khaki font-bold uppercase tracking-wide text-sm transition-colors">Home</a>
-                <a href="#services" class="text-gray-300 hover:text-pmc-khaki font-bold uppercase tracking-wide text-sm transition-colors">Services</a>
-                <a href="#about" class="text-gray-300 hover:text-pmc-khaki font-bold uppercase tracking-wide text-sm transition-colors">About</a>
-                <a href="#contact" class="bg-pmc-green hover:bg-pmc-darkgreen text-white px-5 py-2 rounded font-bold uppercase tracking-wide text-sm transition-colors clip-path-slant">
+                <a href="capabilities.php" class="text-gray-300 hover:text-pmc-khaki font-bold uppercase tracking-wide text-sm transition-colors">Capabilities</a>
+                <a href="index.php#about" class="text-gray-300 hover:text-pmc-khaki font-bold uppercase tracking-wide text-sm transition-colors">About</a>
+                <a href="index.php#contact" class="bg-pmc-green hover:bg-pmc-darkgreen text-white px-5 py-2 rounded font-bold uppercase tracking-wide text-sm transition-colors clip-path-slant">
                     Contact Command
                 </a>
             </div>

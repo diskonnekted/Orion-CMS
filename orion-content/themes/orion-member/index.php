@@ -7,7 +7,14 @@
             <article class="bg-white rounded-lg shadow-lg overflow-hidden">
                  <?php 
                  $feat_img = get_the_post_thumbnail_url(get_the_ID(), 'large');
-                 if (!$feat_img) $feat_img = get_first_image_from_content(get_the_content());
+                 if (!$feat_img) {
+                    $gallery = get_post_meta(get_the_ID(), '_gallery_images', true);
+                    if ($gallery) {
+                        $images = json_decode($gallery, true);
+                        if (!empty($images) && is_array($images)) $feat_img = $images[0];
+                    }
+                 }
+                 if (!$feat_img && function_exists('get_first_image_from_content')) $feat_img = get_first_image_from_content(get_the_content());
                  
                  if ($feat_img): ?>
                     <img src="<?php echo $feat_img; ?>" class="w-full h-96 object-cover" alt="<?php the_title(); ?>">
@@ -171,7 +178,7 @@
                         </a>
                     </h3>
                     <p class="text-slate-600 text-sm mb-6 flex-1 line-clamp-3 leading-relaxed">
-                        <?php echo wp_trim_words($post->post_content, 20); ?>
+                        <?php echo wp_trim_words(strip_tags($post->post_content), 20); ?>
                     </p>
                     <div class="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
                         <span class="text-xs text-slate-500 font-medium">Oleh <?php the_author(); ?></span>

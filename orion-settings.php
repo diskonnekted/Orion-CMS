@@ -52,6 +52,116 @@ if ( !orion_is_installed() ) {
     orion_install();
 }
 
+/**
+ * Ensure default information pages exist (About, Manual, Privacy, Terms)
+ */
+function orion_ensure_default_info_pages() {
+    $flag = get_option('orion_default_info_pages_created', '0');
+    if ($flag === '1') {
+        return;
+    }
+
+    global $orion_db, $table_prefix;
+    $table = $table_prefix . 'posts';
+
+    $pages = array(
+        array(
+            'title' => 'About',
+            'content' => '<h2>Tentang Orion CMS</h2><p>Halaman ini menjelaskan secara singkat tentang Orion CMS, sistem manajemen konten ringan dan modern yang dirancang untuk kecepatan dan kemudahan pengembangan.</p>'
+        ),
+        array(
+            'title' => 'Manual',
+            'content' => '<h2>Manual Pengguna</h2><p>Halaman ini dapat digunakan untuk mendokumentasikan panduan penggunaan situs, alur kerja, dan instruksi penting bagi administrator maupun editor konten.</p>'
+        ),
+        array(
+            'title' => 'Privacy',
+            'content' => '<h2>Kebijakan Privasi</h2><p>Gunakan halaman ini untuk menjelaskan bagaimana data pengunjung dikumpulkan, digunakan, dan dilindungi sesuai regulasi yang berlaku.</p>'
+        ),
+        array(
+            'title' => 'Terms',
+            'content' => '<h2>Syarat dan Ketentuan</h2><p>Halaman ini berisi syarat dan ketentuan penggunaan layanan atau situs yang perlu disetujui oleh pengguna.</p>'
+        ),
+    );
+
+    foreach ($pages as $page) {
+        $title = $orion_db->real_escape_string($page['title']);
+        $sql = "SELECT ID FROM $table WHERE post_title = '$title' AND post_type = 'page' AND post_status = 'publish' LIMIT 1";
+        $result = $orion_db->query($sql);
+
+        if (!$result || $result->num_rows === 0) {
+            wp_insert_post(array(
+                'post_title' => $page['title'],
+                'post_content' => $page['content'],
+                'post_status' => 'publish',
+                'post_type' => 'page'
+            ));
+        }
+    }
+
+    update_option('orion_default_info_pages_created', '1');
+}
+
+orion_ensure_default_info_pages();
+
+if (function_exists('register_post_type')) {
+    register_post_type('post', array(
+        'label' => 'Posts',
+        'public' => true,
+        'show_in_menu' => true,
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'taxonomies' => array('category')
+    ));
+    register_post_type('page', array(
+        'label' => 'Pages',
+        'public' => true,
+        'show_in_menu' => true,
+        'supports' => array('title', 'editor', 'thumbnail')
+    ));
+    register_post_type('nav_menu_item', array(
+        'label' => 'Menu Item',
+        'public' => false,
+        'show_in_menu' => false,
+        'supports' => array('title')
+    ));
+    register_post_type('product', array(
+        'label' => 'Products',
+        'public' => true,
+        'show_in_menu' => true,
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'taxonomies' => array('product_cat')
+    ));
+    register_post_type('portfolio', array(
+        'label' => 'Portfolio',
+        'public' => true,
+        'show_in_menu' => true,
+        'supports' => array('title', 'editor', 'thumbnail'),
+        'taxonomies' => array('portfolio_cat')
+    ));
+}
+
+if (function_exists('register_taxonomy')) {
+    register_taxonomy('category', array('post'), array(
+        'label' => 'Categories',
+        'public' => true,
+        'hierarchical' => true
+    ));
+    register_taxonomy('product_cat', array('post', 'product'), array(
+        'label' => 'Product Categories',
+        'public' => true,
+        'hierarchical' => true
+    ));
+    register_taxonomy('nav_menu', array('nav_menu_item'), array(
+        'label' => 'Navigation Menus',
+        'public' => false,
+        'hierarchical' => false
+    ));
+    register_taxonomy('portfolio_cat', array('portfolio'), array(
+        'label' => 'Portfolio Categories',
+        'public' => true,
+        'hierarchical' => true
+    ));
+}
+
 // Initialize the main Query object
 $query_args = array();
 
@@ -67,6 +177,9 @@ if (isset($_GET['p'])) {
     $query_args['post_type'] = 'post';
     if (isset($_GET['taxonomy'])) {
         $query_args['taxonomy'] = $_GET['taxonomy'];
+        if ($_GET['taxonomy'] === 'product_cat') {
+            $query_args['post_type'] = array('post', 'product');
+        }
     }
 } else {
     // Check for Front Page setting
@@ -89,7 +202,12 @@ if ( (!isset($query_args['post_type']) || $query_args['post_type'] == 'post') &&
     $current_theme = get_option('template', 'orion-default');
     if ( $current_theme == 'orion-shop' ) {
         // Force product_cat for Shop main loop
-        $wp_query->query(array_merge($wp_query->query_vars, array('taxonomy' => 'product_cat')));
+        $vars = $wp_query->query_vars;
+        if (!isset($vars['post_type']) || $vars['post_type'] === 'post' || $vars['post_type'] === 'any') {
+            $vars['post_type'] = array('post', 'product');
+        }
+        $vars['taxonomy'] = 'product_cat';
+        $wp_query->query($vars);
     } else {
         // Force category for others (Magazine, etc)
         $wp_query->query(array_merge($wp_query->query_vars, array('taxonomy' => 'category')));

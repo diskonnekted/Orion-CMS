@@ -14,9 +14,10 @@ Orion CMS provides a streamlined experience for both developers and content mana
 - **Modern Admin Interface:** Clean, responsive dashboard built with **Tailwind CSS**.
 - **Post & Page Management:** Full lifecycle management including draft/publish statuses.
 - **E-Commerce Support:** Native support for Product post types, categories, and attributes via the **Orion Shop** theme.
-- **Media Manager:** Centralized handling of uploads and media assets.
+- **Media Manager:** Centralized handling of uploads and media assets with smart folder filtering.
 - **User Roles:** Granular permission system (Administrator, Editor, Author, Contributor, Subscriber).
 - **Customizable Appearance:** Dynamic color schemes and menu management.
+- **Specialized Workflows:** Industry-specific tools including Bulk ID Card Printing (Membership) and Advanced Product Management (E-Commerce).
 - **SEO Friendly:** Built-in permalink structures and clean markup.
 
 ## Included Themes
@@ -27,6 +28,8 @@ Orion CMS comes with several pre-built themes demonstrating its versatility:
 - **Orion Portfolio:** A clean portfolio theme for creatives.
 - **Orion Libre:** A library/book management theme.
 - **Orion Wall:** A social-media style feed theme.
+- **Orion Member:** A membership management theme with registration, ID card generation, and bulk printing capabilities.
+- **Orion PMC:** A specialized theme for Private Military Contractors with tactical design, secure communication forms, and service showcases.
 
 ## System Requirements
 

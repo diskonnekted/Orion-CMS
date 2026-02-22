@@ -21,7 +21,7 @@ if ($post_id) {
 
 $message = '';
 
-// Handle Form Submission
+// Handle Form Submission (PRG)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $post_data = array(
         'ID' => $post_id,
@@ -34,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($new_post_id) {
         $post_id = $new_post_id;
-        $message = "Page saved successfully.";
 
         $upload_dir = ABSPATH . 'orion-content/uploads/';
         if (!file_exists($upload_dir)) {
@@ -59,9 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              update_post_meta($post_id, '_thumbnail_url', $feat_img_url);
         }
 
-        // Refresh post data
-        $post = get_post($post_id);
+        // PRG redirect after successful save
+        $redirect_url = 'page-new.php?id=' . $post_id . '&updated=1';
+        header('Location: ' . $redirect_url);
+        exit;
     }
+}
+
+// Message from query string (PRG)
+if (isset($_GET['updated']) && $_GET['updated'] == '1' && $post_id) {
+    $message = "Page saved successfully.";
 }
 
 require_once( 'admin-header.php' );
@@ -83,11 +89,39 @@ require_once( 'admin-header.php' );
             } )
             .then( editor => {
                 editorInstance = editor;
+
+                editor.model.schema.extend( '$text', { allowAttributes: 'fontJawa' } );
+                editor.conversion.attributeToElement( {
+                    model: 'fontJawa',
+                    view: {
+                        name: 'span',
+                        classes: 'font-jawa'
+                    },
+                    upcastAlso: [
+                        { name: 'span', classes: 'font-jawa' }
+                    ]
+                } );
             } )
             .catch( error => {
                 console.error( error );
             } );
     });
+
+    function toggleAksaraJawa() {
+        if (!editorInstance) return;
+        const selection = editorInstance.model.document.selection;
+        if (selection.isCollapsed) {
+            return;
+        }
+        editorInstance.model.change( writer => {
+            const isOn = selection.hasAttribute('fontJawa');
+            if (isOn) {
+                writer.removeSelectionAttribute('fontJawa');
+            } else {
+                writer.setSelectionAttribute('fontJawa', true);
+            }
+        });
+    }
 </script>
 
 <div class="mb-6">
@@ -109,8 +143,17 @@ require_once( 'admin-header.php' );
                 <input name="post_title" id="post_title" type="text" value="<?php echo $post ? htmlspecialchars($post->post_title) : ''; ?>" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-xl font-bold" placeholder="Enter title here" required>
             </div>
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="post_content">Content</label>
-                <textarea name="post_content" id="post_content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-96" placeholder="Start writing..."><?php echo $post ? htmlspecialchars($post->post_content) : ''; ?></textarea>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-gray-700 text-sm font-bold" for="post_content">Content</label>
+                    <button
+                        type="button"
+                        onclick="toggleAksaraJawa()"
+                        class="inline-flex items-center gap-2 px-3 py-2 rounded-md border border-slate-300 text-slate-700 text-xs font-semibold bg-white hover:bg-slate-50 shadow-sm focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-slate-300 transition-colors duration-150"
+                    >
+                        <span>Aksara Jawa</span>
+                    </button>
+                </div>
+                <textarea name="post_content" id="post_content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-96" placeholder="Start writing..."><?php echo $post ? $post->post_content : ''; ?></textarea>
             </div>
         </div>
     </div>
