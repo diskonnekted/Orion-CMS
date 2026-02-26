@@ -1,0 +1,22 @@
+/*
+Theme Name: Orion Mosque
+Theme URI: http://orion-cms.com/themes/orion-mosque
+Description: Tema hijau modern untuk website masjid dengan Tailwind CSS.
+Author: Orion Team
+Author URI: http://orion-cms.com
+Version: 1.0
+*/
+
+:root {
+    --hunter-green: #386641ff;
+    --sage-green: #6a994eff;
+    --yellow-green: #a7c957ff;
+    --vanilla-cream: #f2e8cfff;
+    --blushed-brick: #bc4749ff;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background-color: #f0fdf4;
+    color: #022c22;
+}

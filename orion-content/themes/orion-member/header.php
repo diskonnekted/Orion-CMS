@@ -28,7 +28,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center justify-between">
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="index.php" class="text-2xl font-bold text-brand-600">Orion<span class="text-slate-800">Member</span></a>
+                    <a href="index.php" class="flex items-center gap-3">
+                        <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
+                        <span class="text-2xl font-bold text-brand-600">Orion Member</span>
+                    </a>
                 </div>
                 <div class="hidden md:flex space-x-8">
                     <a href="index.php" class="text-slate-600 hover:text-brand-600 font-medium">Beranda</a>

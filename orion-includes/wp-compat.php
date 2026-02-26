@@ -620,6 +620,9 @@ function the_author() {
 function the_title($before = '', $after = '', $echo = true) {
     global $post;
     $title = isset($post->post_title) ? $post->post_title : '';
+    if ($title !== '') {
+        $title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+    }
     if ($echo) {
         echo $before . $title . $after;
     }
@@ -628,7 +631,14 @@ function the_title($before = '', $after = '', $echo = true) {
 
 function the_content($more_link_text = null, $strip_teaser = false) {
     global $post;
-    echo isset($post->post_content) ? $post->post_content : '';
+    $content = isset($post->post_content) ? $post->post_content : '';
+    if ($content !== '') {
+        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+    }
+    if (function_exists('apply_filters')) {
+        $content = apply_filters('the_content', $content);
+    }
+    echo $content;
 }
 
 function the_excerpt() {
