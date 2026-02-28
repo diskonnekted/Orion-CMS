@@ -52,7 +52,7 @@
                 </span>
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight mb-6">
                     Tingkatkan Karir & <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 to-white">Koneksi Anda</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-white to-sky-200">Koneksi Anda</span>
                 </h1>
                 <p class="text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                     Bergabunglah dengan ribuan profesional lainnya. Dapatkan akses eksklusif ke wawasan industri, event networking, dan layanan konsultasi prioritas.
@@ -159,7 +159,7 @@
             <article class="bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden group h-full flex flex-col">
                 <div class="relative overflow-hidden h-56">
                     <?php 
-                    $thumbnail = has_post_thumbnail() ? get_the_post_thumbnail_url($post->ID, 'medium') : get_first_image_from_content($post->post_content);
+                    $thumbnail = orion_member_get_thumbnail($post->ID);
                     if ($thumbnail): ?>
                         <img src="<?php echo $thumbnail; ?>" alt="<?php the_title(); ?>" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
                     <?php else: ?>
@@ -178,7 +178,7 @@
                         </a>
                     </h3>
                     <p class="text-slate-600 text-sm mb-6 flex-1 line-clamp-3 leading-relaxed">
-                        <?php echo wp_trim_words(strip_tags($post->post_content), 20); ?>
+                        <?php echo wp_trim_words(strip_tags(html_entity_decode($post->post_content)), 20); ?>
                     </p>
                     <div class="mt-auto pt-6 border-t border-slate-100 flex items-center justify-between">
                         <span class="text-xs text-slate-500 font-medium">Oleh <?php the_author(); ?></span>

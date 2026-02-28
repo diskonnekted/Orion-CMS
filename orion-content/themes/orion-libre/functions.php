@@ -12,7 +12,13 @@ if (!function_exists('orion_pdf_viewer')) {
 }
 
 function orion_libre_get_book_cover($post_id) {
-    // Try to get gallery images first as cover
+    // 1. Try Featured Image (Thumbnail) first
+    $feat_img = get_post_meta($post_id, '_thumbnail_url', true);
+    if ($feat_img) {
+        return $feat_img;
+    }
+
+    // 2. Try to get gallery images as fallback
     $gallery = get_post_meta($post_id, '_gallery_images', true);
     if ($gallery) {
         $images = json_decode($gallery, true);
@@ -40,4 +46,6 @@ function orion_libre_get_pdf($post_id) {
     }
     return false;
 }
+
+require_once( dirname( __FILE__ ) . '/settings.php' );
 ?>

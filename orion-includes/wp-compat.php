@@ -617,33 +617,57 @@ function the_author() {
     echo get_the_author();
 }
 
-function the_title($before = '', $after = '', $echo = true) {
-    global $post;
-    $title = isset($post->post_title) ? $post->post_title : '';
-    if ($title !== '') {
-        $title = html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+function get_the_title($post = 0) {
+    $post_obj = null;
+    if (empty($post)) {
+        global $post;
+        $post_obj = $post;
+    } elseif (is_numeric($post)) {
+        $post_obj = get_post($post);
+    } else {
+        $post_obj = $post;
     }
+    
+    $title = isset($post_obj->post_title) ? $post_obj->post_title : '';
+    return html_entity_decode($title, ENT_QUOTES, 'UTF-8');
+}
+
+function the_title($before = '', $after = '', $echo = true) {
+    $title = get_the_title();
     if ($echo) {
         echo $before . $title . $after;
     }
     return $before . $title . $after;
 }
 
-function the_content($more_link_text = null, $strip_teaser = false) {
-    global $post;
-    $content = isset($post->post_content) ? $post->post_content : '';
+function get_the_content($more_link_text = null, $strip_teaser = false, $post_id = 0) {
+    $post_obj = null;
+    if (empty($post_id)) {
+        global $post;
+        $post_obj = $post;
+    } elseif (is_numeric($post_id)) {
+        $post_obj = get_post($post_id);
+    } else {
+        $post_obj = $post_id;
+    }
+
+    $content = isset($post_obj->post_content) ? $post_obj->post_content : '';
     if ($content !== '') {
         $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
     }
     if (function_exists('apply_filters')) {
         $content = apply_filters('the_content', $content);
     }
-    echo $content;
+    return $content;
+}
+
+function the_content($more_link_text = null, $strip_teaser = false) {
+    echo get_the_content($more_link_text, $strip_teaser);
 }
 
 function the_excerpt() {
     global $post;
-    echo isset($post->post_content) ? substr(strip_tags($post->post_content), 0, 150) . '...' : '';
+    echo isset($post->post_content) ? substr(strip_tags(html_entity_decode($post->post_content)), 0, 150) . '...' : '';
 }
 
 function the_permalink() {

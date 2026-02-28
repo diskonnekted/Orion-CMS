@@ -37,7 +37,9 @@
     <header class="bg-libre-800 text-libre-50 shadow-lg">
         <div class="container mx-auto px-4 py-6 flex justify-between items-center">
             <a href="<?php echo site_url(); ?>" class="flex items-center gap-3">
-                <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
+                <div class="h-12 w-12 rounded-full bg-white p-1 flex items-center justify-center shadow-md">
+                    <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
+                </div>
                 <div>
                     <h1 class="text-2xl font-bold font-serif tracking-wide">Orion Libre</h1>
                     <p class="text-xs text-libre-300 uppercase tracking-widest">Digital Library</p>
@@ -46,8 +48,8 @@
             <nav>
                 <ul class="flex space-x-6 text-sm font-semibold">
                     <li><a href="index.php" class="hover:text-libre-300 transition">Home</a></li>
-                    <li><a href="#" class="hover:text-libre-300 transition">Collections</a></li>
-                    <li><a href="#" class="hover:text-libre-300 transition">About</a></li>
+                    <li><a href="index.php?page=collections" class="hover:text-libre-300 transition">Collections</a></li>
+                    <li><a href="index.php?page=about" class="hover:text-libre-300 transition">About</a></li>
                     <?php if(is_user_logged_in()): ?>
                         <li><a href="manage-books.php" class="bg-libre-600 hover:bg-libre-500 text-white px-3 py-1 rounded transition">Manage Books</a></li>
                     <?php endif; ?>

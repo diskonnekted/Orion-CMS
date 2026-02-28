@@ -1,0 +1,55 @@
+/*
+Theme Name: Orion Developer
+Theme URI: https://orion-cms.com/themes/orion-developer
+Author: Orion Team
+Author URI: https://orion-cms.com/
+Description: Tema modern dan eye-catching untuk jasa pembuatan website express. Cocok untuk agency, freelancer, atau developer mandiri.
+Version: 1.0.0
+Text Domain: orion-developer
+*/
+
+:root {
+    --orion-primary: #6366f1;
+    --orion-primary-dark: #4f46e5;
+    --orion-secondary: #ec4899;
+    --orion-accent: #f59e0b;
+    --orion-dark: #0f172a;
+    --orion-light: #f8fafc;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+    background-color: var(--orion-light);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, var(--orion-primary), var(--orion-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bg-glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--orion-primary), var(--orion-primary-dark));
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+}
+
+.card-pricing {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-pricing:hover {
+    transform: translateY(-10px);
+}

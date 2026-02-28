@@ -405,7 +405,12 @@ if ($is_single):
                         <h4 class="text-lg font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition line-clamp-2">
                             <a href="index.php?p=<?php echo $post->ID; ?>"><?php echo $post->post_title; ?></a>
                         </h4>
-                        <p class="text-slate-500 text-sm mb-4 line-clamp-3 flex-grow"><?php echo substr(strip_tags($post->post_content), 0, 100); ?>...</p>
+                        <p class="text-slate-500 text-sm mb-4 line-clamp-3 flex-grow">
+                            <?php 
+                            $excerpt = strip_tags(html_entity_decode($post->post_content));
+                            echo (strlen($excerpt) > 100) ? substr($excerpt, 0, 100) . '...' : $excerpt; 
+                            ?>
+                        </p>
                         <a href="index.php?p=<?php echo $post->ID; ?>" class="text-sm font-medium text-emerald-600 hover:text-emerald-700 mt-auto inline-flex items-center">
                             Baca selengkapnya <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </a>
@@ -466,7 +471,10 @@ if ($is_single):
     <!-- Background Pattern & Image -->
     <div class="absolute inset-0 opacity-20 hero-pattern"></div>
     <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/90 to-emerald-800/70 z-10"></div>
-    <img src="https://picsum.photos/seed/village/1920/1080" alt="Village Landscape" class="absolute inset-0 w-full h-full object-cover">
+    <?php 
+    $hero_bg = get_option('smartvillage_hero_bg', 'https://picsum.photos/seed/village/1920/1080'); 
+    ?>
+    <img src="<?php echo htmlspecialchars($hero_bg); ?>" alt="Village Landscape" class="absolute inset-0 w-full h-full object-cover">
     
     <div class="container mx-auto px-4 py-24 relative z-20">
         <div class="max-w-2xl">
@@ -563,6 +571,48 @@ if ($is_single):
     </div>
 </section>
 
+<!-- Digital Services Section -->
+<section id="layanan" class="py-24 bg-white relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-24 bg-slate-50 -skew-y-2 transform origin-top-left"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-emerald-600 font-bold tracking-widest uppercase text-sm mb-3">Transformasi Digital</h2>
+            <h3 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Layanan Mandiri Warga</h3>
+            <p class="text-slate-500 text-lg">Nikmati kemudahan mengurus administrasi kependudukan dan surat-menyurat secara online dari mana saja.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+            <!-- Pendaftaran Warga -->
+            <div class="group bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
+                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-inner">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                </div>
+                <h4 class="text-2xl font-bold text-slate-800 mb-4">Pendaftaran Warga</h4>
+                <p class="text-slate-500 leading-relaxed mb-8">Belum terdaftar di database desa? Daftarkan diri anda dan keluarga untuk mendapatkan akses layanan publik yang lebih cepat.</p>
+                <a href="index.php?desa_layanan=1" class="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition transform hover:-translate-y-1">
+                    Daftar Sekarang
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
+
+            <!-- Pengajuan Surat -->
+            <div class="group bg-slate-50 p-10 rounded-[2.5rem] border border-slate-100 hover:bg-white hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl group-hover:bg-emerald-500/10 transition-colors"></div>
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-inner">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <h4 class="text-2xl font-bold text-slate-800 mb-4">Pengajuan Surat Online</h4>
+                <p class="text-slate-500 leading-relaxed mb-8">Butuh surat keterangan domisili, usaha, atau SKTM? Ajukan secara mandiri dan pantau statusnya dari rumah anda.</p>
+                <a href="index.php?desa_layanan=1" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition transform hover:-translate-y-1">
+                    Mulai Pengajuan
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Mobile Stats (Visible only on mobile) -->
 <section class="py-8 bg-slate-50 md:hidden">
     <div class="container mx-auto px-4">
@@ -626,7 +676,10 @@ if ($is_single):
                                 <a href="index.php?p=<?php echo $featured_post->ID; ?>"><?php echo $featured_post->post_title; ?></a>
                             </h3>
                             <p class="text-slate-600 mb-6 line-clamp-3">
-                                <?php echo substr(strip_tags($featured_post->post_content), 0, 150) . '...'; ?>
+                                <?php 
+                                $content = strip_tags(html_entity_decode($featured_post->post_content));
+                                echo (strlen($content) > 150) ? substr($content, 0, 150) . '...' : $content;
+                                ?>
                             </p>
                             <a href="index.php?p=<?php echo $featured_post->ID; ?>" class="inline-flex items-center text-emerald-600 font-bold hover:text-emerald-700">
                                 Baca Selengkapnya <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -656,7 +709,12 @@ if ($is_single):
                             <h4 class="text-lg font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition line-clamp-2">
                                 <a href="index.php?p=<?php echo $post->ID; ?>"><?php echo $post->post_title; ?></a>
                             </h4>
-                            <p class="text-slate-500 text-sm mb-4 line-clamp-2"><?php echo substr(strip_tags($post->post_content), 0, 100); ?>...</p>
+                            <p class="text-slate-500 text-sm mb-4 line-clamp-2">
+                                <?php 
+                                $content = strip_tags(html_entity_decode($post->post_content));
+                                echo (strlen($content) > 100) ? substr($content, 0, 100) . '...' : $content;
+                                ?>
+                            </p>
                             <a href="index.php?p=<?php echo $post->ID; ?>" class="text-sm font-medium text-emerald-600 hover:text-emerald-700">Baca selengkapnya &rarr;</a>
                         </div>
                     </article>

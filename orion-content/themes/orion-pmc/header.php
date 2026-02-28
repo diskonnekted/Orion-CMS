@@ -51,7 +51,9 @@
         <div class="flex justify-between h-20">
             <div class="flex items-center">
                 <a href="index.php" class="flex-shrink-0 flex items-center gap-3 group">
-                    <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto rounded bg-pmc-khaki p-1.5 group-hover:bg-pmc-green transition-colors">
+                    <div class="h-12 w-12 rounded-full bg-white p-1 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300">
+                        <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
+                    </div>
                     <span class="font-stencil text-2xl tracking-wider group-hover:text-pmc-khaki transition-colors">Orion PMC</span>
                 </a>
             </div>

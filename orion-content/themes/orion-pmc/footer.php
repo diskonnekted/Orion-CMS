@@ -3,8 +3,8 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="col-span-1 md:col-span-2">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 bg-pmc-green text-white flex items-center justify-center rounded font-stencil text-lg">
-                        O
+                    <div class="h-10 w-10 rounded-full bg-white p-1 flex items-center justify-center shadow-md">
+                        <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
                     </div>
                     <span class="font-stencil text-2xl text-white tracking-wider">ORION <span class="text-pmc-green">PMC</span></span>
                 </div>

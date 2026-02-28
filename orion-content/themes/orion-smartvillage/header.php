@@ -31,10 +31,12 @@
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <a href="<?php echo site_url(); ?>" class="flex items-center gap-3">
-                        <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
+                    <a href="<?php echo site_url(); ?>" class="flex items-center gap-3 group">
+                        <div class="h-12 w-12 rounded-full bg-white p-1 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300">
+                            <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
+                        </div>
                         <div class="flex flex-col">
-                            <span class="text-xl font-bold text-emerald-800 leading-none">Orion SmartVillage</span>
+                            <span class="text-xl font-bold text-emerald-800 leading-none group-hover:text-emerald-600 transition-colors">Orion SmartVillage</span>
                             <span class="text-xs text-slate-500 font-medium tracking-wide">Desa Digital</span>
                         </div>
                     </a>
@@ -57,7 +59,7 @@
                         <a href="index.php" class="px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition">Beranda</a>
                         <a href="index.php?p=5" class="px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition">Tentang Kami</a>
                         <a href="index.php?view=archive" class="px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition">Berita</a>
-                        <a href="index.php?view=services" class="px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition">Layanan</a>
+                        <a href="index.php?desa_layanan=1" class="px-4 py-2 text-emerald-600 font-bold border-b-2 border-emerald-500 transition">Portal Warga</a>
                         <a href="index.php?p=6" class="px-4 py-2 text-slate-600 hover:text-emerald-600 font-medium transition">Kontak</a>
                     </div>
                     <?php } ?>

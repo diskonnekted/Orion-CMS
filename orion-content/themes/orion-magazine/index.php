@@ -4,16 +4,92 @@
 // Handle Page Views - Only if NOT front page
 if (!is_front_page() && is_page()) {
     while (have_posts()) : the_post();
-?>
-    <main class="container mx-auto px-4 py-12">
-        <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm p-8 md:p-12">
-            <h1 class="text-4xl font-bold text-slate-800 mb-8 font-serif border-b pb-4"><?php the_title(); ?></h1>
-            <div class="prose prose-lg prose-emerald max-w-none text-slate-600">
-                <?php the_content(); ?>
-            </div>
-        </div>
-    </main>
-<?php
+        $title = trim(get_the_title());
+        if ($title === 'Berita' || $title === 'News') {
+            // Special view for News Page
+            ?>
+            <main class="container mx-auto px-4 py-12">
+                <div class="mb-12 border-b border-slate-200 pb-6">
+                    <h1 class="text-5xl font-bold text-slate-800 font-serif leading-tight">
+                        Berita <span class="text-emerald-500 italic">Terkini</span>
+                    </h1>
+                    <p class="text-slate-500 mt-4 text-lg">Ikuti perkembangan terbaru dan wawasan mendalam dari redaksi kami.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <?php 
+                    $paged = isset($_GET['paged']) ? max(1, (int)$_GET['paged']) : 1;
+                    $posts_per_page = 9;
+                    $offset = ($paged - 1) * $posts_per_page;
+                    
+                    $news_posts = get_posts(array(
+                        'numberposts' => $posts_per_page,
+                        'offset' => $offset,
+                        'post_status' => 'publish',
+                        'post_type' => 'post'
+                    ));
+
+                    if ($news_posts):
+                        foreach ($news_posts as $np):
+                            $thumb = get_the_post_thumbnail_url($np->ID);
+                            $categories = get_the_terms($np->ID, 'category');
+                            $cat_name = ($categories) ? $categories[0]->name : 'News';
+                    ?>
+                    <article class="flex flex-col group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-slate-100 h-full">
+                        <div class="relative overflow-hidden h-64">
+                            <a href="?p=<?php echo $np->ID; ?>" class="block h-full">
+                                <?php if ($thumb): ?>
+                                    <img src="<?php echo htmlspecialchars($thumb); ?>" alt="<?php echo htmlspecialchars($np->post_title); ?>" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                                <?php else: ?>
+                                    <div class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300">
+                                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    </div>
+                                <?php endif; ?>
+                            </a>
+                            <span class="absolute top-4 left-4 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg uppercase tracking-widest">
+                                <?php echo htmlspecialchars($cat_name); ?>
+                            </span>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="mb-4 flex items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                <?php echo date('M j, Y', strtotime($np->post_date)); ?>
+                            </div>
+                            <h2 class="text-xl font-bold text-slate-800 mb-4 group-hover:text-emerald-600 transition-colors font-serif leading-snug">
+                                <a href="?p=<?php echo $np->ID; ?>"><?php echo htmlspecialchars($np->post_title); ?></a>
+                            </h2>
+                            <p class="text-slate-600 text-sm mb-6 line-clamp-3 leading-relaxed flex-grow">
+                                <?php 
+                                $content = $np->post_content;
+                                $decoded = $content;
+                                for ($i=0; $i<3; $i++) { $decoded = html_entity_decode($decoded, ENT_QUOTES, 'UTF-8'); }
+                                echo wp_trim_words(strip_tags($decoded), 20); 
+                                ?>
+                            </p>
+                            <a href="?p=<?php echo $np->ID; ?>" class="mt-auto inline-flex items-center gap-2 text-sm font-bold text-emerald-600 hover:text-emerald-800 transition-colors group/link">
+                                Read Full Article
+                                <svg class="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            </a>
+                        </div>
+                    </article>
+                    <?php endforeach; else: ?>
+                        <p class="col-span-full text-center py-20 text-slate-400 italic bg-slate-50 rounded-3xl border border-dashed">Belum ada berita yang tersedia.</p>
+                    <?php endif; ?>
+                </div>
+            </main>
+            <?php
+        } else {
+            // Standard Page Content
+            ?>
+            <main class="container mx-auto px-4 py-12">
+                <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm p-8 md:p-12">
+                    <h1 class="text-4xl font-bold text-slate-800 mb-8 font-serif border-b pb-4"><?php the_title(); ?></h1>
+                    <div class="prose prose-lg prose-emerald max-w-none text-slate-600">
+                        <?php the_content(); ?>
+                    </div>
+                </div>
+            </main>
+            <?php
+        }
     endwhile;
     get_footer();
     return; // Stop execution
@@ -60,13 +136,60 @@ if (!is_front_page() && is_single()) {
                         <?php the_content(); ?>
                     </div>
                 </div>
-                <aside class="lg:col-span-4 space-y-8">
-                    <!-- Share Widget -->
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-                        <h4 class="font-bold text-slate-800 mb-4 font-serif">Share this article</h4>
-                        <div class="flex gap-2">
-                            <button class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition">Facebook</button>
-                            <button class="flex-1 bg-sky-500 text-white py-2 rounded-lg text-sm font-bold hover:bg-sky-600 transition">Twitter</button>
+                <aside class="lg:col-span-4 space-y-10">
+                    <!-- Categories Widget -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                        <h4 class="font-bold text-slate-800 mb-6 font-serif text-lg border-l-4 border-emerald-500 pl-4 uppercase tracking-wider text-xs">Categories</h4>
+                        <div class="space-y-3">
+                            <?php 
+                            $all_cats = get_categories();
+                            if ($all_cats): foreach($all_cats as $cat):
+                            ?>
+                            <a href="?cat=<?php echo $cat->term_id; ?>" class="flex items-center justify-between group py-2 border-b border-slate-50 last:border-0">
+                                <span class="text-slate-600 group-hover:text-emerald-600 transition-colors font-medium"><?php echo htmlspecialchars($cat->name); ?></span>
+                                <span class="bg-slate-50 text-slate-400 group-hover:bg-emerald-50 group-hover:text-emerald-600 px-2 py-0.5 rounded text-[10px] font-bold transition-all"><?php echo $cat->count; ?></span>
+                            </a>
+                            <?php endforeach; endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Recent News Widget -->
+                    <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                        <h4 class="font-bold text-slate-800 mb-6 font-serif text-lg border-l-4 border-emerald-500 pl-4 uppercase tracking-wider text-xs">Recent News</h4>
+                        <div class="space-y-6">
+                            <?php 
+                            $recent_args = array('numberposts' => 5, 'post_type' => 'post', 'post_status' => 'publish');
+                            $recent_list = get_posts($recent_args);
+                            if ($recent_list): foreach($recent_list as $rp):
+                                if ($rp->ID == $post->ID) continue; // Skip current
+                                $rp_thumb = get_the_post_thumbnail_url($rp->ID);
+                            ?>
+                            <a href="?p=<?php echo $rp->ID; ?>" class="flex gap-4 group">
+                                <div class="w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden bg-slate-100 shadow-sm">
+                                    <?php if ($rp_thumb): ?>
+                                        <img src="<?php echo htmlspecialchars($rp_thumb); ?>" class="w-full h-full object-cover transform transition group-hover:scale-110">
+                                    <?php else: ?>
+                                        <div class="w-full h-full flex items-center justify-center text-slate-300">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="flex flex-col justify-center">
+                                    <h5 class="text-sm font-bold text-slate-800 line-clamp-2 group-hover:text-emerald-600 transition leading-snug mb-1 font-serif"><?php echo htmlspecialchars($rp->post_title); ?></h5>
+                                    <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold"><?php echo date('M j, Y', strtotime($rp->post_date)); ?></p>
+                                </div>
+                            </a>
+                            <?php endforeach; endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter Widget -->
+                    <div class="bg-slate-900 p-8 rounded-2xl shadow-xl text-center relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-emerald-500 rounded-full opacity-10 group-hover:scale-150 transition-transform duration-700"></div>
+                        <div class="relative z-10">
+                            <h4 class="font-bold text-white mb-2 font-serif text-lg">Stay Informed</h4>
+                            <p class="text-slate-400 text-xs mb-6">Dapatkan berita terpopuler langsung di inbox anda.</p>
+                            <button class="w-full bg-emerald-500 text-white font-bold py-2.5 rounded-lg hover:bg-emerald-600 transition-all text-xs">Subscribe</button>
                         </div>
                     </div>
                 </aside>
@@ -132,7 +255,7 @@ if (!is_front_page() && is_single()) {
                 </span>
             </div>
             <p class="text-slate-200 text-lg md:text-xl line-clamp-2 md:line-clamp-3 font-light leading-relaxed max-w-3xl">
-                <?php echo wp_trim_words($post->post_content, 35); ?>
+                <?php echo wp_trim_words(strip_tags(html_entity_decode($post->post_content)), 35); ?>
             </p>
         </div>
     </section>
@@ -208,7 +331,7 @@ if (!is_front_page() && is_single()) {
                             <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                         </h2>
                         <p class="text-slate-600 text-sm mb-4 line-clamp-3 leading-relaxed flex-grow">
-                            <?php echo wp_trim_words($post->post_content, 20); ?>
+                            <?php echo wp_trim_words(strip_tags(html_entity_decode($post->post_content)), 20); ?>
                         </p>
                         <div class="pt-4 border-t border-slate-50 mt-auto">
                             <a href="<?php the_permalink(); ?>" class="text-sm font-semibold text-emerald-600 hover:text-emerald-800 flex items-center group/link">

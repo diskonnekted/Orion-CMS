@@ -46,12 +46,12 @@ if ($has_core):
                 <div class="flex flex-col sm:flex-row items-center gap-4 text-sm text-brand-200">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        PHP 7.4+
+                        PHP 8.2+
                     </div>
                     <div class="hidden sm:block w-1 h-1 bg-brand-400 rounded-full"></div>
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
-                        MySQL 5.7+
+                        MariaDB 10.4+
                     </div>
                     <div class="hidden sm:block w-1 h-1 bg-brand-400 rounded-full"></div>
                     <div class="flex items-center">
@@ -143,11 +143,40 @@ if ($has_core):
                 $has_zip = file_exists($zip_path);
                 
                 // Check for screenshot
-                $img_url = site_url('/assets/img/orion-logo.png'); // Default
-                if (file_exists($themes_path . $dir . '/screenshot.png')) {
-                    $img_url = site_url('/orion-content/themes/' . $dir . '/screenshot.png');
-                } elseif (file_exists($themes_path . $dir . '/screenshot.jpg')) {
-                    $img_url = site_url('/orion-content/themes/' . $dir . '/screenshot.jpg');
+                $img_url = ''; 
+                $is_icon = true;
+                $category = 'theme'; // Default category
+                
+                $screenshot_files = array('screenshot.png', 'screenshot.jpg', 'screenshot.jpeg', 'screenshot.JPG', 'screenshot.JPEG');
+                foreach ($screenshot_files as $sf) {
+                    if (file_exists($themes_path . $dir . '/' . $sf)) {
+                        $img_url = site_url('/orion-content/themes/' . $dir . '/' . $sf);
+                        $is_icon = false;
+                        break;
+                    }
+                }
+                
+                if ($is_icon) {
+                    // Try any image in root
+                    $root_files = scandir($themes_path . $dir);
+                    foreach ($root_files as $rf) {
+                        if ($rf == '.' || $rf == '..') continue;
+                        if (preg_match('/\.(jpg|jpeg|png|webp)$/i', $rf) && !preg_match('/(favicon|logo)\./i', $rf)) {
+                            $img_url = site_url('/orion-content/themes/' . $dir . '/' . $rf);
+                            $is_icon = false;
+                            break;
+                        }
+                    }
+                }
+
+                // Determine category if icon
+                if ($is_icon) {
+                    if (strpos($dir, 'shop') !== false) $category = 'shop';
+                    elseif (strpos($dir, 'school') !== false) $category = 'school';
+                    elseif (strpos($dir, 'member') !== false) $category = 'community';
+                    elseif (strpos($dir, 'portfolio') !== false) $category = 'design';
+                    elseif (strpos($dir, 'magazine') !== false) $category = 'news';
+                    elseif (strpos($dir, 'developer') !== false) $category = 'code';
                 }
 
                 $themes[$dir] = [
@@ -157,6 +186,8 @@ if ($has_core):
                     'has_zip' => $has_zip,
                     'size' => $has_zip ? filesize($zip_path) : 0,
                     'img_url' => $img_url,
+                    'is_icon' => $is_icon,
+                    'category' => $category,
                     'description' => 'Tema responsif dan modern untuk website Anda. Siap pakai dan mudah dikustomisasi.'
                 ];
             }
@@ -191,14 +222,31 @@ if ($has_core):
                 $has_zip = file_exists($zip_path);
                 
                 // Default image for plugins
-                $img_url = site_url('/assets/img/orion-logo.png');
-                // Try to find screenshot in plugin folder if it is a dir
+                $img_url = '';
+                $is_icon = true;
+                $category = 'plugin';
+
+                // Try to find screenshot or specific icon
                 if ($is_dir) {
-                        if (file_exists($full_path . '/screenshot.png')) {
+                    if (file_exists($full_path . '/screenshot.png')) {
                         $img_url = site_url('/orion-content/plugins/' . $item_name . '/screenshot.png');
-                    } elseif (file_exists($full_path . '/assets/img/logo.png')) {
-                            $img_url = site_url('/orion-content/plugins/' . $item_name . '/assets/img/logo.png');
+                        $is_icon = false;
+                    } elseif (file_exists($full_path . '/screenshot.jpg')) {
+                        $img_url = site_url('/orion-content/plugins/' . $item_name . '/screenshot.jpg');
+                        $is_icon = false;
                     }
+                }
+
+                // Determine category for icon
+                if ($is_icon) {
+                    if (strpos($slug, 'form') !== false) $category = 'form';
+                    elseif (strpos($slug, 'shop') !== false) $category = 'shop';
+                    elseif (strpos($slug, 'pdf') !== false) $category = 'pdf';
+                    elseif (strpos($slug, 'ai') !== false) $category = 'ai';
+                    elseif (strpos($slug, 'bbpress') !== false || strpos($slug, 'forum') !== false) $category = 'forum';
+                    elseif (strpos($slug, 'editor') !== false) $category = 'editor';
+                    elseif (strpos($slug, 'quran') !== false || strpos($slug, 'doa') !== false) $category = 'religion';
+                    elseif (strpos($slug, 'donor') !== false || strpos($slug, 'donation') !== false) $category = 'finance';
                 }
 
                 $plugins[$slug] = [
@@ -208,6 +256,8 @@ if ($has_core):
                     'has_zip' => $has_zip,
                     'size' => $has_zip ? filesize($zip_path) : 0,
                     'img_url' => $img_url,
+                    'is_icon' => $is_icon,
+                    'category' => $category,
                     'description' => 'Plugin fungsionalitas untuk sistem Orion CMS.'
                 ];
             }
@@ -254,10 +304,41 @@ if ($has_core):
                         'orion-shop.zip' => 'shop.png',
                         'orion-wall.zip' => 'wall.png',
                         'orion-libre.zip' => 'libre.png',
+                        'orion-school.zip' => 'school.png',
+                        'orion-promo.zip' => 'promo.png',
+                        'orion-developer.zip' => 'logo.png',
+                        'orion-form.zip' => 'form-plugin.png',
+                        'orion-pdf-reader.zip' => 'pdf-plugin.png',
+                        'orion-shop-manager.zip' => 'shop-plugin.png',
+                        'hello-orion.zip' => 'hello-plugin.png',
+                        'classic-editor.1.6.7.zip' => 'form-plugin.png',
+                        'ai.0.3.1.zip' => 'hello-plugin.png',
                     ];
                     
-                    $img_file = isset($image_map[$filename]) ? $image_map[$filename] : 'orion-logo.png';
-                    $img_url = site_url('/assets/img/' . $img_file); // Fallback to assets
+                    $img_url = '';
+                    $is_icon_only = true;
+                    $category = ($type === 'Theme') ? 'theme' : 'plugin';
+
+                    if (isset($image_map[$filename])) {
+                        $img_file = $image_map[$filename];
+                        if (in_array($img_file, ['magazine.png', 'one.png', 'portfolio.png', 'smartvillage.png', 'shop.png', 'wall.png', 'libre.png', 'school.png', 'promo.png'])) {
+                            $is_icon_only = false;
+                            $img_url = site_url('/assets/img/' . $img_file);
+                        }
+                    } 
+                    
+                    if ($is_icon_only) {
+                        if (strpos($filename, 'form') !== false) $category = 'form';
+                        elseif (strpos($filename, 'shop') !== false) $category = 'shop';
+                        elseif (strpos($filename, 'pdf') !== false) $category = 'pdf';
+                        elseif (strpos($filename, 'ai') !== false) $category = 'ai';
+                        elseif (strpos($filename, 'bbpress') !== false || strpos($filename, 'forum') !== false) $category = 'forum';
+                        elseif (strpos($filename, 'editor') !== false) $category = 'editor';
+                        elseif (strpos($filename, 'quran') !== false || strpos($filename, 'doa') !== false) $category = 'religion';
+                        elseif (strpos($filename, 'donor') !== false || strpos($filename, 'donation') !== false) $category = 'finance';
+                        elseif (strpos($filename, 'developer') !== false) $category = 'code';
+                        elseif (strpos($filename, 'school') !== false) $category = 'school';
+                    }
 
                     $item_data = [
                         'name' => $name,
@@ -266,6 +347,8 @@ if ($has_core):
                         'has_zip' => true,
                         'size' => filesize($file),
                         'img_url' => $img_url,
+                        'is_icon' => $is_icon_only,
+                        'category' => $category,
                         'description' => ($type === 'Plugin') ? 'Ekstensi fungsionalitas untuk meningkatkan kemampuan Orion CMS.' : 'Tema responsif dan modern untuk website Anda.'
                     ];
                     
@@ -280,9 +363,34 @@ if ($has_core):
         
         // Function to render grid
         function render_download_grid($items) {
+            $icons = [
+                'shop'      => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>',
+                'form'      => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>',
+                'pdf'       => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v12a2 2 0 002 2z"></path>',
+                'ai'        => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>',
+                'forum'     => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>',
+                'editor'    => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>',
+                'religion'  => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>',
+                'finance'   => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>',
+                'code'      => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>',
+                'school'    => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 12.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>',
+                'community' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>',
+                'design'    => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>',
+                'plugin'    => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H7a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path>',
+                'theme'     => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>',
+            ];
+
             foreach ($items as $slug => $item) {
-                $badge_color = ($item['type'] === 'Theme') ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
+                $is_theme = ($item['type'] === 'Theme');
+                $badge_color = $is_theme ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700';
+                $is_icon = isset($item['is_icon']) ? $item['is_icon'] : false;
+                $cat = isset($item['category']) ? $item['category'] : ($is_theme ? 'theme' : 'plugin');
                 
+                // Aesthetic background gradients
+                $grad_class = $is_theme 
+                    ? 'from-purple-500 to-indigo-600' 
+                    : 'from-blue-500 to-brand-600';
+
                 // Format size
                 $size_str = '0 KB';
                 if ($item['size'] > 0) {
@@ -290,12 +398,31 @@ if ($has_core):
                             ? round($item['size'] / (1024 * 1024), 2) . ' MB' 
                             : round($item['size'] / 1024, 2) . ' KB';
                 }
+
+                $svg_path = isset($icons[$cat]) ? $icons[$cat] : $icons[$is_theme ? 'theme' : 'plugin'];
             ?>
             <!-- Modern Download Card -->
             <div class="group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
                 <!-- Image Container -->
                 <div class="relative h-48 overflow-hidden bg-slate-100">
-                    <img src="<?php echo $item['img_url']; ?>" alt="<?php echo $item['name']; ?>" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                    <?php if ($is_icon): ?>
+                        <!-- Aesthetic Icon Background -->
+                        <div class="w-full h-full bg-gradient-to-br <?php echo $grad_class; ?> flex items-center justify-center relative">
+                            <!-- Large background icon (aesthetic) -->
+                            <svg class="absolute w-48 h-48 opacity-10 transform -rotate-12 scale-125 pointer-events-none" fill="none" stroke="white" viewBox="0 0 24 24">
+                                <?php echo $svg_path; ?>
+                            </svg>
+                            <!-- Main Icon Container -->
+                            <div class="relative z-10 w-24 h-24 bg-white/10 backdrop-blur-md rounded-3xl p-5 shadow-inner border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                                <svg class="w-full h-full text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <?php echo $svg_path; ?>
+                                </svg>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <img src="<?php echo $item['img_url']; ?>" alt="<?php echo $item['name']; ?>" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                    <?php endif; ?>
+
                     <div class="absolute top-4 right-4">
                         <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide <?php echo $badge_color; ?> shadow-sm">
                             <?php echo $item['type']; ?>

@@ -29,7 +29,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex-shrink-0 flex items-center">
                     <a href="index.php" class="flex items-center gap-3">
-                        <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
+                        <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
                         <span class="text-2xl font-bold text-brand-600">Orion Member</span>
                     </a>
                 </div>

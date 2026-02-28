@@ -3,8 +3,10 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <!-- Brand -->
             <div class="col-span-1 md:col-span-1">
-                <a href="<?php echo site_url(); ?>" class="flex items-center gap-3 mb-6">
-                    <div class="w-8 h-8 bg-emerald-500 rounded flex items-center justify-center text-white font-bold">O</div>
+                <a href="<?php echo site_url(); ?>" class="flex items-center gap-3 mb-6 group">
+                    <div class="h-10 w-10 rounded-full bg-white p-1 flex items-center justify-center shadow-md">
+                        <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
+                    </div>
                     <span class="text-xl font-bold text-white"><?php echo get_bloginfo('name'); ?></span>
                 </a>
                 <p class="text-sm text-slate-400 mb-6">

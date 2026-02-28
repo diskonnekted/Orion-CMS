@@ -144,7 +144,7 @@
 <nav class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="<?php echo site_url(); ?>" class="text-2xl font-bold text-brand-700 flex items-center gap-3">
-            <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
+            <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
             <span class="tracking-tight">Orion Promo</span>
         </a>
         

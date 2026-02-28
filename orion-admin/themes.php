@@ -103,12 +103,34 @@ if (is_dir($themes_dir)) {
                     preg_match('/Author:(.*)$/m', $css_data, $author_match);
                     preg_match('/Version:(.*)$/m', $css_data, $version_match);
                     
+                    $screenshot = 'https://via.placeholder.com/600x400?text=' . $file;
+                    $screenshot_files = array('screenshot.png', 'screenshot.jpg', 'screenshot.jpeg', 'screenshot.JPG', 'screenshot.JPEG');
+                    
+                    foreach ($screenshot_files as $sf) {
+                        if (file_exists($themes_dir . $file . '/' . $sf)) {
+                            $screenshot = site_url('/orion-content/themes/' . $file . '/' . $sf);
+                            break;
+                        }
+                    }
+                    
+                    // If still placeholder, try to find any image in the theme root (e.g. construction.jpg, garahe.jpg)
+                    if (strpos($screenshot, 'via.placeholder.com') !== false) {
+                        $root_files = scandir($themes_dir . $file);
+                        foreach ($root_files as $rf) {
+                            if ($rf == '.' || $rf == '..') continue;
+                            if (preg_match('/\.(jpg|jpeg|png|webp)$/i', $rf) && !preg_match('/(favicon|logo)\./i', $rf)) {
+                                $screenshot = site_url('/orion-content/themes/' . $file . '/' . $rf);
+                                break;
+                            }
+                        }
+                    }
+
                     $themes[$file] = array(
                         'name' => isset($name_match[1]) ? trim($name_match[1]) : $file,
                         'description' => isset($desc_match[1]) ? trim($desc_match[1]) : '',
                         'author' => isset($author_match[1]) ? trim($author_match[1]) : '',
                         'version' => isset($version_match[1]) ? trim($version_match[1]) : '',
-                        'screenshot' => file_exists($themes_dir . $file . '/screenshot.png') ? site_url('/orion-content/themes/' . $file . '/screenshot.png') : 'https://via.placeholder.com/600x400?text=' . $file
+                        'screenshot' => $screenshot
                     );
                 }
             }
@@ -190,9 +212,11 @@ include 'admin-header.php';
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     <?php foreach ($themes as $slug => $theme): ?>
         <div class="bg-white rounded-xl shadow-sm overflow-hidden border <?php echo ($slug == $current_theme) ? 'border-orion-600 ring-2 ring-orion-600' : 'border-slate-200'; ?> hover:shadow-md transition-shadow">
-            <div class="h-48 relative overflow-hidden group">
+            <div class="h-48 relative overflow-hidden group bg-slate-100">
                 <?php if (strpos($theme['screenshot'], 'via.placeholder.com') === false): ?>
-                    <img src="<?php echo $theme['screenshot']; ?>" alt="<?php echo $theme['name']; ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <img src="<?php echo $theme['screenshot']; ?>" alt="<?php echo $theme['name']; ?>" 
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/600x400?text=<?php echo urlencode($theme['name']); ?>';">
                 <?php else: ?>
                     <?php if (strpos($slug, 'portfolio') !== false): ?>
                         <div class="absolute inset-0 bg-purple-50 flex items-center justify-center overflow-hidden">

@@ -106,7 +106,9 @@
             <!-- Logo -->
             <div class="flex items-center">
                 <a href="<?php echo site_url(); ?>" class="flex items-center gap-3 group">
-                    <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto drop-shadow-md">
+                    <div class="h-12 w-12 rounded-full bg-white p-1 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300">
+                        <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
+                    </div>
                     <div>
                         <h1 class="text-2xl font-bold text-slate-800 leading-none group-hover:text-primary-600 transition tracking-tight">Orion School</h1>
                         <p class="text-[10px] text-slate-500 tracking-[0.2em] uppercase font-semibold mt-0.5">Unggul & Berkarakter</p>

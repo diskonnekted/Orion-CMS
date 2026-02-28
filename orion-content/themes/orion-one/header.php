@@ -28,7 +28,9 @@
         <div class="flex justify-between items-center py-4">
             <div class="text-2xl font-bold text-orion-600">
                 <a href="<?php echo site_url(); ?>" class="flex items-center gap-3">
-                    <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
+                    <div class="h-10 w-10 rounded-full bg-white p-1 flex items-center justify-center shadow-sm">
+                        <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
+                    </div>
                     <span class="tracking-tight">Orion One</span>
                 </a>
             </div>

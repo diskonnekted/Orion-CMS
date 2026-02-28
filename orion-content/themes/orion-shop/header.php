@@ -45,8 +45,10 @@
             <div class="flex items-center justify-between gap-8">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center">
-                    <a href="index.php" class="flex items-center gap-3">
-                        <img src="<?php echo site_url('/assets/img/orion-logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
+                    <a href="index.php" class="flex items-center gap-3 group">
+                        <div class="h-12 w-12 rounded-full bg-white p-1 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300 border border-slate-100">
+                            <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
+                        </div>
                         <span class="text-2xl font-extrabold text-shop-600 tracking-tighter">Orion Shop</span>
                     </a>
                 </div>

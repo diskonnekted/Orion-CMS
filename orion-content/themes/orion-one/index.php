@@ -60,7 +60,10 @@
                                             <a href="?p=<?php echo $np->ID; ?>"><?php echo htmlspecialchars($np->post_title); ?></a>
                                         </h3>
                                         <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">
-                                            <?php echo substr(strip_tags($np->post_content), 0, 100) . '...'; ?>
+                                            <?php 
+                                            $excerpt = strip_tags(html_entity_decode($np->post_content));
+                                            echo (strlen($excerpt) > 100) ? substr($excerpt, 0, 100) . '...' : $excerpt; 
+                                            ?>
                                         </p>
                                         <a href="?p=<?php echo $np->ID; ?>" class="text-blue-600 text-sm font-semibold hover:underline mt-auto">Baca Selengkapnya &rarr;</a>
                                     </div>
@@ -335,7 +338,7 @@
                         
                         <p class="text-gray-200 mb-8 hidden md:block text-lg max-w-2xl leading-relaxed">
                             <?php 
-                            $content = strip_tags($hero_post->post_content);
+                            $content = strip_tags(html_entity_decode($hero_post->post_content));
                             echo (strlen($content) > 150) ? substr($content, 0, 150) . '...' : $content;
                             ?>
                         </p>
@@ -395,7 +398,7 @@
                         
                         <p class="text-gray-600 mb-6 text-sm line-clamp-3 leading-relaxed flex-grow">
                             <?php 
-                            $content = strip_tags($post->post_content);
+                            $content = strip_tags(html_entity_decode($post->post_content));
                             echo (strlen($content) > 100) ? substr($content, 0, 100) . '...' : $content;
                             ?>
                         </p>
@@ -471,7 +474,7 @@
                                         </h4>
                                         <p class="text-sm text-gray-600 line-clamp-3 mb-4 flex-grow">
                                             <?php 
-                                            $content = strip_tags($post->post_content);
+                                            $content = strip_tags(html_entity_decode($post->post_content));
                                             echo (strlen($content) > 80) ? substr($content, 0, 80) . '...' : $content;
                                             ?>
                                         </p>

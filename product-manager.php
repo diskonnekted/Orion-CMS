@@ -722,7 +722,7 @@ $products = get_posts($args);
                                             </div>
                                             <div class="ml-4">
                                                 <div class="text-sm font-semibold text-gray-900"><?php echo $p->post_title; ?></div>
-                                                <div class="text-xs text-gray-500 truncate max-w-[200px]"><?php echo substr(strip_tags($p->post_content), 0, 50); ?>...</div>
+                                                <div class="text-xs text-gray-500 truncate max-w-[200px]"><?php echo substr(strip_tags(html_entity_decode($p->post_content)), 0, 50); ?>...</div>
                                             </div>
                                         </div>
                                     </td>

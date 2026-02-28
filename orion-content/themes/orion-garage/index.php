@@ -86,6 +86,88 @@ if ($view_id > 0) {
                 </div>
             </section>
             <?php
+        } elseif ($type === 'page' && ($title === 'Berita' || $title === 'News')) {
+            ?>
+            <section class="space-y-8">
+                <div classmax-w-2xl>
+                    <p class="text-xs font-semibold tracking-wide uppercase text-garage-200 mb-2">Update dari Orion Garage</p>
+                    <h1 class="text-3xl sm:text-4xl font-extrabold text-white mb-3 leading-tight">
+                        Tips Perawatan & Kabar Terbaru
+                    </h1>
+                    <p class="text-gray-300 text-sm sm:text-base">
+                        Simak tips otomotif terbaru dan update layanan dari tim teknisi ahli kami.
+                    </p>
+                </div>
+
+                <?php
+                // Pagination Logic
+                $paged = isset($_GET['paged']) ? max(1, (int)$_GET['paged']) : 1;
+                $posts_per_page = 9;
+                $offset = ($paged - 1) * $posts_per_page;
+                
+                $args = array(
+                    'numberposts' => $posts_per_page,
+                    'offset' => $offset,
+                    'post_status' => 'publish',
+                    'post_type' => 'post'
+                );
+                
+                $news_posts = get_posts($args);
+                
+                if ($news_posts):
+                ?>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <?php foreach ($news_posts as $lp): ?>
+                        <?php $thumb = get_the_post_thumbnail_url($lp->ID); ?>
+                        <article class="bg-slate-900/60 border border-white/10 rounded-2xl overflow-hidden flex flex-col group hover:border-garage-500/50 transition-all">
+                            <div class="aspect-video bg-slate-800 relative overflow-hidden">
+                                <?php if ($thumb): ?>
+                                    <img src="<?php echo htmlspecialchars($thumb); ?>" alt="<?php echo htmlspecialchars($lp->post_title); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <?php else: ?>
+                                    <div class="w-full h-full flex items-center justify-center text-gray-500 text-xs italic">
+                                        Sampul tidak tersedia
+                                    </div>
+                                <?php endif; ?>
+                                <a href="?p=<?php echo $lp->ID; ?>" class="absolute inset-0"></a>
+                            </div>
+                            <div class="p-5 flex flex-col flex-1">
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="text-[10px] font-bold text-garage-300 uppercase tracking-widest"><?php echo date('d M Y', strtotime($lp->post_date)); ?></p>
+                                    <span class="h-1 w-1 bg-white/20 rounded-full"></span>
+                                    <p class="text-[10px] font-medium text-gray-400">By Admin</p>
+                                </div>
+                                <h3 class="text-base font-bold text-white mb-3 line-clamp-2 leading-snug group-hover:text-garage-200 transition-colors">
+                                    <a href="?p=<?php echo $lp->ID; ?>">
+                                        <?php echo htmlspecialchars($lp->post_title); ?>
+                                    </a>
+                                </h3>
+                                <p class="text-xs text-gray-400 mb-5 line-clamp-3 leading-relaxed">
+                                    <?php
+                                    $content = $lp->post_content;
+                                    // Robust decoding to handle multiple layers of encoding
+                                    $decoded = $content;
+                                    for ($i=0; $i<3; $i++) {
+                                        $decoded = html_entity_decode($decoded, ENT_QUOTES, 'UTF-8');
+                                    }
+                                    $plain_text = strip_tags($decoded);
+                                    echo (strlen($plain_text) > 120) ? substr($plain_text, 0, 120) . '...' : $plain_text;
+                                    ?>
+                                </p>
+                                <a href="?p=<?php echo $lp->ID; ?>" class="mt-auto inline-flex items-center gap-2 text-xs font-bold text-garage-200 hover:text-white transition-colors group/link">
+                                    Baca Selengkapnya
+                                    <svg class="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                </a>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+                <?php else: ?>
+                    <div class="text-center py-20 bg-slate-900/40 rounded-3xl border border-dashed border-white/10">
+                        <p class="text-gray-500 italic">Belum ada berita yang diterbitkan.</p>
+                    </div>
+                <?php endif; ?>
+            </section>
+            <?php
         } elseif ($type === 'page' && $title === 'Promo') {
             ?>
             <section class="space-y-6">
@@ -323,12 +405,28 @@ if ($view_id > 0) {
                             <img src="<?php echo htmlspecialchars($thumb_url); ?>" alt="<?php echo htmlspecialchars($post->post_title); ?>" class="w-full h-auto object-cover">
                         </div>
                     <?php endif; ?>
-                    <div class="prose prose-invert prose-sm sm:prose lg:prose-lg max-w-none text-gray-100 leading-relaxed">
+                    <div class="prose prose-invert prose-slate max-w-none 
+                                text-slate-300 leading-[1.8] text-base md:text-lg
+                                prose-headings:text-white prose-headings:font-extrabold prose-headings:tracking-tight
+                                prose-p:mb-6 prose-p:mt-0
+                                prose-strong:text-garage-200 prose-strong:font-bold
+                                prose-a:text-garage-300 prose-a:no-underline hover:prose-a:text-white prose-a:border-b prose-a:border-garage-500/30
+                                prose-ul:list-disc prose-ol:list-decimal
+                                prose-li:my-2
+                                prose-blockquote:border-l-4 prose-blockquote:border-garage-500 prose-blockquote:bg-white/5 prose-blockquote:p-6 prose-blockquote:rounded-r-2xl prose-blockquote:italic prose-blockquote:text-slate-200
+                                prose-img:rounded-3xl prose-img:shadow-2xl">
                         <?php
+                        $content = $post->post_content;
+                        // Robust decoding for content
+                        $decoded = $content;
+                        for ($i=0; $i<3; $i++) {
+                            $decoded = html_entity_decode($decoded, ENT_QUOTES, 'UTF-8');
+                        }
+                        
                         if (function_exists('apply_filters')) {
-                            echo apply_filters('the_content', $post->post_content);
+                            echo apply_filters('the_content', $decoded);
                         } else {
-                            echo $post->post_content;
+                            echo $decoded;
                         }
                         ?>
                     </div>
@@ -584,8 +682,13 @@ if ($view_id > 0) {
                             </h3>
                             <p class="text-xs text-gray-300 mb-3 line-clamp-3">
                                 <?php
-                                $raw_excerpt = html_entity_decode($lp->post_content);
-                                $plain_text = strip_tags($raw_excerpt);
+                                $content = $lp->post_content;
+                                // Robust decoding
+                                $decoded = $content;
+                                for ($i=0; $i<3; $i++) {
+                                    $decoded = html_entity_decode($decoded, ENT_QUOTES, 'UTF-8');
+                                }
+                                $plain_text = strip_tags($decoded);
                                 if (function_exists('mb_substr')) {
                                     $excerpt = mb_substr($plain_text, 0, 120);
                                 } else {
