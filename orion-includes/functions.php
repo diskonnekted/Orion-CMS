@@ -324,6 +324,17 @@ function site_url($path = '') {
     if ($basePath === '') {
         $script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
         $dir = rtrim(str_replace('\\', '/', dirname($script_name)), '/');
+
+        // Fix: If we are inside orion-admin, strip it to find the root
+        // Check if path ends with /orion-admin or contains /orion-admin/
+        $orion_admin = '/orion-admin';
+        $len = strlen($orion_admin);
+        if (substr($dir, -$len) === $orion_admin) {
+             $dir = substr($dir, 0, -$len);
+        } elseif (($pos = strpos($dir, $orion_admin . '/')) !== false) {
+             $dir = substr($dir, 0, $pos);
+        }
+
         if ($dir && $dir !== '/') {
             $basePath = $dir;
         }
