@@ -280,7 +280,7 @@ $inactive_count = $total_plugins - $active_count;
                     ];
                     
                     // Icon map for known plugins
-                    if (str_contains($plugin_name_lower, 'ai') || str_contains($plugin_name_lower, 'artificial')) {
+                    if (strpos($plugin_name_lower, 'ai') !== false || strpos($plugin_name_lower, 'artificial') !== false) {
                         $icon_config = [
                             'bg_class' => 'bg-purple-50',
                             'text_class' => 'text-purple-600',
@@ -288,7 +288,7 @@ $inactive_count = $total_plugins - $active_count;
                             'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>',
                             'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>'
                         ];
-                    } elseif (str_contains($plugin_name_lower, 'download') || str_contains($plugin_name_lower, 'file')) {
+                    } elseif (strpos($plugin_name_lower, 'download') !== false || strpos($plugin_name_lower, 'file') !== false) {
                         $icon_config = [
                             'bg_class' => 'bg-blue-50',
                             'text_class' => 'text-blue-600',
@@ -296,7 +296,7 @@ $inactive_count = $total_plugins - $active_count;
                             'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>',
                             'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>'
                         ];
-                    } elseif (str_contains($plugin_name_lower, 'shop') || str_contains($plugin_name_lower, 'ecommerce')) {
+                    } elseif (strpos($plugin_name_lower, 'shop') !== false || strpos($plugin_name_lower, 'ecommerce') !== false) {
                         $icon_config = [
                             'bg_class' => 'bg-emerald-50',
                             'text_class' => 'text-emerald-600',
@@ -304,7 +304,7 @@ $inactive_count = $total_plugins - $active_count;
                             'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>',
                             'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'
                         ];
-                    } elseif (str_contains($plugin_name_lower, 'form')) {
+                    } elseif (strpos($plugin_name_lower, 'form') !== false) {
                         $icon_config = [
                             'bg_class' => 'bg-amber-50',
                             'text_class' => 'text-amber-600',
@@ -312,7 +312,7 @@ $inactive_count = $total_plugins - $active_count;
                             'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
                             'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>'
                         ];
-                    } elseif (str_contains($plugin_name_lower, 'pdf')) {
+                    } elseif (strpos($plugin_name_lower, 'pdf') !== false) {
                         $icon_config = [
                             'bg_class' => 'bg-red-50',
                             'text_class' => 'text-red-600',
@@ -320,7 +320,7 @@ $inactive_count = $total_plugins - $active_count;
                             'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>',
                             'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>'
                         ];
-                    } elseif (str_contains($plugin_name_lower, 'hello') || str_contains($plugin_name_lower, 'greeting')) {
+                    } elseif (strpos($plugin_name_lower, 'hello') !== false || strpos($plugin_name_lower, 'greeting') !== false) {
                         $icon_config = [
                             'bg_class' => 'bg-pink-50',
                             'text_class' => 'text-pink-600',
