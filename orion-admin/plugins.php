@@ -275,7 +275,7 @@ $inactive_count = $total_plugins - $active_count;
                     
                     // Specific plugin mappings (check for keywords first)
                     if (strpos($plugin_name_lower, 'quran') !== false || strpos($plugin_name_lower, 'qur\'an') !== false) {
-                        $image_url = 'https://images.unsplash.com/photo-1596266405353-5889d0530d09?auto=format&fit=crop&w=800&q=80'; // Alquran
+                        $image_url = 'https://images.unsplash.com/photo-1586661709166-4365a55279b2?auto=format&fit=crop&w=800&q=80'; // Alquran
                     } elseif (strpos($plugin_name_lower, 'desa') !== false || strpos($plugin_name_lower, 'village') !== false) {
                         $image_url = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80'; // Desa
                     } elseif (strpos($plugin_name_lower, 'doa') !== false || strpos($plugin_name_lower, 'pray') !== false) {
