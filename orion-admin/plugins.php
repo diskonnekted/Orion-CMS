@@ -273,16 +273,22 @@ $inactive_count = $total_plugins - $active_count;
                     $plugin_name_lower = strtolower($plugin['Name']);
                     $image_url = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80'; // Default code image
                     
-                    if (strpos($plugin_name_lower, 'ai') !== false || strpos($plugin_name_lower, 'artificial') !== false) {
+                    if (strpos($plugin_name_lower, 'desa') !== false || strpos($plugin_name_lower, 'village') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80'; // Desa
+                    } elseif (strpos($plugin_name_lower, 'doa') !== false || strpos($plugin_name_lower, 'pray') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80'; // Orang berdoa
+                    } elseif (strpos($plugin_name_lower, 'quran') !== false || strpos($plugin_name_lower, 'qur\'an') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1596266405353-5889d0530d09?auto=format&fit=crop&w=800&q=80'; // Alquran
+                    } elseif (strpos($plugin_name_lower, 'shop') !== false || strpos($plugin_name_lower, 'toko') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80'; // Toko
+                    } elseif (strpos($plugin_name_lower, 'form') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'; // Form
+                    } elseif (strpos($plugin_name_lower, 'pdf') !== false || strpos($plugin_name_lower, 'reader') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1542744095-09e7039a2a1e?auto=format&fit=crop&w=800&q=80'; // Dokumen
+                    } elseif (strpos($plugin_name_lower, 'ai') !== false || strpos($plugin_name_lower, 'artificial') !== false) {
                         $image_url = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'download') !== false || strpos($plugin_name_lower, 'file') !== false) {
                         $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
-                    } elseif (strpos($plugin_name_lower, 'shop') !== false || strpos($plugin_name_lower, 'ecommerce') !== false) {
-                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
-                    } elseif (strpos($plugin_name_lower, 'form') !== false) {
-                        $image_url = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80';
-                    } elseif (strpos($plugin_name_lower, 'pdf') !== false) {
-                        $image_url = 'https://images.unsplash.com/photo-1542744095-09e7039a2a1e?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'hello') !== false || strpos($plugin_name_lower, 'greeting') !== false) {
                         $image_url = 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'seo') !== false) {
