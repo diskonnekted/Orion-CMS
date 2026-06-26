@@ -43,11 +43,13 @@ class Orion_Security {
         header("X-Content-Type-Options: nosniff");
         header("X-Frame-Options: SAMEORIGIN");
         header("Referrer-Policy: strict-origin-when-cross-origin");
-        // header("Content-Security-Policy: default-src 'self' https: 'unsafe-inline' 'unsafe-eval';"); // Commented out to prevent breaking existing scripts
+        header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; img-src 'self' data: https:;");
+        header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
     }
 
     /**
-     * WAF: Sanitize Superglobals to prevent SQLi and XSS
+     * WAF: Sanitize Superglobals to prevent SQLi and XSS (only remove null bytes for safety)
+     * NOTE: htmlspecialchars() should be applied at OUTPUT time, not INPUT time!
      */
     private function sanitize_request_globals() {
         $_GET     = $this->clean_input($_GET);
@@ -57,7 +59,7 @@ class Orion_Security {
     }
 
     /**
-     * Recursive cleaner
+     * Recursive cleaner - just remove null bytes for safety
      */
     private function clean_input($data) {
         if (is_array($data)) {
@@ -68,8 +70,7 @@ class Orion_Security {
             // Remove NULL bytes
             $data = str_replace(chr(0), '', $data);
             
-            // Basic SQL Injection filters (if not using prepared statements everywhere)
-            // Note: This is a fallback defense. Prepared statements are always better.
+            // Basic SQL Injection detection only - DO NOT modify data!
             $sql_patterns = array(
                 '/union\s+select/i',
                 '/union\s+all\s+select/i',
@@ -78,14 +79,10 @@ class Orion_Security {
                 '/\/\*/'
             );
             
-            // XSS Filters
-            $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-            
-            // Check for SQLi attempts and log/block
+            // Check for SQLi attempts and log
             foreach ($sql_patterns as $pattern) {
                 if (preg_match($pattern, $data)) {
                     $this->log_event("Potential SQL Injection detected: " . $pattern);
-                    // die("Security Violation Detected."); // Optional: block request immediately
                 }
             }
         }

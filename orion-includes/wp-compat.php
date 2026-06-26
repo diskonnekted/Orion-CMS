@@ -83,31 +83,35 @@ function _e($text, $domain = 'default') {
 }
 
 function esc_html__($text, $domain = 'default') {
-    return htmlspecialchars($text);
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_html_e($text, $domain = 'default') {
-    echo htmlspecialchars($text);
+    echo htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_attr__($text, $domain = 'default') {
-    return htmlspecialchars($text, ENT_QUOTES);
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_attr_e($text, $domain = 'default') {
-    echo htmlspecialchars($text, ENT_QUOTES);
+    echo htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_html($text) {
-    return htmlspecialchars($text);
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_attr($text) {
-    return htmlspecialchars($text, ENT_QUOTES);
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_url($url) {
-    return htmlspecialchars($url, ENT_QUOTES); // Simplified
+    return htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); // Simplified
+}
+
+function esc_js($text) {
+    return json_encode($text, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 }
 
 function _x($text, $context, $domain = 'default') {

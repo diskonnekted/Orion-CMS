@@ -88,9 +88,25 @@ $current_user = wp_get_current_user();
 </head>
 <body class="bg-slate-50 font-sans antialiased text-slate-800">
 
-<div class="flex min-h-screen">
+<div class="flex min-h-screen" x-data="{ sidebarOpen: false }">
+    <!-- Mobile Sidebar Overlay -->
+    <div 
+        x-show="sidebarOpen" 
+        x-transition:enter="transition-opacity ease-linear duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition-opacity ease-linear duration-300"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @click="sidebarOpen = false"
+        class="fixed inset-0 bg-black/50 z-30 md:hidden"
+    ></div>
+    
     <!-- Sidebar -->
-    <aside class="w-64 bg-slate-900 text-white flex-shrink-0 hidden md:flex flex-col border-r border-slate-800 shadow-xl z-20">
+    <aside 
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+        class="fixed md:static md:translate-x-0 inset-y-0 left-0 w-64 bg-slate-900 text-white flex flex-col border-r border-slate-800 shadow-xl z-40 transition-transform duration-300"
+    >
         <div class="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-900">
             <a href="<?php echo site_url('/orion-admin/index.php'); ?>" class="flex items-center gap-3">
                 <img src="<?php echo get_option('site_logo', site_url('/assets/img/orion-light.png')); ?>" alt="<?php echo htmlspecialchars(get_option('blogname', 'Orion CMS')); ?>" class="h-12 w-auto object-contain max-w-[150px]">
@@ -285,7 +301,7 @@ $current_user = wp_get_current_user();
         <!-- Topbar -->
         <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10">
             <div class="flex items-center">
-                <button class="text-slate-500 focus:outline-none md:hidden p-2 rounded-md hover:bg-slate-100">
+                <button @click="sidebarOpen = !sidebarOpen" class="text-slate-500 focus:outline-none md:hidden p-2 rounded-md hover:bg-slate-100">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
                 <a href="<?php echo site_url(); ?>" target="_blank" class="ml-4 text-slate-600 hover:text-orion-600 flex items-center text-sm font-medium transition-colors group">

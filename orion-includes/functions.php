@@ -175,8 +175,9 @@ function load_template( $_template_file, $require_once = true ) {
 function get_option($option, $default = false) {
     global $orion_db, $table_prefix;
     $table = $table_prefix . 'options';
+    $escaped_option = $orion_db->real_escape_string($option);
     
-    $result = $orion_db->query("SELECT option_value FROM $table WHERE option_name = '$option' LIMIT 1");
+    $result = $orion_db->query("SELECT option_value FROM $table WHERE option_name = '$escaped_option' LIMIT 1");
     if ($result && $result->num_rows > 0) {
         $row = $result->fetch_object();
         $value = $row->option_value;
@@ -209,14 +210,15 @@ function update_option($option, $value) {
         $value = serialize($value);
     }
     
+    $escaped_option = $orion_db->real_escape_string($option);
     $escaped_value = $orion_db->real_escape_string($value);
     
     if ($existing !== null) {
         // Update
-        $sql = "UPDATE $table SET option_value = '$escaped_value' WHERE option_name = '$option'";
+        $sql = "UPDATE $table SET option_value = '$escaped_value' WHERE option_name = '$escaped_option'";
     } else {
         // Insert
-        $sql = "INSERT INTO $table (option_name, option_value, autoload) VALUES ('$option', '$escaped_value', 'yes')";
+        $sql = "INSERT INTO $table (option_name, option_value, autoload) VALUES ('$escaped_option', '$escaped_value', 'yes')";
     }
     
     return $orion_db->query($sql);
@@ -264,8 +266,9 @@ function get_first_image_from_content($content) {
 function delete_option($option) {
     global $orion_db, $table_prefix;
     $table = $table_prefix . 'options';
+    $escaped_option = $orion_db->real_escape_string($option);
     
-    $orion_db->query("DELETE FROM $table WHERE option_name = '$option'");
+    $orion_db->query("DELETE FROM $table WHERE option_name = '$escaped_option'");
     return true;
 }
 
@@ -659,3 +662,89 @@ function get_taxonomy($taxonomy) {
     }
     return null;
 }
+
+/**
+ * Generate CSRF token
+ */
+function orion_generate_nonce($action = -1) {
+    $user = wp_get_current_user();
+    $uid = $user ? $user->ID : 0;
+    $token = wp_create_nonce($action . '|' . $uid);
+    return $token;
+}
+
+/**
+ * Verify CSRF token
+ */
+function orion_verify_nonce($nonce, $action = -1) {
+    $user = wp_get_current_user();
+    $uid = $user ? $user->ID : 0;
+    return wp_verify_nonce($nonce, $action . '|' . $uid);
+}
+
+/**
+ * Create nonce field for forms
+ */
+function orion_nonce_field($action = -1, $name = '_wpnonce', $referer = true, $echo = true) {
+    $name = esc_attr($name);
+    $nonce = orion_generate_nonce($action);
+    $field = '<input type="hidden" name="' . $name . '" value="' . $nonce . '" />';
+    if ($referer) {
+        $field .= '<input type="hidden" name="_wp_http_referer" value="' . esc_attr($_SERVER['REQUEST_URI']) . '" />';
+    }
+    if ($echo) {
+        echo $field;
+    }
+    return $field;
+}
+
+/**
+ * Simple create nonce hash
+ */
+function wp_create_nonce($action = -1) {
+    $i = ceil(time() / 86400);
+    return substr(hash_hmac('sha256', $i . '|' . $action, ORION_NONCE_KEY), -12, 10);
+}
+
+/**
+ * Simple verify nonce hash
+ */
+function wp_verify_nonce($nonce, $action = -1) {
+    $nonce = (string) $nonce;
+    if (empty($nonce)) {
+        return false;
+    }
+    $i = ceil(time() / 86400);
+    // Check both current and previous 24hr window
+    foreach (array($i, $i - 1) as $tick) {
+        $expected = substr(hash_hmac('sha256', $tick . '|' . $action, ORION_NONCE_KEY), -12, 10);
+        if (hash_equals($expected, $nonce)) {
+            return 1;
+        }
+    }
+    return false;
+}
+
+/**
+ * Simple Math Captcha Functions
+ */
+function orion_generate_captcha() {
+    $num1 = rand(1, 10);
+    $num2 = rand(1, 10);
+    $_SESSION['orion_captcha_answer'] = $num1 + $num2;
+    return array(
+        'num1' => $num1,
+        'num2' => $num2
+    );
+}
+
+function orion_verify_captcha($user_input) {
+    if (!isset($_SESSION['orion_captcha_answer'])) {
+        return false;
+    }
+    $is_valid = (intval($user_input) === $_SESSION['orion_captcha_answer']);
+    unset($_SESSION['orion_captcha_answer']); // Invalidate after use
+    return $is_valid;
+}
+
+

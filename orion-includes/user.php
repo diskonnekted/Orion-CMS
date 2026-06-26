@@ -61,8 +61,8 @@ function wp_set_auth_cookie($user_id, $remember = false) {
     }
     
     // Simple cookie implementation for demo
-    $cookie_value = $user_id . '|' . $expiration . '|' . hash_hmac('sha256', $user_id . $expiration, 'orion_secret_key');
-    setcookie('orion_auth', $cookie_value, $expiration, '/');
+    $cookie_value = $user_id . '|' . $expiration . '|' . hash_hmac('sha256', $user_id . $expiration, ORION_AUTH_KEY);
+    setcookie('orion_auth', $cookie_value, $expiration, '/', '', false, true); // HttpOnly and Secure (if HTTPS)
 }
 
 /**
@@ -97,7 +97,7 @@ function wp_get_current_user() {
     if (isset($_COOKIE['orion_auth'])) {
         list($user_id, $expiration, $hash) = explode('|', $_COOKIE['orion_auth']);
         
-        if ($expiration > time() && hash_hmac('sha256', $user_id . $expiration, 'orion_secret_key') === $hash) {
+        if ($expiration > time() && hash_hmac('sha256', $user_id . $expiration, ORION_AUTH_KEY) === $hash) {
             $user = get_user_by('id', $user_id);
             if ($user) {
                 $current_user = $user;
@@ -312,9 +312,11 @@ function current_user_can($capability) {
 function get_user_meta($user_id, $key = '', $single = false) {
     global $orion_db, $table_prefix;
     $usermeta_table = $table_prefix . 'usermeta';
+    $user_id = (int)$user_id;
+    $escaped_key = $orion_db->real_escape_string($key);
     
     if ($key) {
-        $sql = "SELECT meta_value FROM $usermeta_table WHERE user_id = $user_id AND meta_key = '$key'";
+        $sql = "SELECT meta_value FROM $usermeta_table WHERE user_id = $user_id AND meta_key = '$escaped_key'";
         $result = $orion_db->query($sql);
         
         if ($result && $result->num_rows > 0) {
@@ -341,13 +343,16 @@ function get_user_meta($user_id, $key = '', $single = false) {
 function update_user_meta($user_id, $meta_key, $meta_value, $prev_value = '') {
     global $orion_db, $table_prefix;
     $usermeta_table = $table_prefix . 'usermeta';
+    $user_id = (int)$user_id;
+    $escaped_key = $orion_db->real_escape_string($meta_key);
+    $escaped_value = $orion_db->real_escape_string($meta_value);
     
     $existing = get_user_meta($user_id, $meta_key, true);
     
     if ($existing) {
-        $sql = "UPDATE $usermeta_table SET meta_value = '$meta_value' WHERE user_id = $user_id AND meta_key = '$meta_key'";
+        $sql = "UPDATE $usermeta_table SET meta_value = '$escaped_value' WHERE user_id = $user_id AND meta_key = '$escaped_key'";
     } else {
-        $sql = "INSERT INTO $usermeta_table (user_id, meta_key, meta_value) VALUES ($user_id, '$meta_key', '$meta_value')";
+        $sql = "INSERT INTO $usermeta_table (user_id, meta_key, meta_value) VALUES ($user_id, '$escaped_key', '$escaped_value')";
     }
     
     return $orion_db->query($sql);
