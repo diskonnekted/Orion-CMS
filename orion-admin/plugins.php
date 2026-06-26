@@ -273,7 +273,28 @@ $inactive_count = $total_plugins - $active_count;
                     $plugin_name_lower = strtolower($plugin['Name']);
                     $image_url = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80'; // Default code image
                     
-                    if (strpos($plugin_name_lower, 'desa') !== false || strpos($plugin_name_lower, 'village') !== false) {
+                    // Specific plugin mappings
+                    if (strpos($plugin_name_lower, 'orion desa digital') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80'; // Desa
+                    } elseif (strpos($plugin_name_lower, 'orion doa harian') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80'; // Orang berdoa
+                    } elseif (strpos($plugin_name_lower, 'orion quran api') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1596266405353-5889d0530d09?auto=format&fit=crop&w=800&q=80'; // Alquran
+                    } elseif (strpos($plugin_name_lower, 'orion shop manager') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80'; // Toko
+                    } elseif (strpos($plugin_name_lower, 'orion form plugin') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'; // Form
+                    } elseif (strpos($plugin_name_lower, 'orion pdf reader') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1542744095-09e7039a2a1e?auto=format&fit=crop&w=800&q=80'; // Dokumen
+                    } elseif (strpos($plugin_name_lower, 'donorbox') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=800&q=80'; // Donasi
+                    } elseif (strpos($plugin_name_lower, 'orion classic editor') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80'; // Editor
+                    } elseif (strpos($plugin_name_lower, 'hello orion') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80'; // Hello
+                    }
+                    // Fallback mappings
+                    elseif (strpos($plugin_name_lower, 'desa') !== false || strpos($plugin_name_lower, 'village') !== false) {
                         $image_url = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80'; // Desa
                     } elseif (strpos($plugin_name_lower, 'doa') !== false || strpos($plugin_name_lower, 'pray') !== false) {
                         $image_url = 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80'; // Orang berdoa
@@ -289,8 +310,6 @@ $inactive_count = $total_plugins - $active_count;
                         $image_url = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'download') !== false || strpos($plugin_name_lower, 'file') !== false) {
                         $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
-                    } elseif (strpos($plugin_name_lower, 'hello') !== false || strpos($plugin_name_lower, 'greeting') !== false) {
-                        $image_url = 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'seo') !== false) {
                         $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'security') !== false || strpos($plugin_name_lower, 'secure') !== false) {
