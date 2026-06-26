@@ -263,18 +263,87 @@ $message = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'Pengaturan te
         <form method="POST" enctype="multipart/form-data">
             <div class="space-y-8">
                 <section>
-                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">WhatsApp Contact</h2>
-                    <input type="text" name="whatsapp" value="<?php echo htmlspecialchars($wa); ?>" class="w-full md:w-1/2 p-2 border rounded-lg">
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.95.68l1.1 3.3a1 1 0 01-.54 1.23l-2.1.9a11.05 11.05 0 005.02 5.02l.9-2.1a1 1 0 011.23-.54l3.3 1.1a1 1 0 01.68.95V20a2 2 0 01-2 2h-1C9.82 22 2 14.18 2 4V5z"></path></svg>
+                        WhatsApp Contact
+                    </h2>
+                    <input type="text" name="whatsapp" value="<?php echo htmlspecialchars($wa); ?>" class="w-full md:w-1/2 p-2 border rounded-lg" placeholder="081328128315">
                 </section>
                 
                 <section>
-                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">Portfolio Gallery</h2>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Paket Harga
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-4 bg-slate-50 rounded-lg border">
+                            <h3 class="font-bold text-indigo-600 uppercase text-xs tracking-widest mb-3">Paket 1 (Kiri)</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Paket</label>
+                                    <input type="text" name="pkg1_name" value="<?php echo htmlspecialchars($pkg1['name']); ?>" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Express Starter">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Harga</label>
+                                    <input type="text" name="pkg1_price" value="<?php echo htmlspecialchars($pkg1['price']); ?>" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="500rb">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fitur (satu per baris)</label>
+                                    <textarea name="pkg1_features" rows="5" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Domain & Hosting 1 Thn"><?php echo htmlspecialchars($pkg1['features']); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-indigo-50 rounded-lg border-2 border-indigo-500 relative">
+                            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-[10px] font-bold px-3 py-1 rounded-full">Paling Populer</span>
+                            <h3 class="font-bold text-indigo-600 uppercase text-xs tracking-widest mb-3 mt-2">Paket 2 (Tengah)</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Paket</label>
+                                    <input type="text" name="pkg2_name" value="<?php echo htmlspecialchars($pkg2['name']); ?>" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Professional Agency">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Harga</label>
+                                    <input type="text" name="pkg2_price" value="<?php echo htmlspecialchars($pkg2['price']); ?>" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="1.5jt">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fitur (satu per baris)</label>
+                                    <textarea name="pkg2_features" rows="5" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Domain & Hosting High Spec"><?php echo htmlspecialchars($pkg2['features']); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-slate-50 rounded-lg border">
+                            <h3 class="font-bold text-indigo-600 uppercase text-xs tracking-widest mb-3">Paket 3 (Kanan)</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nama Paket</label>
+                                    <input type="text" name="pkg3_name" value="<?php echo htmlspecialchars($pkg3['name']); ?>" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Custom Enterprise">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Harga</label>
+                                    <input type="text" name="pkg3_price" value="<?php echo htmlspecialchars($pkg3['price']); ?>" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Mulai 3jt">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Fitur (satu per baris)</label>
+                                    <textarea name="pkg3_features" rows="5" class="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Desain Eksklusif"><?php echo htmlspecialchars($pkg3['features']); ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Portfolio Gallery
+                    </h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <?php for($i=1;$i<=6;$i++): ?>
                             <div class="p-3 bg-slate-50 rounded-lg border">
                                 <label class="block text-xs font-bold text-slate-500 uppercase">Slot <?php echo $i; ?></label>
                                 <?php if($gallery[$i]['img']): ?><img src="<?php echo $gallery[$i]['img']; ?>" class="h-20 w-full object-cover my-2 rounded"><?php endif; ?>
-                                <input type="text" name="gallery_desc<?php echo $i; ?>" value="<?php echo htmlspecialchars($gallery[$i]['desc']); ?>" class="w-full p-1 text-xs border rounded mb-1" placeholder="Desc">
+                                <input type="text" name="gallery_desc<?php echo $i; ?>" value="<?php echo htmlspecialchars($gallery[$i]['desc']); ?>" class="w-full p-1 text-xs border rounded mb-1" placeholder="Kategori - Judul">
                                 <input type="text" name="gallery_img<?php echo $i; ?>" value="<?php echo htmlspecialchars($gallery[$i]['img']); ?>" class="w-full p-1 text-xs border rounded mb-1" placeholder="URL">
                                 <input type="file" name="gallery_img<?php echo $i; ?>_file" class="text-[10px]">
                             </div>
@@ -283,7 +352,7 @@ $message = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'Pengaturan te
                 </section>
 
                 <div class="pt-6 border-t flex justify-end">
-                    <button type="submit" name="orion_dev_theme_settings_submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg">
+                    <button type="submit" name="orion_dev_theme_settings_submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg transform transition transform hover:-translate-y-0.5">
                         Simpan Semua Perubahan
                     </button>
                 </div>
