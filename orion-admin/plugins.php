@@ -269,78 +269,31 @@ $inactive_count = $total_plugins - $active_count;
                     <img src="<?php echo $image_url; ?>" alt="<?php echo htmlspecialchars($plugin['Name']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                 <?php else: ?>
                     <?php
-                    // Assign unique icons based on plugin name
+                    // Assign unique stock images based on plugin name
                     $plugin_name_lower = strtolower($plugin['Name']);
-                    $icon_config = [
-                        'bg_class' => 'bg-indigo-50',
-                        'text_class' => 'text-indigo-600',
-                        'bg_text_class' => 'text-indigo-200',
-                        'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>',
-                        'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>'
-                    ];
+                    $image_url = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80'; // Default code image
                     
-                    // Icon map for known plugins
                     if (strpos($plugin_name_lower, 'ai') !== false || strpos($plugin_name_lower, 'artificial') !== false) {
-                        $icon_config = [
-                            'bg_class' => 'bg-purple-50',
-                            'text_class' => 'text-purple-600',
-                            'bg_text_class' => 'text-purple-200',
-                            'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>',
-                            'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>'
-                        ];
+                        $image_url = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'download') !== false || strpos($plugin_name_lower, 'file') !== false) {
-                        $icon_config = [
-                            'bg_class' => 'bg-blue-50',
-                            'text_class' => 'text-blue-600',
-                            'bg_text_class' => 'text-blue-200',
-                            'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>',
-                            'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path></svg>'
-                        ];
+                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'shop') !== false || strpos($plugin_name_lower, 'ecommerce') !== false) {
-                        $icon_config = [
-                            'bg_class' => 'bg-emerald-50',
-                            'text_class' => 'text-emerald-600',
-                            'bg_text_class' => 'text-emerald-200',
-                            'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>',
-                            'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>'
-                        ];
+                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'form') !== false) {
-                        $icon_config = [
-                            'bg_class' => 'bg-amber-50',
-                            'text_class' => 'text-amber-600',
-                            'bg_text_class' => 'text-amber-200',
-                            'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
-                            'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>'
-                        ];
+                        $image_url = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'pdf') !== false) {
-                        $icon_config = [
-                            'bg_class' => 'bg-red-50',
-                            'text_class' => 'text-red-600',
-                            'bg_text_class' => 'text-red-200',
-                            'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>',
-                            'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>'
-                        ];
+                        $image_url = 'https://images.unsplash.com/photo-1542744095-09e7039a2a1e?auto=format&fit=crop&w=800&q=80';
                     } elseif (strpos($plugin_name_lower, 'hello') !== false || strpos($plugin_name_lower, 'greeting') !== false) {
-                        $icon_config = [
-                            'bg_class' => 'bg-pink-50',
-                            'text_class' => 'text-pink-600',
-                            'bg_text_class' => 'text-pink-200',
-                            'svg' => '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>',
-                            'bg_svg' => '<svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>'
-                        ];
+                        $image_url = 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80';
+                    } elseif (strpos($plugin_name_lower, 'seo') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+                    } elseif (strpos($plugin_name_lower, 'security') !== false || strpos($plugin_name_lower, 'secure') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80';
+                    } elseif (strpos($plugin_name_lower, 'analytics') !== false || strpos($plugin_name_lower, 'stats') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80';
                     }
                     ?>
-                    <!-- Background -->
-                    <div class="absolute inset-0 <?php echo $icon_config['bg_class']; ?> flex items-center justify-center overflow-hidden">
-                        <!-- Large Faded Background Icon -->
-                        <div class="absolute -right-4 -bottom-8 <?php echo $icon_config['bg_text_class']; ?> opacity-20 transform rotate-12">
-                            <?php echo $icon_config['bg_svg']; ?>
-                        </div>
-                        <!-- Foreground Icon -->
-                        <div class="relative z-10 w-24 h-24 bg-white rounded-full flex items-center justify-center <?php echo $icon_config['text_class']; ?> shadow-md group-hover:scale-110 transition-transform duration-300">
-                            <?php echo $icon_config['svg']; ?>
-                        </div>
-                    </div>
+                    <img src="<?php echo $image_url; ?>" alt="<?php echo htmlspecialchars($plugin['Name']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                 <?php endif; ?>
 
                 <?php if ($is_active): ?>
