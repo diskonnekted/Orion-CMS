@@ -1,0 +1,23 @@
+# Build artefacts live here. Nothing in this directory should execute.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+<FilesMatch "\.(php|phtml|php[0-9]?|phar|pht|phps|pl|py|cgi|sh|asp|aspx|jsp|sqlite|sqlite3|db|log|txt|md|json|yml|yaml)$">
+    SetHandler default-handler
+    <IfModule mod_access_compat.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+Options -Indexes

@@ -4,7 +4,11 @@ debug_cat_log.txt
 *.log
 Thumbs.db
 .DS_Store
-tmp/
+# Runtime scratch space: rate-limit counters, login attempts, ban list.
+# The directory itself ships (with its deny rules) so a fresh clone works.
+tmp/*
+!tmp/.gitkeep
+!tmp/.htaccess
 test_schemes.php
 reset-admin.php
 
