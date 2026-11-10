@@ -83,41 +83,35 @@ function _e($text, $domain = 'default') {
 }
 
 function esc_html__($text, $domain = 'default') {
-    return htmlspecialchars($text);
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_html_e($text, $domain = 'default') {
-    echo htmlspecialchars($text);
+    echo htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_attr__($text, $domain = 'default') {
-    return htmlspecialchars($text, ENT_QUOTES);
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_attr_e($text, $domain = 'default') {
-    echo htmlspecialchars($text, ENT_QUOTES);
+    echo htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_html($text) {
-    // double_encode = false keeps already-encoded input from turning into
-    // &amp;amp; on every save/display cycle.
-    return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8', false);
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_attr($text) {
-    return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8', false);
-}
-
-function esc_js($text) {
-    return str_replace(
-        array('\\', "'", '"', '<', '>', '&'),
-        array('\\\\', "\\'", '\\"', '\\x3C', '\\x3E', '\\x26'),
-        (string) $text
-    );
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
 function esc_url($url) {
-    return htmlspecialchars($url, ENT_QUOTES); // Simplified
+    return htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); // Simplified
+}
+
+function esc_js($text) {
+    return json_encode($text, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 }
 
 function _x($text, $context, $domain = 'default') {

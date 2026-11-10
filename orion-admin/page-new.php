@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($new_post_id) {
         $post_id = $new_post_id;
 
-        $upload_dir = ABSPATH . 'orion-content/uploads/';
+        $upload_dir = ABSPATH . 'assets/uploads/';
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0755, true);
         }
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $file_name = time() . '_feat_' . $safe_name;
                 $target_file = $upload_dir . $file_name;
                 if ($safe_name !== '' && move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
-                    $feat_img_url = site_url('/orion-content/uploads/' . $file_name);
+                    $feat_img_url = site_url('/assets/uploads/' . $file_name);
                 }
             }
         }

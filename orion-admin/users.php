@@ -13,15 +13,11 @@ if (!current_user_can('administrator')) {
 }
 
 // Handle Delete
-if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['user'])) {
-    if (!isset($_GET['orion_nonce']) || !orion_verify_nonce($_GET['orion_nonce'], 'orion_user_delete')) {
-        echo '<div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 mx-6 mt-6" role="alert"><p>Invalid security token.</p></div>';
-    } else {
-        $user_id = (int) $_GET['user'];
-        if ($user_id != $current_user->ID) { // Prevent self-deletion
-            wp_delete_user($user_id);
-            echo '<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 mx-6 mt-6" role="alert"><p>User deleted.</p></div>';
-        }
+if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['user']) && isset($_GET['_wpnonce'])) {
+    $user_id = (int) $_GET['user'];
+    if (orion_verify_nonce($_GET['_wpnonce'], 'delete-user-' . $user_id) && $user_id != $current_user->ID) { // Prevent self-deletion + CSRF check
+        wp_delete_user($user_id);
+        echo '<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 mx-6 mt-6" role="alert"><p>User deleted.</p></div>';
     }
 }
 
@@ -82,7 +78,7 @@ $result = $orion_db->query($sql);
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <a href="user-new.php?user_id=<?php echo $user->ID; ?>" class="text-orion-600 hover:text-orion-900 mr-3">Edit</a>
                         <?php if ($user->ID != $current_user->ID): ?>
-                        <a href="users.php?action=delete&user=<?php echo $user->ID; ?>&orion_nonce=<?php echo urlencode(orion_create_nonce('orion_user_delete')); ?>" class="text-red-600 hover:text-red-900" data-orion-confirm="Are you sure you want to delete this user?">Delete</a>
+                        <a href="users.php?action=delete&user=<?php echo $user->ID; ?>&_wpnonce=<?php echo urlencode(orion_generate_nonce('delete-user-' . $user->ID)); ?>" class="text-red-600 hover:text-red-900" data-orion-confirm="Are you sure you want to delete this user?">Delete</a>
                         <?php endif; ?>
                     </td>
                 </tr>

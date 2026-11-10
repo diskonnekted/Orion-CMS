@@ -291,17 +291,43 @@ $inactive_count = $total_plugins - $active_count;
                 <?php if ($has_image): ?>
                     <img src="<?php echo $image_url; ?>" alt="<?php echo htmlspecialchars($plugin['Name']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                 <?php else: ?>
-                    <!-- Background -->
-                    <div class="absolute inset-0 bg-indigo-50 flex items-center justify-center overflow-hidden">
-                        <!-- Large Faded Background Icon -->
-                        <div class="absolute -right-4 -bottom-8 text-indigo-200 opacity-20 transform rotate-12">
-                            <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
-                        </div>
-                        <!-- Foreground Icon -->
-                        <div class="relative z-10 w-24 h-24 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-md group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
-                        </div>
-                    </div>
+                    <?php
+                    // Assign unique stock images based on plugin name
+                    $plugin_name_lower = strtolower($plugin['Name']);
+                    $image_url = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80'; // Default code image
+                    
+                    // Specific plugin mappings (check for keywords first)
+                    if (strpos($plugin_name_lower, 'quran') !== false || strpos($plugin_name_lower, 'qur\'an') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1586661709166-4365a55279b2?auto=format&fit=crop&w=800&q=80'; // Alquran
+                    } elseif (strpos($plugin_name_lower, 'desa') !== false || strpos($plugin_name_lower, 'village') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80'; // Desa
+                    } elseif (strpos($plugin_name_lower, 'doa') !== false || strpos($plugin_name_lower, 'pray') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80'; // Orang berdoa
+                    } elseif (strpos($plugin_name_lower, 'shop') !== false || strpos($plugin_name_lower, 'toko') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=800&q=80'; // Toko
+                    } elseif (strpos($plugin_name_lower, 'form') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'; // Form
+                    } elseif (strpos($plugin_name_lower, 'pdf') !== false || strpos($plugin_name_lower, 'reader') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1542744095-09e7039a2a1e?auto=format&fit=crop&w=800&q=80'; // Dokumen
+                    } elseif (strpos($plugin_name_lower, 'donorbox') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=800&q=80'; // Donasi
+                    } elseif (strpos($plugin_name_lower, 'editor') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80'; // Editor
+                    } elseif (strpos($plugin_name_lower, 'hello') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=80'; // Hello
+                    } elseif (strpos($plugin_name_lower, 'ai') !== false || strpos($plugin_name_lower, 'artificial') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80';
+                    } elseif (strpos($plugin_name_lower, 'download') !== false || strpos($plugin_name_lower, 'file') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+                    } elseif (strpos($plugin_name_lower, 'seo') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80';
+                    } elseif (strpos($plugin_name_lower, 'security') !== false || strpos($plugin_name_lower, 'secure') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80';
+                    } elseif (strpos($plugin_name_lower, 'analytics') !== false || strpos($plugin_name_lower, 'stats') !== false) {
+                        $image_url = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80';
+                    }
+                    ?>
+                    <img src="<?php echo $image_url; ?>" alt="<?php echo htmlspecialchars($plugin['Name']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                 <?php endif; ?>
 
                 <?php if ($is_active): ?>

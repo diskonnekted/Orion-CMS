@@ -4,6 +4,11 @@
  */
 require_once 'orion-load.php';
 
+// Start session if not started
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Handle Logout
 if (isset($_GET['action']) && $_GET['action'] == 'logout') {
     if (!isset($_GET['orion_nonce']) || !orion_verify_nonce($_GET['orion_nonce'], 'orion_logout')) {
@@ -24,6 +29,12 @@ if (is_user_logged_in()) {
 
 $error = '';
 
+// The captcha is generated once per request, and never before the POST has
+// been verified: regenerating it first overwrote the stored answer and
+// compared the visitor's input against a brand new sum, which made every
+// login fail.
+$captcha = null;
+
 // Security: Check Brute Force
 global $orion_security;
 if (isset($orion_security) && !$orion_security->check_login_attempts($_SERVER['REMOTE_ADDR'])) {
@@ -34,28 +45,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp-submit'])) {
     $username = isset($_POST['log']) ? trim($_POST['log']) : '';
     $password = isset($_POST['pwd']) ? $_POST['pwd'] : '';
     $remember = isset($_POST['rememberme']);
+    $captcha_input = isset($_POST['orion_captcha']) ? trim($_POST['orion_captcha']) : '';
     
-    $user = wp_signon(array(
-        'user_login' => $username,
-        'user_password' => $password,
-        'remember' => $remember
-    ));
-    
-    if ($user instanceof WP_User) {
-        // Security: Clear failed attempts
-        if (isset($orion_security)) {
-            $orion_security->clear_login_attempts($_SERVER['REMOTE_ADDR']);
-        }
-        
-        header('Location: orion-admin/index.php');
-        exit;
+    // Verify captcha first
+    if (!orion_verify_captcha($captcha_input)) {
+        $error = 'Captcha salah. Silakan coba lagi.';
+        $captcha = orion_generate_captcha(); // Regenerate captcha if wrong
     } else {
-        // Security: Log failed attempt
-        if (isset($orion_security)) {
-            $orion_security->log_failed_login($_SERVER['REMOTE_ADDR']);
+        $user = wp_signon(array(
+            'user_login' => $username,
+            'user_password' => $password,
+            'remember' => $remember
+        ));
+        
+        if ($user instanceof WP_User) {
+            // Security: Clear failed attempts
+            if (isset($orion_security)) {
+                $orion_security->clear_login_attempts($_SERVER['REMOTE_ADDR']);
+            }
+            
+            header('Location: orion-admin/index.php');
+            exit;
+        } else {
+            // Security: Log failed attempt
+            if (isset($orion_security)) {
+                $orion_security->log_failed_login($_SERVER['REMOTE_ADDR']);
+            }
+            $error = 'Invalid username or password.';
+            $captcha = orion_generate_captcha(); // Regenerate captcha if login fails
         }
-        $error = 'Invalid username or password.';
     }
+}
+
+if (!is_array($captcha)) {
+    $captcha = orion_generate_captcha();
 }
 ?>
 <!DOCTYPE html>
@@ -121,6 +144,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp-submit'])) {
                         <label for="user_pass" class="block text-sm font-medium text-slate-700">Password</label>
                     </div>
                     <input type="password" name="pwd" id="user_pass" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orion-500 focus:border-orion-500 transition-shadow" value="" size="20" autocomplete="current-password" required>
+                </div>
+                
+                <div class="mb-5">
+                    <label for="orion_captcha" class="block text-sm font-medium text-slate-700 mb-1">Captcha: <?php echo $captcha['num1']; ?> + <?php echo $captcha['num2']; ?> = ?</label>
+                    <input type="number" name="orion_captcha" id="orion_captcha" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orion-500 focus:border-orion-500 transition-shadow" required>
                 </div>
                 
                 <div class="flex items-center justify-between mb-6">

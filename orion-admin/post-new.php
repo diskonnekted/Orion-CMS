@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             file_put_contents(ABSPATH . 'debug_cat_log.txt', $debug_msg, FILE_APPEND);
 
-            $upload_dir = ABSPATH . 'orion-content/uploads/';
+            $upload_dir = ABSPATH . 'assets/uploads/';
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0755, true);
             }
@@ -119,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $file_name = time() . '_feat_' . $safe_name;
                 $target_file = $upload_dir . $file_name;
                 if ($safe_name !== '' && move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
-                    $feat_img_url = site_url('/orion-content/uploads/' . $file_name);
+                    $feat_img_url = site_url('/assets/uploads/' . $file_name);
                 }
             }
             
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                          $file_name = time() . '_gal_' . $safe_name;
                          $target_file = $upload_dir . $file_name;
                          if (move_uploaded_file($_FILES['gallery_images']['tmp_name'][$key], $target_file)) {
-                             $gallery_urls[] = site_url('/orion-content/uploads/' . $file_name);
+                             $gallery_urls[] = site_url('/assets/uploads/' . $file_name);
                          }
                     }
                 }
@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                          $target_file = $upload_dir . $file_name;
                          if (move_uploaded_file($_FILES['attachments']['tmp_name'][$key], $target_file)) {
                              $attachment_urls[] = array(
-                                 'url' => site_url('/orion-content/uploads/' . $file_name),
+                                 'url' => site_url('/assets/uploads/' . $file_name),
                                  'name' => $_FILES['attachments']['name'][$key]
                              );
                          }

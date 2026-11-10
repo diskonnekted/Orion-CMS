@@ -43,11 +43,13 @@ class Orion_Security {
         header("X-Content-Type-Options: nosniff");
         header("X-Frame-Options: SAMEORIGIN");
         header("Referrer-Policy: strict-origin-when-cross-origin");
-        // header("Content-Security-Policy: default-src 'self' https: 'unsafe-inline' 'unsafe-eval';"); // Commented out to prevent breaking existing scripts
+        header("Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; img-src 'self' data: https:;");
+        header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
     }
 
     /**
-     * WAF: Sanitize Superglobals to prevent SQLi and XSS
+     * WAF: Sanitize Superglobals to prevent SQLi and XSS (only remove null bytes for safety)
+     * NOTE: htmlspecialchars() should be applied at OUTPUT time, not INPUT time!
      */
     private function sanitize_request_globals() {
         $_GET     = $this->clean_input($_GET);
@@ -59,47 +61,21 @@ class Orion_Security {
     }
 
     /**
-     * Keys that must keep their exact bytes.
+     * Recursive cleaner - removes null bytes and logs injection attempts.
      *
-     * Passwords are compared against a hash, so a single entity-encoded
-     * character here locks the user out of their own account.
+     * Data is deliberately NOT modified here: escaping belongs at output
+     * time, otherwise values are corrupted between save and display.
      */
-    private function is_raw_key($key) {
-        static $raw = array(
-            'pwd', 'pass', 'password', 'pass1', 'pass2',
-            'user_password', 'user_pass', 'new_password', 'confirm_password',
-            'log', 'user_login', 'username',
-        );
-
-        return in_array(strtolower((string) $key), $raw, true);
-    }
-
-    /**
-     * Recursive cleaner
-     */
-    private function clean_input($data, $key = null) {
+    private function clean_input($data) {
         if (is_array($data)) {
-            foreach ($data as $k => $inner) {
-                $data[$k] = $this->clean_input($inner, $k);
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->clean_input($value);
             }
             return $data;
         }
 
-        if ($data === null || $data === true || $data === false) {
-            return $data;
-        }
+        $data = str_replace(chr(0), '', (string) $data);
 
-        $data = (string) $data;
-
-        if ($key !== null && $this->is_raw_key($key)) {
-            return $data;
-        }
-
-        // Remove NULL bytes
-        $data = str_replace(chr(0), '', $data);
-
-        // Basic SQL Injection filters (if not using prepared statements everywhere)
-        // Note: This is a fallback defense. Prepared statements are always better.
         $sql_patterns = array(
             '/union\s+select/i',
             '/union\s+all\s+select/i',
@@ -108,14 +84,9 @@ class Orion_Security {
             '/\/\*/'
         );
 
-        // XSS Filters
-        $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-
-        // Check for SQLi attempts and log/block
         foreach ($sql_patterns as $pattern) {
             if (preg_match($pattern, $data)) {
                 $this->log_event("Potential SQL Injection detected: " . $pattern);
-                // die("Security Violation Detected."); // Optional: block request immediately
             }
         }
 
