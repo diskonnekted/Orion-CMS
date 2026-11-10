@@ -4,24 +4,74 @@
  * Provides protection against SQL Injection, XSS, Brute Force, and DDoS.
  */
 
+/**
+ * Resolve a directory for runtime artifacts that must not be web-accessible.
+ *
+ * Hosts that serve PHP through php-fpm behind nginx ignore .htaccess, so any
+ * file written under the document root is downloadable by URL: the rate-limit
+ * counters would leak client IPs and the security log would leak internals.
+ * Prefer a sibling directory of the install, then the system temp dir.
+ *
+ * @return string Absolute directory path with a trailing separator.
+ */
+function orion_runtime_dir() {
+    static $dir = null;
+    if ($dir !== null) {
+        return $dir;
+    }
+
+    $candidates = array();
+
+    if (defined('ORION_RUNTIME_DIR') && ORION_RUNTIME_DIR) {
+        $candidates[] = rtrim(ORION_RUNTIME_DIR, '/\\') . DIRECTORY_SEPARATOR;
+    }
+
+    $root = rtrim(ABSPATH, '/\\');
+    $parent = dirname($root);
+    if ($parent !== '' && $parent !== $root) {
+        $candidates[] = $parent . DIRECTORY_SEPARATOR . 'orion-runtime' . DIRECTORY_SEPARATOR;
+    }
+
+    $candidates[] = rtrim(sys_get_temp_dir(), '/\\') . DIRECTORY_SEPARATOR
+        . 'orion-runtime-' . substr(md5($root), 0, 12) . DIRECTORY_SEPARATOR;
+
+    foreach ($candidates as $candidate) {
+        if (!is_dir($candidate)) {
+            @mkdir($candidate, 0700, true);
+        }
+        if (is_dir($candidate) && is_writable($candidate)) {
+            return $dir = $candidate;
+        }
+    }
+
+    // Last resort: the historical location, so brute-force protection still works.
+    $fallback = rtrim(ABSPATH, '/\\') . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
+    if (!is_dir($fallback)) {
+        @mkdir($fallback, 0755, true);
+    }
+    return $dir = $fallback;
+}
+
 class Orion_Security {
     
     private $log_file;
     private $ban_file;
     
     public function __construct() {
-        $this->log_file = ABSPATH . 'tmp/security.log';
-        $this->ban_file = ABSPATH . 'tmp/banned_ips.json';
-        
-        // Ensure tmp directory exists
-        if (!file_exists(dirname($this->log_file))) {
-            mkdir(dirname($this->log_file), 0755, true);
-        }
-        
-        // Protect tmp directory
-        $htaccess = dirname($this->log_file) . '/.htaccess';
-        if (!file_exists($htaccess)) {
-            file_put_contents($htaccess, "Order Deny,Allow\nDeny from all\nRequire all denied");
+        $runtime = orion_runtime_dir();
+        $this->log_file = $runtime . 'security.log';
+        $this->ban_file = $runtime . 'banned_ips.json';
+
+        // .htaccess only helps on Apache. Writing "deny from all" into a
+        // directory above the install would block every neighbouring site, so
+        // only protect runtime dirs that sit inside the install itself.
+        $runtime_real = @realpath($runtime);
+        $root_real = @realpath(ABSPATH);
+        if ($runtime_real && $root_real && strpos($runtime_real . DIRECTORY_SEPARATOR, $root_real . DIRECTORY_SEPARATOR) === 0) {
+            $htaccess = $runtime . '.htaccess';
+            if (!file_exists($htaccess)) {
+                file_put_contents($htaccess, "Order Deny,Allow\nDeny from all\nRequire all denied");
+            }
         }
     }
 
@@ -106,7 +156,7 @@ class Orion_Security {
         $limit = 100; // Max requests per minute
         $window = 60; // Time window in seconds
         
-        $file = ABSPATH . 'tmp/rate_limit_' . md5($ip) . '.txt';
+        $file = orion_runtime_dir() . 'rate_limit_' . md5($ip) . '.txt';
         
         $current_time = time();
         $data = array('count' => 0, 'start_time' => $current_time);
@@ -142,7 +192,7 @@ class Orion_Security {
         $limit = 5; // Max failed attempts
         $window = 900; // 15 minutes lock
         
-        $file = ABSPATH . 'tmp/login_attempts_' . md5($ip) . '.txt';
+        $file = orion_runtime_dir() . 'login_attempts_' . md5($ip) . '.txt';
         
         if (file_exists($file)) {
             $data = json_decode(file_get_contents($file), true);
@@ -168,7 +218,7 @@ class Orion_Security {
      * Record a failed login attempt
      */
     public function log_failed_login($ip) {
-        $file = ABSPATH . 'tmp/login_attempts_' . md5($ip) . '.txt';
+        $file = orion_runtime_dir() . 'login_attempts_' . md5($ip) . '.txt';
         
         $data = array('attempts' => 0, 'last_attempt' => time());
         
@@ -190,7 +240,7 @@ class Orion_Security {
      * Clear failed login attempts on success
      */
     public function clear_login_attempts($ip) {
-        $file = ABSPATH . 'tmp/login_attempts_' . md5($ip) . '.txt';
+        $file = orion_runtime_dir() . 'login_attempts_' . md5($ip) . '.txt';
         if (file_exists($file)) {
             unlink($file);
         }
