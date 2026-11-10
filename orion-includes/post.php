@@ -357,7 +357,13 @@ function get_post_id($post = null) {
     } elseif (is_object($post)) {
         return $post->ID;
     } else {
-        // Try global post if loop implemented properly later
+        // Nothing passed in: use the post the loop is currently on.
+        if (isset($GLOBALS['post']) && is_object($GLOBALS['post']) && !empty($GLOBALS['post']->ID)) {
+            return (int) $GLOBALS['post']->ID;
+        }
+        if (!empty($GLOBALS['id'])) {
+            return (int) $GLOBALS['id'];
+        }
         return 0;
     }
 }

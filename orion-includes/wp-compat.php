@@ -697,11 +697,25 @@ function get_the_permalink($post = 0) {
 }
 
 function has_post_thumbnail($post = null) {
-    return false; // Stub
+    return get_the_post_thumbnail_url($post) !== '';
 }
 
 function the_post_thumbnail($size = 'post-thumbnail', $attr = '') {
-    // Stub
+    $url = get_the_post_thumbnail_url();
+    if ($url === '') {
+        return;
+    }
+
+    $extra = '';
+    if (is_array($attr)) {
+        foreach ($attr as $name => $value) {
+            if (preg_match('/^[a-z0-9_:.-]+$/i', (string) $name)) {
+                $extra .= ' ' . $name . '="' . esc_attr($value) . '"';
+            }
+        }
+    }
+
+    echo '<img src="' . esc_url($url) . '" alt="' . esc_attr(get_the_title()) . '"' . $extra . ' />';
 }
 
 function comments_open($post_id = null) {
