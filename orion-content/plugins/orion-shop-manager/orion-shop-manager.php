@@ -73,7 +73,7 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => 10,
             'unit' => 'paket',
             'category' => 'Oli & Servis',
-            'image' => ''
+            'image' => 'tmp/product/pexels-cottonbro-7428102.jpg'
         ),
         array(
             'sku' => 'OR-AKI-45',
@@ -86,7 +86,7 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => 5,
             'unit' => 'unit',
             'category' => 'Kelistrikan',
-            'image' => ''
+            'image' => 'tmp/product/pexels-taha-balta-3031128-4834307.jpg'
         ),
         array(
             'sku' => 'OR-BAN-R15',
@@ -99,7 +99,7 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => 3,
             'unit' => 'paket',
             'category' => 'Ban & Kaki-kaki',
-            'image' => ''
+            'image' => 'tmp/product/pexels-elena-druzhinina-54874780-7817505.jpg'
         ),
         array(
             'sku' => 'OR-COOL-1L',
@@ -112,7 +112,7 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => 20,
             'unit' => 'botol',
             'category' => 'Radiator',
-            'image' => ''
+            'image' => 'tmp/product/pexels-elsa-olofsson-3357043-5331314.jpg'
         ),
         array(
             'sku' => 'OR-WIPER-SET',
@@ -125,7 +125,7 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => 15,
             'unit' => 'set',
             'category' => 'Aksesoris',
-            'image' => ''
+            'image' => 'tmp/product/pexels-tree-of-life-seeds-1708680-3577295.jpg'
         ),
         array(
             'sku' => 'SRV-10K',
@@ -138,7 +138,7 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => null,
             'unit' => 'layanan',
             'category' => 'Servis Berkala',
-            'image' => ''
+            'image' => 'tmp/product/pexels-noratopicals-7038220.jpg'
         ),
         array(
             'sku' => 'SRV-TUNEUP',
@@ -151,7 +151,7 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => null,
             'unit' => 'layanan',
             'category' => 'Mesin',
-            'image' => ''
+            'image' => 'tmp/product/pexels-noratopicals-7038227.jpg'
         ),
         array(
             'sku' => 'SRV-DETAIL',
@@ -164,7 +164,7 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => null,
             'unit' => 'layanan',
             'category' => 'Detailing',
-            'image' => ''
+            'image' => 'tmp/product/pexels-noratopicals-7038230.jpg'
         ),
         array(
             'sku' => 'SRV-AC',
@@ -177,28 +177,45 @@ function orion_shop_seed_dummy_products() {
             'stock_quantity' => null,
             'unit' => 'layanan',
             'category' => 'AC',
-            'image' => ''
+            'image' => 'tmp/product/pexels-noratopicals-7038243.jpg'
         ),
     );
 
     foreach ($items as $item) {
-        $stmt = $orion_db->prepare("INSERT INTO $table_products (sku, name, description, price, sale_price, type, stock_status, stock_quantity, unit, category, image) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
-        if ($stmt) {
-            $stmt->bind_param(
-                'sssisssisss',
-                $item['sku'],
-                $item['name'],
-                $item['description'],
-                $item['price'],
-                $item['sale_price'],
-                $item['type'],
-                $item['stock_status'],
-                $item['stock_quantity'],
-                $item['unit'],
-                $item['category'],
-                $item['image']
-            );
-            $stmt->execute();
+        if (method_exists($orion_db, 'prepare')) {
+            $stmt = $orion_db->prepare("INSERT INTO $table_products (sku, name, description, price, sale_price, type, stock_status, stock_quantity, unit, category, image) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+            if ($stmt) {
+                $stmt->bind_param(
+                    'sssisssisss',
+                    $item['sku'],
+                    $item['name'],
+                    $item['description'],
+                    $item['price'],
+                    $item['sale_price'],
+                    $item['type'],
+                    $item['stock_status'],
+                    $item['stock_quantity'],
+                    $item['unit'],
+                    $item['category'],
+                    $item['image']
+                );
+                $stmt->execute();
+            }
+        } else {
+            $sku = $orion_db->real_escape_string((string) $item['sku']);
+            $name = $orion_db->real_escape_string((string) $item['name']);
+            $description = $orion_db->real_escape_string((string) $item['description']);
+            $type = $orion_db->real_escape_string((string) $item['type']);
+            $stock_status = $orion_db->real_escape_string((string) $item['stock_status']);
+            $unit = $orion_db->real_escape_string((string) $item['unit']);
+            $category = $orion_db->real_escape_string((string) $item['category']);
+            $image = $orion_db->real_escape_string((string) $item['image']);
+
+            $price = (int) $item['price'];
+            $sale_price = $item['sale_price'] === null ? 'NULL' : (string) ((int) $item['sale_price']);
+            $stock_quantity = $item['stock_quantity'] === null ? 'NULL' : (string) ((int) $item['stock_quantity']);
+
+            $orion_db->query("INSERT INTO $table_products (sku, name, description, price, sale_price, type, stock_status, stock_quantity, unit, category, image) VALUES ('$sku', '$name', '$description', $price, $sale_price, '$type', '$stock_status', $stock_quantity, '$unit', '$category', '$image')");
         }
     }
 
@@ -208,6 +225,37 @@ function orion_shop_seed_dummy_products() {
 }
 
 orion_shop_seed_dummy_products();
+
+function orion_shop_migrate_seed_images_v1() {
+    if (!function_exists('get_option') || !function_exists('update_option')) return;
+    $done = get_option('orion_shop_seed_images_v1', 0);
+    if ($done) return;
+
+    global $orion_db, $table_prefix;
+    $table_products = $table_prefix . 'orion_products';
+
+    $map = array(
+        'OR-OLI-10K' => 'tmp/product/pexels-cottonbro-7428102.jpg',
+        'OR-AKI-45' => 'tmp/product/pexels-taha-balta-3031128-4834307.jpg',
+        'OR-BAN-R15' => 'tmp/product/pexels-elena-druzhinina-54874780-7817505.jpg',
+        'OR-COOL-1L' => 'tmp/product/pexels-elsa-olofsson-3357043-5331314.jpg',
+        'OR-WIPER-SET' => 'tmp/product/pexels-tree-of-life-seeds-1708680-3577295.jpg',
+        'SRV-10K' => 'tmp/product/pexels-noratopicals-7038220.jpg',
+        'SRV-TUNEUP' => 'tmp/product/pexels-noratopicals-7038227.jpg',
+        'SRV-DETAIL' => 'tmp/product/pexels-noratopicals-7038230.jpg',
+        'SRV-AC' => 'tmp/product/pexels-noratopicals-7038243.jpg',
+    );
+
+    foreach ($map as $sku => $img) {
+        $sku_esc = $orion_db->real_escape_string($sku);
+        $img_esc = $orion_db->real_escape_string($img);
+        $orion_db->query("UPDATE $table_products SET image = '$img_esc' WHERE sku = '$sku_esc' AND (image IS NULL OR image = '')");
+    }
+
+    update_option('orion_shop_seed_images_v1', 1);
+}
+
+orion_shop_migrate_seed_images_v1();
 
 function orion_shop_get_product($id) {
     global $orion_db, $table_prefix;

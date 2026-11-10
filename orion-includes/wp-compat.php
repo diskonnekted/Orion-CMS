@@ -99,11 +99,21 @@ function esc_attr_e($text, $domain = 'default') {
 }
 
 function esc_html($text) {
-    return htmlspecialchars($text);
+    // double_encode = false keeps already-encoded input from turning into
+    // &amp;amp; on every save/display cycle.
+    return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8', false);
 }
 
 function esc_attr($text) {
-    return htmlspecialchars($text, ENT_QUOTES);
+    return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8', false);
+}
+
+function esc_js($text) {
+    return str_replace(
+        array('\\', "'", '"', '<', '>', '&'),
+        array('\\\\', "\\'", '\\"', '\\x3C', '\\x3E', '\\x26'),
+        (string) $text
+    );
 }
 
 function esc_url($url) {
@@ -337,25 +347,12 @@ function is_front_page() {
 
 function is_single() {
     global $wp_query;
-    if (isset($wp_query->query_vars['p'])) {
-        return true;
-    }
-    if (!empty($wp_query->posts) && count($wp_query->posts) == 1 && $wp_query->posts[0]->post_type == 'post') {
-        return true;
-    }
-    return false;
+    return isset($wp_query->query_vars['p']);
 }
 
 function is_page() {
     global $wp_query;
-    if (isset($wp_query->query_vars['page_id']) || isset($wp_query->query_vars['pagename'])) {
-        return true;
-    }
-    // Also check post type of current post
-    if (!empty($wp_query->posts) && count($wp_query->posts) == 1 && $wp_query->posts[0]->post_type == 'page') {
-        return true;
-    }
-    return false;
+    return isset($wp_query->query_vars['page_id']) || isset($wp_query->query_vars['pagename']);
 }
 
 /**
@@ -799,4 +796,299 @@ function is_admin() {
 
 function is_rtl() {
     return false;
+}
+
+/**
+ * Shortcode API (Mock Implementation)
+ */
+global $shortcode_tags;
+$shortcode_tags = array();
+
+function add_shortcode($tag, $callback) {
+    global $shortcode_tags;
+    if ( '' === trim( $tag ) ) {
+        // Warning?
+        return;
+    }
+    $shortcode_tags[ $tag ] = $callback;
+}
+
+function remove_shortcode($tag) {
+    global $shortcode_tags;
+    unset($shortcode_tags[$tag]);
+}
+
+function remove_all_shortcodes() {
+    global $shortcode_tags;
+    $shortcode_tags = array();
+}
+
+function shortcode_exists( $tag ) {
+    global $shortcode_tags;
+    return array_key_exists( $tag, $shortcode_tags );
+}
+
+function has_shortcode( $content, $tag ) {
+    if ( false === strpos( $content, '[' ) ) {
+        return false;
+    }
+
+    if ( shortcode_exists( $tag ) ) {
+        preg_match_all( '/' . get_shortcode_regex() . '/', $content, $matches, PREG_SET_ORDER );
+        if ( empty( $matches ) )
+            return false;
+
+        foreach ( $matches as $shortcode ) {
+            if ( $tag === $shortcode[2] ) {
+                return true;
+            } elseif ( ! empty( $shortcode[5] ) && has_shortcode( $shortcode[5], $tag ) ) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function do_shortcode($content, $ignore_html = false) {
+    global $shortcode_tags;
+
+    if (false === strpos($content, '[')) {
+        return $content;
+    }
+
+    if (empty($shortcode_tags) || !is_array($shortcode_tags)) {
+        return $content;
+    }
+
+    // Find all registered tag names in $content.
+    preg_match_all( '@\[([^<>&/\[\]\x00-\x20=]++)@', $content, $matches );
+    $tagnames = array_intersect( array_keys( $shortcode_tags ), $matches[1] );
+
+    if ( empty( $tagnames ) ) {
+        return $content;
+    }
+
+    $content = do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames );
+
+    $pattern = get_shortcode_regex( $tagnames );
+    $content = preg_replace_callback( "/$pattern/", 'do_shortcode_tag', $content );
+
+    // Always unescape line breaks in shortcodes.
+    $content = unescape_invalid_shortcodes( $content );
+
+    return $content;
+}
+
+function get_shortcode_regex( $tagnames = null ) {
+    global $shortcode_tags;
+
+    if ( empty( $tagnames ) ) {
+        $tagnames = array_keys( $shortcode_tags );
+    }
+    $tagregexp = join( '|', array_map('preg_quote', $tagnames) );
+
+    // WARNING! Do not change this regex without changing do_shortcode_tag() and strip_shortcode_tag()
+    // Also, see shortcode_unautop() and shortcode.js.
+    return
+          '\\['                              // Opening bracket
+        . '(\\[?)'                           // 1: Optional second opening bracket for escaping shortcodes: [[tag]]
+        . "($tagregexp)"                     // 2: Shortcode name
+        . '(?![\\w-])'                       // Not followed by word character or hyphen
+        . '('                                // 3: Unroll the loop: Inside the opening shortcode tag
+        .     '[^\\]\\/]*'                   // Not a closing bracket or forward slash
+        .     '(?:'
+        .         '\\/(?!\\])'               // A forward slash not followed by a closing bracket
+        .         '[^\\]\\/]*'               // Not a closing bracket or forward slash
+        .     ')*?'
+        . ')'
+        . '(?:'
+        .     '(\\/)'                        // 4: Self closing tag ...
+        .     '\\]'                          // ... and closing bracket
+        . '|'
+        .     '\\]'                          // Closing bracket
+        .     '(?:'
+        .         '('                        // 5: Unroll the loop: Optionally, anything between the opening and closing shortcode tags
+        .             '[^\\[]*+'             // Not an opening bracket
+        .             '(?:'
+        .                 '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
+        .                 '[^\\[]*+'         // Not an opening bracket
+        .             ')*+'
+        .         ')'
+        .         '\\[\\/\\2\\]'             // Closing shortcode tag
+        .     ')?'
+        . ')'
+        . '(\\]?)';                          // 6: Optional second closing bracket for escaping shortcodes: [[tag]]
+}
+
+function do_shortcode_tag( $m ) {
+    global $shortcode_tags;
+
+    // Allow [[foo]] syntax for escaping a tag
+    if ( $m[1] == '[' && $m[6] == ']' ) {
+        return substr($m[0], 1, -1);
+    }
+
+    $tag = $m[2];
+    $attr = shortcode_parse_atts( $m[3] );
+
+    if ( ! is_callable( $shortcode_tags[ $tag ] ) ) {
+        return $m[0];
+    }
+
+    $content = isset( $m[5] ) ? $m[5] : null;
+
+    $output = $m[1] . call_user_func( $shortcode_tags[ $tag ], $attr, $content, $tag ) . $m[6];
+
+    return $output;
+}
+
+function shortcode_parse_atts( $text ) {
+    $atts = array();
+    $pattern = '/([\w-]+)\s*=\s*"([^"]*)"(?:\s|$)|([\w-]+)\s*=\s*\'([^\']*)\'(?:\s|$)|([\w-]+)\s*=\s*([^\s\'"]+)(?:\s|$)|"([^"]*)"(?:\s|$)|(\S+)(?:\s|$)/';
+    $text = preg_replace("/[\x{00a0}\x{000b}]+/u", " ", $text);
+    if ( preg_match_all($pattern, $text, $match, PREG_SET_ORDER) ) {
+        foreach ($match as $m) {
+            if (!empty($m[1]))
+                $atts[strtolower($m[1])] = stripcslashes($m[2]);
+            elseif (!empty($m[3]))
+                $atts[strtolower($m[3])] = stripcslashes($m[4]);
+            elseif (!empty($m[5]))
+                $atts[strtolower($m[5])] = stripcslashes($m[6]);
+            elseif (isset($m[7]) && strlen($m[7]))
+                $atts[] = stripcslashes($m[7]);
+            elseif (isset($m[8]))
+                $atts[] = stripcslashes($m[8]);
+        }
+
+        // Reject any unclosed HTML elements
+        foreach( $atts as &$value ) {
+            if ( false !== strpos( $value, '<' ) ) {
+                if ( 1 !== preg_match( '/^[^<]*+(?:<[^>]*+>[^<]*+)*+$/', $value ) ) {
+                    $value = '';
+                }
+            }
+        }
+    } else {
+        $atts = ltrim($text);
+    }
+    return $atts;
+}
+
+function shortcode_atts( $pairs, $atts, $shortcode = '' ) {
+    $atts = (array)$atts;
+    $out = array();
+    foreach ($pairs as $name => $default) {
+        if ( array_key_exists($name, $atts) )
+            $out[$name] = $atts[$name];
+        else
+            $out[$name] = $default;
+    }
+    
+    if ( function_exists( 'apply_filters' ) ) {
+        $out = apply_filters( "shortcode_atts_{$shortcode}", $out, $pairs, $atts, $shortcode );
+    }
+    
+    return $out;
+}
+
+function strip_shortcodes( $content ) {
+    global $shortcode_tags;
+
+    if ( empty( $shortcode_tags ) || ! is_array( $shortcode_tags ) ) {
+        return $content;
+    }
+
+    $pattern = get_shortcode_regex();
+
+    return preg_replace_callback( "/$pattern/", 'strip_shortcode_tag', $content );
+}
+
+function strip_shortcode_tag( $m ) {
+    // Allow [[foo]] syntax for escaping a tag
+    if ( $m[1] == '[' && $m[6] == ']' ) {
+        return substr($m[0], 1, -1);
+    }
+    return $m[1] . $m[6];
+}
+
+function do_shortcodes_in_html_tags( $content, $ignore_html, $tagnames ) {
+    // Stub
+    return $content;
+}
+
+function unescape_invalid_shortcodes( $content ) {
+    return $content; // Stub
+}
+
+// Hook do_shortcode to the_content
+if (function_exists('add_filter')) {
+    add_filter('the_content', 'do_shortcode', 11); // Priority 11 to run after wpautop if it existed
+}
+
+if ( ! function_exists( 'trailingslashit' ) ) {
+function trailingslashit( $string ) {
+return rtrim( $string, '/\\' ) . '/';
+}
+}
+if ( ! function_exists( 'plugin_dir_path' ) ) {
+	function plugin_dir_path( $file ) {
+		return trailingslashit( str_replace( '\\', '/', dirname( $file ) ) );
+	}
+}
+
+if ( ! function_exists( 'plugin_dir_url' ) ) {
+	function plugin_dir_url( $file ) {
+		$path    = plugin_dir_path( $file );
+		$plugins = '';
+		if ( defined( 'ABSPATH' ) ) {
+			$plugins = trailingslashit( ABSPATH . 'orion-content/plugins' );
+		}
+		if ( $plugins !== '' && strpos( $path, $plugins ) === 0 ) {
+			$url = site_url( '/orion-content/plugins/' . substr( $path, strlen( $plugins ) ) );
+		} else {
+			$base = rtrim( str_replace( '\\', '/', dirname( dirname( dirname( dirname( $file ) ) ) ) ), '/' );
+			$url  = str_replace( $base, site_url(), $path );
+		}
+		return $url;
+	}
+}
+
+if ( ! function_exists( 'plugin_basename' ) ) {
+	function plugin_basename( $file ) {
+		$file    = str_replace( '\\', '/', $file );
+		$plugins = '';
+		if ( defined( 'ABSPATH' ) ) {
+			$plugins = trim( str_replace( '\\', '/', trailingslashit( ABSPATH . 'orion-content/plugins' ) ), '/' );
+		}
+		if ( $plugins !== '' ) {
+			$pos = strpos( $file, $plugins . '/' );
+			if ( $pos !== false ) {
+				return trim( substr( $file, $pos + strlen( $plugins ) + 1 ), '/' );
+			}
+		}
+		if ( preg_match( '#([^/]+/[^/]+\.php)$#', $file, $m ) ) {
+			return $m[1];
+		}
+		return basename( $file );
+	}
+}
+
+if ( ! function_exists( 'plugins_url' ) ) {
+	function plugins_url( $path = '', $plugin = '' ) {
+		if ( $plugin !== '' ) {
+			$url = plugin_dir_url( $plugin );
+			if ( $path !== '' ) {
+				return $url . ltrim( $path, '/' );
+			}
+			return rtrim( $url, '/' );
+		}
+		$base = '';
+		if ( defined( 'ABSPATH' ) ) {
+			$base = site_url( '/orion-content/plugins' );
+		}
+		if ( $path !== '' ) {
+			return $base . '/' . ltrim( $path, '/' );
+		}
+		return $base;
+	}
 }

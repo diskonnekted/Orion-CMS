@@ -10,6 +10,11 @@ $current_theme = get_option('template', 'orion-default');
 
 // --- POST HANDLING ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF guard: reject POST payloads that do not carry a valid nonce.
+    if (!isset($_POST['orion_nonce']) || !orion_verify_nonce($_POST['orion_nonce'], 'orion_theme_settings_save')) {
+        $_POST = array();
+    }
+
     
     if ($current_theme === 'orion-libre' && isset($_POST['orion_libre_theme_settings_submit'])) {
         update_option('orion_libre_featured_book', $_POST['featured_book']);
@@ -138,6 +143,337 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: theme-settings.php?updated=1');
         exit;
 
+    } elseif ($current_theme === 'orion-products' && isset($_POST['orion_products_theme_settings_submit'])) {
+        update_option('orion_products_brand_name', isset($_POST['brand_name']) ? html_entity_decode(trim($_POST['brand_name']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_products_tagline', isset($_POST['tagline']) ? html_entity_decode(trim($_POST['tagline']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_products_hero_title', isset($_POST['hero_title']) ? html_entity_decode(trim($_POST['hero_title']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_products_hero_subtitle', isset($_POST['hero_subtitle']) ? html_entity_decode(trim($_POST['hero_subtitle']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_products_cta_text', isset($_POST['cta_text']) ? html_entity_decode(trim($_POST['cta_text']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_products_whatsapp', isset($_POST['whatsapp']) ? trim($_POST['whatsapp']) : '');
+        update_option('orion_products_instagram', isset($_POST['instagram']) ? trim($_POST['instagram']) : '');
+        update_option('orion_products_email', isset($_POST['email']) ? trim($_POST['email']) : '');
+        update_option('orion_products_address', isset($_POST['address']) ? html_entity_decode(trim($_POST['address']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_products_product_lines', isset($_POST['product_lines']) ? trim($_POST['product_lines']) : '');
+
+        $logo = isset($_POST['logo']) ? trim($_POST['logo']) : '';
+        if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['logo_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'products-logo-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $upload_dir . $filename)) {
+                    $logo = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_products_logo', $logo);
+
+        $hero_bg = isset($_POST['hero_bg']) ? trim($_POST['hero_bg']) : '';
+        if (isset($_FILES['hero_bg_file']) && $_FILES['hero_bg_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['hero_bg_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'products-hero-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['hero_bg_file']['tmp_name'], $upload_dir . $filename)) {
+                    $hero_bg = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_products_hero_bg', $hero_bg);
+
+        header('Location: theme-settings.php?updated=1');
+        exit;
+
+    } elseif ($current_theme === 'orion-promo' && isset($_POST['orion_promo_theme_settings_submit'])) {
+        update_option('orion_promo_brand_name', isset($_POST['brand_name']) ? html_entity_decode(trim($_POST['brand_name']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_promo_hero_badge', isset($_POST['hero_badge']) ? html_entity_decode(trim($_POST['hero_badge']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_promo_hero_title_line1', isset($_POST['hero_title_line1']) ? html_entity_decode(trim($_POST['hero_title_line1']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_promo_hero_title_highlight', isset($_POST['hero_title_highlight']) ? html_entity_decode(trim($_POST['hero_title_highlight']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_promo_hero_subtitle', isset($_POST['hero_subtitle']) ? html_entity_decode(trim($_POST['hero_subtitle']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_promo_primary_cta_text', isset($_POST['primary_cta_text']) ? html_entity_decode(trim($_POST['primary_cta_text']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_promo_primary_cta_url', isset($_POST['primary_cta_url']) ? trim($_POST['primary_cta_url']) : '');
+        update_option('orion_promo_secondary_cta_text', isset($_POST['secondary_cta_text']) ? html_entity_decode(trim($_POST['secondary_cta_text']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_promo_secondary_cta_url', isset($_POST['secondary_cta_url']) ? trim($_POST['secondary_cta_url']) : '');
+
+        $news_per_page = isset($_POST['orion_promo_news_per_page']) ? (int) $_POST['orion_promo_news_per_page'] : 6;
+        if ($news_per_page < 1) $news_per_page = 1;
+        if ($news_per_page > 50) $news_per_page = 50;
+        update_option('orion_promo_news_per_page', $news_per_page);
+
+        $news_layout = isset($_POST['orion_promo_news_layout']) ? trim($_POST['orion_promo_news_layout']) : 'grid';
+        if (!in_array($news_layout, ['grid', 'list'])) $news_layout = 'grid';
+        update_option('orion_promo_news_layout', $news_layout);
+
+        $logo_url = isset($_POST['logo_url']) ? trim($_POST['logo_url']) : '';
+        if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['logo_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'promo-logo-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $upload_dir . $filename)) {
+                    $logo_url = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_promo_logo_url', $logo_url);
+
+        $hero_visual = isset($_POST['hero_visual_url']) ? trim($_POST['hero_visual_url']) : '';
+        if (isset($_FILES['hero_visual_file']) && $_FILES['hero_visual_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['hero_visual_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'promo-hero-visual-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['hero_visual_file']['tmp_name'], $upload_dir . $filename)) {
+                    $hero_visual = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_promo_hero_visual_url', $hero_visual);
+
+        header('Location: theme-settings.php?updated=1');
+        exit;
+
+    } elseif ($current_theme === 'orion-one' && isset($_POST['orion_one_theme_settings_submit'])) {
+        update_option('blogname', isset($_POST['site_title']) ? html_entity_decode(trim($_POST['site_title']), ENT_QUOTES, 'UTF-8') : '');
+        update_option('orion_one_brand_name', isset($_POST['brand_name']) ? html_entity_decode(trim($_POST['brand_name']), ENT_QUOTES, 'UTF-8') : '');
+
+        $logo_url = isset($_POST['logo_url']) ? trim($_POST['logo_url']) : '';
+        if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['logo_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'orion-one-logo-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $upload_dir . $filename)) {
+                    $logo_url = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_one_logo_url', $logo_url);
+
+        $home_banner_image = get_option('orion_one_home_banner_image', '');
+        $banner_image = get_option('orion_one_banner_image', '');
+
+        $home_banner_link = isset($_POST['orion_one_home_banner_link']) ? trim($_POST['orion_one_home_banner_link']) : '#';
+        $banner_link = isset($_POST['orion_one_banner_link']) ? trim($_POST['orion_one_banner_link']) : '#';
+        update_option('orion_one_home_banner_link', $home_banner_link);
+        update_option('orion_one_banner_link', $banner_link);
+
+        if (isset($_FILES['home_banner_file']) && $_FILES['home_banner_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['home_banner_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $filename = 'orion-one-home-banner-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['home_banner_file']['tmp_name'], $upload_dir . $filename)) {
+                    $home_banner_image = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_one_home_banner_image', $home_banner_image);
+
+        if (isset($_FILES['sidebar_banner_file']) && $_FILES['sidebar_banner_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['sidebar_banner_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $filename = 'orion-one-sidebar-banner-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['sidebar_banner_file']['tmp_name'], $upload_dir . $filename)) {
+                    $banner_image = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_one_banner_image', $banner_image);
+
+        header('Location: theme-settings.php?updated=1');
+        exit;
+
+    } elseif ($current_theme === 'orion-bakery' && isset($_POST['orion_bakery_theme_settings_submit'])) {
+        // Logo Upload
+        $logo_url = isset($_POST['logo_url']) ? trim($_POST['logo_url']) : '';
+        if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['logo_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'bakery-logo-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $upload_dir . $filename)) {
+                    $logo_url = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_bakery_logo', $logo_url);
+
+        // Hero BG Upload
+        $hero_img = isset($_POST['hero_img']) ? trim($_POST['hero_img']) : '';
+        if (isset($_FILES['hero_img_file']) && $_FILES['hero_img_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['hero_img_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'bakery-hero-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['hero_img_file']['tmp_name'], $upload_dir . $filename)) {
+                    $hero_img = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_bakery_hero_img', $hero_img);
+        
+        header('Location: theme-settings.php?updated=1');
+        exit;
+
+    } elseif ($current_theme === 'orion-islamic-center' && (isset($_POST['orion_ic_theme_settings_submit']) || isset($_POST['orion_ic_add_announcement_submit']))) {
+        $orion_ic_decode = function($value) {
+            $value = is_string($value) ? trim($value) : '';
+            for ($i = 0; $i < 5; $i++) {
+                $decoded = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+                if ($decoded === $value) break;
+                $value = $decoded;
+            }
+            for ($i = 0; $i < 5; $i++) {
+                $collapsed = preg_replace('/&(?:amp;)+/i', '&', $value);
+                if ($collapsed === $value) break;
+                $value = $collapsed;
+            }
+            return $value;
+        };
+
+        update_option('orion_ic_hero_title', isset($_POST['hero_title']) ? $orion_ic_decode($_POST['hero_title']) : '');
+        update_option('orion_ic_hero_subtitle', isset($_POST['hero_subtitle']) ? $orion_ic_decode($_POST['hero_subtitle']) : '');
+        update_option('orion_ic_whatsapp', isset($_POST['whatsapp']) ? trim($_POST['whatsapp']) : '');
+        update_option('orion_ic_address', isset($_POST['address']) ? trim($_POST['address']) : '');
+        update_option('orion_ic_schedule_rows', isset($_POST['schedule_rows']) ? $orion_ic_decode($_POST['schedule_rows']) : '');
+
+        $logo_url = isset($_POST['logo_url']) ? trim($_POST['logo_url']) : '';
+        if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['logo_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'ic-logo-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $upload_dir . $filename)) {
+                    $logo_url = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_ic_logo', $logo_url);
+
+        $hero_bg = isset($_POST['hero_bg']) ? trim($_POST['hero_bg']) : '';
+        if (isset($_FILES['hero_bg_file']) && $_FILES['hero_bg_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['hero_bg_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'ic-hero-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['hero_bg_file']['tmp_name'], $upload_dir . $filename)) {
+                    $hero_bg = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_ic_hero_bg', $hero_bg);
+
+        $about_img = isset($_POST['about_img']) ? trim($_POST['about_img']) : '';
+        if (isset($_FILES['about_img_file']) && $_FILES['about_img_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['about_img_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'ic-about-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['about_img_file']['tmp_name'], $upload_dir . $filename)) {
+                    $about_img = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_ic_about_img', $about_img);
+
+        $gallery_json = get_option('orion_ic_gallery_images', '[]');
+        $gallery_images = json_decode($gallery_json, true);
+        if (!is_array($gallery_images)) $gallery_images = array();
+
+        if (isset($_POST['gallery_remove']) && is_array($_POST['gallery_remove'])) {
+            $remove = array_map('trim', $_POST['gallery_remove']);
+            $gallery_images = array_values(array_filter($gallery_images, function($u) use ($remove) {
+                return !in_array($u, $remove);
+            }));
+        }
+
+        if (isset($_FILES['gallery_files']) && isset($_FILES['gallery_files']['name']) && is_array($_FILES['gallery_files']['name'])) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+
+            $count = count($_FILES['gallery_files']['name']);
+            for ($i = 0; $i < $count; $i++) {
+                if (!isset($_FILES['gallery_files']['error'][$i]) || $_FILES['gallery_files']['error'][$i] !== UPLOAD_ERR_OK) continue;
+                $ext = strtolower(pathinfo($_FILES['gallery_files']['name'][$i], PATHINFO_EXTENSION));
+                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) continue;
+
+                $filename = 'ic-gallery-' . time() . '-' . mt_rand(1000, 9999) . '.' . $ext;
+                if (move_uploaded_file($_FILES['gallery_files']['tmp_name'][$i], $upload_dir . $filename)) {
+                    $gallery_images[] = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+
+        $gallery_images = array_values(array_unique(array_filter($gallery_images)));
+        update_option('orion_ic_gallery_images', json_encode($gallery_images));
+
+        if (isset($_POST['announcement_title']) && trim($_POST['announcement_title']) !== '' && isset($_POST['orion_ic_add_announcement_submit'])) {
+            $title = trim($_POST['announcement_title']);
+            $content = isset($_POST['announcement_content']) ? trim($_POST['announcement_content']) : '';
+            if (function_exists('wp_insert_post')) {
+                wp_insert_post(array(
+                    'post_title' => $title,
+                    'post_content' => $content,
+                    'post_status' => 'publish',
+                    'post_type' => 'ic_announcement'
+                ));
+            }
+        }
+
+        header('Location: theme-settings.php?updated=1');
+        exit;
+
+    } elseif ($current_theme === 'orion-government' && isset($_POST['orion_gov_theme_settings_submit'])) {
+        update_option('orion_gov_hero_title', isset($_POST['hero_title']) ? trim($_POST['hero_title']) : '');
+        update_option('orion_gov_hero_subtitle', isset($_POST['hero_subtitle']) ? trim($_POST['hero_subtitle']) : '');
+        
+        // Logo Upload
+        $logo_url = isset($_POST['logo_url']) ? trim($_POST['logo_url']) : '';
+        if (isset($_FILES['logo_file']) && $_FILES['logo_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['logo_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'gov-logo-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['logo_file']['tmp_name'], $upload_dir . $filename)) {
+                    $logo_url = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_gov_logo', $logo_url);
+
+        // Hero BG Upload
+        $hero_bg = isset($_POST['hero_bg']) ? trim($_POST['hero_bg']) : '';
+        if (isset($_FILES['hero_bg_file']) && $_FILES['hero_bg_file']['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = ABSPATH . 'orion-content/uploads/settings/';
+            if (!file_exists($upload_dir)) mkdir($upload_dir, 0755, true);
+            $ext = strtolower(pathinfo($_FILES['hero_bg_file']['name'], PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $filename = 'gov-hero-' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['hero_bg_file']['tmp_name'], $upload_dir . $filename)) {
+                    $hero_bg = site_url('/orion-content/uploads/settings/' . $filename);
+                }
+            }
+        }
+        update_option('orion_gov_hero_bg', $hero_bg);
+        
+        header('Location: theme-settings.php?updated=1');
+        exit;
+
     } elseif ($current_theme === 'orion-smartvillage' && isset($_POST['orion_smartvillage_theme_settings_submit'])) {
         update_option('site_title', isset($_POST['site_title']) ? trim($_POST['site_title']) : '');
         update_option('site_tagline', isset($_POST['site_tagline']) ? trim($_POST['site_tagline']) : '');
@@ -200,6 +536,7 @@ $message = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'Pengaturan te
     ?>
     <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
         <form method="POST">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
             <div class="space-y-8">
                 <section>
                     <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">
@@ -261,6 +598,7 @@ $message = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'Pengaturan te
     ?>
     <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
         <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
             <div class="space-y-8">
                 <section>
                     <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">WhatsApp Contact</h2>
@@ -316,6 +654,7 @@ $message = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'Pengaturan te
     ?>
     <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
         <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
             <div class="space-y-8">
                 <!-- Hero Banner -->
                 <section>
@@ -426,6 +765,524 @@ $message = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'Pengaturan te
         </form>
     </div>
 
+<?php elseif ($current_theme === 'orion-products'): ?>
+    <?php
+    $brand_name = html_entity_decode(get_option('orion_products_brand_name', 'Orion Products'), ENT_QUOTES, 'UTF-8');
+    $tagline = html_entity_decode(get_option('orion_products_tagline', 'Skincare & kosmetik premium untuk rutinitas harian.'), ENT_QUOTES, 'UTF-8');
+    $hero_title = html_entity_decode(get_option('orion_products_hero_title', 'Kulit sehat, tampilan percaya diri.'), ENT_QUOTES, 'UTF-8');
+    $hero_subtitle = html_entity_decode(get_option('orion_products_hero_subtitle', 'Formula ringan, hasil terlihat. Dari skincare harian sampai kosmetik untuk momen spesial.'), ENT_QUOTES, 'UTF-8');
+    $cta_text = html_entity_decode(get_option('orion_products_cta_text', 'Konsultasi & Order'), ENT_QUOTES, 'UTF-8');
+    $whatsapp = get_option('orion_products_whatsapp', '628123456789');
+    $instagram = get_option('orion_products_instagram', '');
+    $email = get_option('orion_products_email', 'hello@orionproducts.id');
+    $address = html_entity_decode(get_option('orion_products_address', 'Jl. Contoh No. 10, Jakarta'), ENT_QUOTES, 'UTF-8');
+    $logo = get_option('orion_products_logo', '');
+    $hero_bg = get_option('orion_products_hero_bg', '');
+    $product_lines = get_option('orion_products_product_lines', "Radiance Cleanser|Rp 149.000|Membersihkan tanpa membuat kering.\nHydra Serum|Rp 189.000|Melembapkan dan mengunci hidrasi.\nGlow Moisturizer|Rp 179.000|Kulit terasa kenyal sepanjang hari.\nSun Shield SPF 50|Rp 159.000|Perlindungan harian, ringan dan nyaman.\nVelvet Lip Tint|Rp 129.000|Warna tahan lama, tidak lengket.\nSoft Blush|Rp 119.000|Hasil natural, mudah dibaurkan.");
+    ?>
+    <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
+        <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
+            <div class="space-y-8">
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Brand</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Nama Brand</label>
+                            <input type="text" name="brand_name" value="<?php echo htmlspecialchars($brand_name); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Tagline</label>
+                            <input type="text" name="tagline" value="<?php echo htmlspecialchars($tagline); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Hero</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700">Judul Hero</label>
+                            <input type="text" name="hero_title" value="<?php echo htmlspecialchars($hero_title); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700">Subjudul Hero</label>
+                            <textarea name="hero_subtitle" rows="3" class="w-full p-2 border rounded-lg"><?php echo htmlspecialchars($hero_subtitle); ?></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Background Hero (URL)</label>
+                            <input type="text" name="hero_bg" value="<?php echo htmlspecialchars($hero_bg); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Background</label>
+                            <input type="file" name="hero_bg_file" class="w-full p-1.5 border rounded-lg bg-slate-50 text-sm">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Logo</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Logo (URL)</label>
+                            <input type="text" name="logo" value="<?php echo htmlspecialchars($logo); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Logo</label>
+                            <input type="file" name="logo_file" class="w-full p-1.5 border rounded-lg bg-slate-50 text-sm">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">CTA & Kontak</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Teks Tombol CTA</label>
+                            <input type="text" name="cta_text" value="<?php echo htmlspecialchars($cta_text); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">WhatsApp (628xxxx)</label>
+                            <input type="text" name="whatsapp" value="<?php echo htmlspecialchars($whatsapp); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Instagram URL</label>
+                            <input type="text" name="instagram" value="<?php echo htmlspecialchars($instagram); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Email</label>
+                            <input type="text" name="email" value="<?php echo htmlspecialchars($email); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700">Alamat</label>
+                            <textarea name="address" rows="2" class="w-full p-2 border rounded-lg"><?php echo htmlspecialchars($address); ?></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Daftar Produk (Maks 6)</h2>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-slate-700">Format per baris (mendukung 2 format)</label>
+                        <div class="text-xs text-slate-500">
+                            <div><span class="font-mono">Nama|Harga|Deskripsi</span></div>
+                            <div><span class="font-mono">Slug|Kategori|Nama|Harga|Deskripsi|ImageURL (opsional)</span></div>
+                        </div>
+                        <textarea name="product_lines" rows="8" class="w-full p-2 border rounded-lg font-mono text-xs"><?php echo htmlspecialchars($product_lines); ?></textarea>
+                        <div class="text-xs text-slate-500">Foto produk menggunakan aset tema. Baris 1-6 akan dipakai untuk kartu produk.</div>
+                    </div>
+                </section>
+
+                <div class="pt-6 border-t flex justify-end">
+                    <button type="submit" name="orion_products_theme_settings_submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg">
+                        Simpan Pengaturan Produk
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<?php elseif ($current_theme === 'orion-promo'): ?>
+    <?php
+    $brand_name = html_entity_decode(get_option('orion_promo_brand_name', 'Orion Promo'), ENT_QUOTES, 'UTF-8');
+    $logo_url = get_option('orion_promo_logo_url', site_url('/assets/img/logo.png'));
+    $hero_badge = html_entity_decode(get_option('orion_promo_hero_badge', 'Orion CMS v1.0 Resmi Dirilis'), ENT_QUOTES, 'UTF-8');
+    $hero_title_line1 = html_entity_decode(get_option('orion_promo_hero_title_line1', 'Bangun Web'), ENT_QUOTES, 'UTF-8');
+    $hero_title_highlight = html_entity_decode(get_option('orion_promo_hero_title_highlight', 'Tanpa Batas'), ENT_QUOTES, 'UTF-8');
+    $hero_subtitle = html_entity_decode(get_option('orion_promo_hero_subtitle', 'Platform manajemen konten modern yang menggabungkan performa tinggi, keamanan tingkat lanjut, dan kemudahan penggunaan untuk developer maupun pemula.'), ENT_QUOTES, 'UTF-8');
+    $primary_cta_text = html_entity_decode(get_option('orion_promo_primary_cta_text', 'Download Gratis'), ENT_QUOTES, 'UTF-8');
+    $primary_cta_url = get_option('orion_promo_primary_cta_url', site_url('/download/'));
+    $secondary_cta_text = html_entity_decode(get_option('orion_promo_secondary_cta_text', 'Coba Gratis'), ENT_QUOTES, 'UTF-8');
+    $secondary_cta_url = get_option('orion_promo_secondary_cta_url', site_url('/?page=coba-gratis'));
+    $hero_visual_url = get_option('orion_promo_hero_visual_url', site_url('/assets/img/CMS-ORION-ONE.png'));
+    $news_per_page = (int) get_option('orion_promo_news_per_page', 6);
+    $news_layout = get_option('orion_promo_news_layout', 'grid');
+    ?>
+    <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
+        <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
+            <div class="space-y-8">
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Brand & Logo</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Nama Brand</label>
+                            <input type="text" name="brand_name" value="<?php echo htmlspecialchars($brand_name); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Logo (URL)</label>
+                            <input type="text" name="logo_url" value="<?php echo htmlspecialchars($logo_url); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="https://...">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Logo</label>
+                            <input type="file" name="logo_file" class="w-full p-1.5 border rounded-lg bg-slate-50 text-sm">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Hero</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700">Badge</label>
+                            <input type="text" name="hero_badge" value="<?php echo htmlspecialchars($hero_badge); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Judul Baris 1</label>
+                            <input type="text" name="hero_title_line1" value="<?php echo htmlspecialchars($hero_title_line1); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Judul Highlight</label>
+                            <input type="text" name="hero_title_highlight" value="<?php echo htmlspecialchars($hero_title_highlight); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700">Subjudul</label>
+                            <textarea name="hero_subtitle" rows="3" class="w-full p-2 border rounded-lg"><?php echo htmlspecialchars($hero_subtitle); ?></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Hero Visual (URL)</label>
+                            <input type="text" name="hero_visual_url" value="<?php echo htmlspecialchars($hero_visual_url); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Hero Visual</label>
+                            <input type="file" name="hero_visual_file" class="w-full p-1.5 border rounded-lg bg-slate-50 text-sm">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">CTA</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Primary CTA Text</label>
+                            <input type="text" name="primary_cta_text" value="<?php echo htmlspecialchars($primary_cta_text); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Primary CTA URL</label>
+                            <input type="text" name="primary_cta_url" value="<?php echo htmlspecialchars($primary_cta_url); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Secondary CTA Text</label>
+                            <input type="text" name="secondary_cta_text" value="<?php echo htmlspecialchars($secondary_cta_text); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Secondary CTA URL</label>
+                            <input type="text" name="secondary_cta_url" value="<?php echo htmlspecialchars($secondary_cta_url); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="#features atau https://...">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Berita</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Jumlah berita per halaman</label>
+                            <input type="number" name="orion_promo_news_per_page" value="<?php echo (int) $news_per_page; ?>" class="w-full p-2 border rounded-lg" min="1" max="50">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Layout Berita</label>
+                            <select name="orion_promo_news_layout" class="w-full p-2 border rounded-lg">
+                                <option value="grid" <?php echo $news_layout === 'grid' ? 'selected' : ''; ?>>Grid</option>
+                                <option value="list" <?php echo $news_layout === 'list' ? 'selected' : ''; ?>>List</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="pt-6 border-t flex justify-end">
+                    <button type="submit" name="orion_promo_theme_settings_submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg">
+                        Simpan Pengaturan Promo
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<?php elseif ($current_theme === 'orion-bakery'): ?>
+    <?php
+    $logo_url = get_option('orion_bakery_logo', '');
+    $hero_img = get_option('orion_bakery_hero_img', 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80');
+    ?>
+    <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
+        <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
+            <div class="space-y-8">
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-amber-900 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        Tampilan Toko Roti
+                    </h2>
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Logo -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Logo Toko</label>
+                            <?php if($logo_url): ?>
+                                <img src="<?php echo $logo_url; ?>" class="h-20 w-auto object-contain mb-2 border p-1 rounded bg-amber-50">
+                            <?php endif; ?>
+                            <div class="flex gap-4">
+                                <input type="text" name="logo_url" value="<?php echo htmlspecialchars($logo_url); ?>" class="flex-1 p-2 border rounded-lg text-xs" placeholder="URL Logo">
+                                <input type="file" name="logo_file" class="flex-1 p-1 border rounded-lg bg-slate-50 text-xs">
+                            </div>
+                        </div>
+
+                        <!-- Hero Image -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Gambar Utama (Hero)</label>
+                            <?php if($hero_img): ?>
+                                <img src="<?php echo $hero_img; ?>" class="w-full h-40 object-cover rounded-lg mb-2 border">
+                            <?php endif; ?>
+                            <div class="flex gap-4">
+                                <input type="text" name="hero_img" value="<?php echo htmlspecialchars($hero_img); ?>" class="flex-1 p-2 border rounded-lg text-xs" placeholder="URL Gambar Hero">
+                                <input type="file" name="hero_img_file" class="flex-1 p-1 border rounded-lg bg-slate-50 text-xs">
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Gunakan gambar roti yang menarik dengan resolusi tinggi.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="pt-6 border-t flex justify-end">
+                    <button type="submit" name="orion_bakery_theme_settings_submit" class="bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg">
+                        Simpan Pengaturan Bakery
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<?php elseif ($current_theme === 'orion-islamic-center'): ?>
+    <?php
+    $orion_ic_normalize = function($value) {
+        $value = is_string($value) ? trim($value) : '';
+        for ($i = 0; $i < 5; $i++) {
+            $decoded = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+            if ($decoded === $value) break;
+            $value = $decoded;
+        }
+        for ($i = 0; $i < 5; $i++) {
+            $collapsed = preg_replace('/&(?:amp;)+/i', '&', $value);
+            if ($collapsed === $value) break;
+            $value = $collapsed;
+        }
+        return $value;
+    };
+    $hero_title = $orion_ic_normalize(get_option('orion_ic_hero_title', 'Membina Generasi Qur’ani & Berakhlak Mulia'));
+    $hero_subtitle = $orion_ic_normalize(get_option('orion_ic_hero_subtitle', 'Pendidikan terpadu: ilmu syar’i, tahfidz, adab, dan keterampilan untuk masa depan.'));
+    $hero_bg = get_option('orion_ic_hero_bg', 'https://images.unsplash.com/photo-1542810100-2c3c5f7c7d12?auto=format&fit=crop&q=80');
+    $about_img = get_option('orion_ic_about_img', 'https://images.unsplash.com/photo-1609599006353-e629aaabeb38?auto=format&fit=crop&q=80');
+    $logo_url = get_option('orion_ic_logo', '');
+    $whatsapp = get_option('orion_ic_whatsapp', '');
+    $address = get_option('orion_ic_address', "Jl. Pesantren No. 1\nKota, Provinsi");
+    $schedule_rows = get_option('orion_ic_schedule_rows', '');
+    $gallery_json = get_option('orion_ic_gallery_images', '[]');
+    $gallery_images = json_decode($gallery_json, true);
+    if (!is_array($gallery_images)) $gallery_images = array();
+    ?>
+    <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
+        <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
+            <div class="space-y-8">
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-emerald-900 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                        Identitas & Hero
+                    </h2>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Logo</label>
+                            <?php if($logo_url): ?>
+                                <img src="<?php echo $logo_url; ?>" class="h-20 w-auto object-contain mb-2 border p-1 rounded bg-emerald-50">
+                            <?php endif; ?>
+                            <div class="flex gap-4">
+                                <input type="text" name="logo_url" value="<?php echo htmlspecialchars($logo_url); ?>" class="flex-1 p-2 border rounded-lg text-xs" placeholder="URL Logo">
+                                <input type="file" name="logo_file" class="flex-1 p-1 border rounded-lg bg-slate-50 text-xs">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Judul Hero</label>
+                            <input type="text" name="hero_title" value="<?php echo htmlspecialchars($hero_title); ?>" class="w-full p-2 border rounded-lg mb-4">
+
+                            <label class="block text-sm font-medium text-slate-700">Subjudul Hero</label>
+                            <textarea name="hero_subtitle" class="w-full p-2 border rounded-lg mb-4" rows="3"><?php echo htmlspecialchars($hero_subtitle); ?></textarea>
+
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Gambar Latar Hero</label>
+                            <?php if($hero_bg): ?>
+                                <img src="<?php echo $hero_bg; ?>" class="w-full h-40 object-cover rounded-lg mb-2 border">
+                            <?php endif; ?>
+                            <div class="flex gap-4">
+                                <input type="text" name="hero_bg" value="<?php echo htmlspecialchars($hero_bg); ?>" class="flex-1 p-2 border rounded-lg text-xs" placeholder="URL Gambar Hero">
+                                <input type="file" name="hero_bg_file" class="flex-1 p-1 border rounded-lg bg-slate-50 text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-emerald-900 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h12a2 2 0 012 2v10z"></path></svg>
+                        Kontak
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">WhatsApp</label>
+                            <input type="text" name="whatsapp" value="<?php echo htmlspecialchars($whatsapp); ?>" class="w-full p-2 border rounded-lg" placeholder="62812xxxxxxx">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-700">Alamat</label>
+                            <textarea name="address" rows="3" class="w-full p-2 border rounded-lg"><?php echo htmlspecialchars($address); ?></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-emerald-900 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Jadwal Kegiatan
+                    </h2>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Format: Hari|Jam|Kegiatan (1 baris = 1 item)</label>
+                        <textarea name="schedule_rows" rows="7" class="w-full p-2 border rounded-lg font-mono text-xs"><?php echo htmlspecialchars($schedule_rows); ?></textarea>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-emerald-900 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4-4a3 3 0 014 0l4 4m-2-2l2-2a3 3 0 014 0l2 2M2 20h20"></path></svg>
+                        Foto Tentang Kami
+                    </h2>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <?php if($about_img): ?>
+                                <img src="<?php echo htmlspecialchars($about_img); ?>" class="w-full max-w-xl h-48 object-cover rounded-xl mb-2 border">
+                            <?php endif; ?>
+                            <div class="flex gap-4">
+                                <input type="text" name="about_img" value="<?php echo htmlspecialchars($about_img); ?>" class="flex-1 p-2 border rounded-lg text-xs" placeholder="URL Foto Tentang Kami">
+                                <input type="file" name="about_img_file" class="flex-1 p-1 border rounded-lg bg-slate-50 text-xs">
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">Format: jpg, jpeg, png, webp.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-emerald-900 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4-4a3 3 0 014 0l4 4m-2-2l2-2a3 3 0 014 0l2 2M2 20h20"></path></svg>
+                        Galeri Kegiatan
+                    </h2>
+
+                    <?php if (!empty($gallery_images)): ?>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                            <?php foreach ($gallery_images as $img): ?>
+                                <label class="relative group cursor-pointer border rounded-lg overflow-hidden bg-slate-50">
+                                    <img src="<?php echo htmlspecialchars($img); ?>" class="w-full h-24 object-cover">
+                                    <div class="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition"></div>
+                                    <div class="absolute top-2 left-2">
+                                        <input type="checkbox" name="gallery_remove[]" value="<?php echo htmlspecialchars($img); ?>">
+                                    </div>
+                                    <div class="absolute bottom-2 left-2 right-2 text-xs text-white opacity-0 group-hover:opacity-100 transition font-semibold">
+                                        Centang untuk hapus
+                                    </div>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <div class="text-sm text-slate-500 mb-4">Belum ada foto galeri.</div>
+                    <?php endif; ?>
+
+                    <div class="grid grid-cols-1 gap-2">
+                        <label class="block text-sm font-medium text-slate-700">Upload Foto Baru</label>
+                        <input type="file" name="gallery_files[]" multiple class="w-full p-2 border rounded-lg bg-slate-50 text-sm">
+                        <div class="text-xs text-slate-500">Format: jpg, jpeg, png, webp.</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-emerald-900 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h6m-6 4h10M5 4h14a2 2 0 012 2v14l-4-3H5a2 2 0 01-2-2V6a2 2 0 012-2z"></path></svg>
+                        Buat Pengumuman
+                    </h2>
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Judul</label>
+                            <input type="text" name="announcement_title" class="w-full p-2 border rounded-lg" placeholder="Judul pengumuman">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Isi</label>
+                            <textarea name="announcement_content" rows="5" class="w-full p-2 border rounded-lg" placeholder="Isi pengumuman"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="pt-6 border-t flex flex-col sm:flex-row gap-3 justify-end">
+                    <button type="submit" name="orion_ic_theme_settings_submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg">
+                        Simpan Pengaturan
+                    </button>
+                    <button type="submit" name="orion_ic_add_announcement_submit" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg">
+                        Publish Pengumuman
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<?php elseif ($current_theme === 'orion-government'): ?>
+    <?php
+    $hero_title = get_option('orion_gov_hero_title', 'Membangun Kota Cerdas & Melayani Sepenuh Hati');
+    $hero_subtitle = get_option('orion_gov_hero_subtitle', 'Akses layanan publik, berita terbaru, dan transparansi anggaran dalam satu pintu.');
+    $hero_bg = get_option('orion_gov_hero_bg', 'https://images.unsplash.com/photo-1577017040065-6505235af3d8?auto=format&fit=crop&q=80');
+    $logo_url = get_option('orion_gov_logo', '');
+    ?>
+    <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
+        <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
+            <div class="space-y-8">
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        Identitas & Tampilan Utama
+                    </h2>
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Logo -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Logo Instansi</label>
+                            <?php if($logo_url): ?>
+                                <img src="<?php echo $logo_url; ?>" class="h-20 w-auto object-contain mb-2 border p-1 rounded">
+                            <?php endif; ?>
+                            <div class="flex gap-4">
+                                <input type="text" name="logo_url" value="<?php echo htmlspecialchars($logo_url); ?>" class="flex-1 p-2 border rounded-lg text-xs" placeholder="URL Logo">
+                                <input type="file" name="logo_file" class="flex-1 p-1 border rounded-lg bg-slate-50 text-xs">
+                            </div>
+                        </div>
+
+                        <!-- Hero -->
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Judul Hero (Besar)</label>
+                            <input type="text" name="hero_title" value="<?php echo htmlspecialchars($hero_title); ?>" class="w-full p-2 border rounded-lg mb-4">
+                            
+                            <label class="block text-sm font-medium text-slate-700">Sub-judul Hero</label>
+                            <textarea name="hero_subtitle" class="w-full p-2 border rounded-lg mb-4"><?php echo htmlspecialchars($hero_subtitle); ?></textarea>
+
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Gambar Latar Hero</label>
+                            <?php if($hero_bg): ?>
+                                <img src="<?php echo $hero_bg; ?>" class="w-full h-40 object-cover rounded-lg mb-2 border">
+                            <?php endif; ?>
+                            <div class="flex gap-4">
+                                <input type="text" name="hero_bg" value="<?php echo htmlspecialchars($hero_bg); ?>" class="flex-1 p-2 border rounded-lg text-xs" placeholder="URL Gambar Hero">
+                                <input type="file" name="hero_bg_file" class="flex-1 p-1 border rounded-lg bg-slate-50 text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="pt-6 border-t flex justify-end">
+                    <button type="submit" name="orion_gov_theme_settings_submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg">
+                        Simpan Pengaturan Pemerintah
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
 <?php elseif ($current_theme === 'orion-smartvillage'): ?>
     <?php
     $site_title = get_option('site_title', 'Desa Digital');
@@ -437,6 +1294,7 @@ $message = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'Pengaturan te
     ?>
     <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
         <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
             <div class="space-y-8">
                 <section>
                     <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2 flex items-center gap-2">
@@ -487,6 +1345,100 @@ $message = (isset($_GET['updated']) && $_GET['updated'] == '1') ? 'Pengaturan te
                 <div class="pt-6 border-t flex justify-end">
                     <button type="submit" name="orion_smartvillage_theme_settings_submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg">
                         Simpan Informasi Desa
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+<?php elseif ($current_theme === 'orion-one'): ?>
+    <?php
+    $site_title = html_entity_decode(get_option('blogname', 'Orion CMS'), ENT_QUOTES, 'UTF-8');
+    $brand_name = html_entity_decode(get_option('orion_one_brand_name', 'Orion One'), ENT_QUOTES, 'UTF-8');
+    $logo_url = get_option('orion_one_logo_url', site_url('/assets/img/logo.png'));
+    $home_banner_image = get_option('orion_one_home_banner_image', '');
+    $home_banner_link = get_option('orion_one_home_banner_link', '#');
+    $banner_image = get_option('orion_one_banner_image', '');
+    $banner_link = get_option('orion_one_banner_link', '#');
+    ?>
+    <div class="bg-white rounded-xl shadow p-6 border border-slate-200">
+        <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_theme_settings_save'); ?>
+            <div class="space-y-8">
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Setup Awal</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Nama Website</label>
+                            <input type="text" name="site_title" value="<?php echo htmlspecialchars($site_title); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Nama Brand (Header)</label>
+                            <input type="text" name="brand_name" value="<?php echo htmlspecialchars($brand_name); ?>" class="w-full p-2 border rounded-lg">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Logo</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                        <div class="md:col-span-2">
+                            <?php if ($logo_url): ?>
+                                <img src="<?php echo htmlspecialchars($logo_url); ?>" class="h-16 w-auto object-contain border rounded-lg p-2 bg-slate-50">
+                            <?php endif; ?>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Logo (URL)</label>
+                            <input type="text" name="logo_url" value="<?php echo htmlspecialchars($logo_url); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Logo</label>
+                            <input type="file" name="logo_file" class="w-full p-1.5 border rounded-lg bg-slate-50 text-sm">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Home Horizontal Banner (After 6 posts)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                        <div class="md:col-span-2">
+                            <?php if ($home_banner_image): ?>
+                                <img src="<?php echo htmlspecialchars($home_banner_image); ?>" class="w-full max-h-48 object-cover rounded-lg border">
+                            <?php endif; ?>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Banner Link URL</label>
+                            <input type="text" name="orion_one_home_banner_link" value="<?php echo htmlspecialchars($home_banner_link); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="https://example.com/promo">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Banner</label>
+                            <input type="file" name="home_banner_file" class="w-full p-1.5 border rounded-lg bg-slate-50 text-sm">
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-xl font-bold mb-4 text-slate-800 border-b pb-2">Sidebar Banner</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                        <div class="md:col-span-2">
+                            <?php if ($banner_image): ?>
+                                <img src="<?php echo htmlspecialchars($banner_image); ?>" class="h-36 w-auto object-contain rounded-lg border bg-slate-50 p-2">
+                            <?php endif; ?>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Banner Link URL</label>
+                            <input type="text" name="orion_one_banner_link" value="<?php echo htmlspecialchars($banner_link); ?>" class="w-full p-2 border rounded-lg text-xs" placeholder="https://example.com/promo">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Upload Banner</label>
+                            <input type="file" name="sidebar_banner_file" class="w-full p-1.5 border rounded-lg bg-slate-50 text-sm">
+                        </div>
+                    </div>
+                </section>
+
+                <div class="pt-6 border-t flex justify-end">
+                    <button type="submit" name="orion_one_theme_settings_submit" class="bg-orion-600 hover:bg-orion-700 text-white font-bold py-3 px-10 rounded-xl shadow-lg">
+                        Simpan Pengaturan Orion One
                     </button>
                 </div>
             </div>

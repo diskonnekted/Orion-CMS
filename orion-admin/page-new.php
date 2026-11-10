@@ -8,6 +8,9 @@ $current_user = wp_get_current_user();
 if ( !$current_user->ID ) {
     die('Access Denied: You must be logged in.');
 }
+if ( !current_user_can('edit_posts') ) {
+    die('Access Denied: You do not have permission to edit pages.');
+}
 
 $post_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $post = null;
@@ -23,10 +26,14 @@ $message = '';
 
 // Handle Form Submission (PRG)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ( !isset($_POST['orion_nonce']) || !orion_verify_nonce($_POST['orion_nonce'], 'orion_page_new') ) {
+        die('Security check failed. Please try again.');
+    }
+
     $post_data = array(
         'ID' => $post_id,
-        'post_title' => $_POST['post_title'],
-        'post_content' => $_POST['post_content'],
+        'post_title' => sanitize_text_field( isset($_POST['post_title']) ? $_POST['post_title'] : '' ),
+        'post_content' => wp_kses_post( isset($_POST['post_content']) ? $_POST['post_content'] : '' ),
         'post_type' => 'page'
     );
 
@@ -43,14 +50,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Handle Featured Image
         $feat_img_url = '';
         if (isset($_POST['featured_image_url'])) {
-            $feat_img_url = $_POST['featured_image_url'];
+            $feat_img_url = esc_url_raw( $_POST['featured_image_url'] );
         }
 
         if (!empty($_FILES['featured_image']['name'])) {
-            $file_name = time() . '_feat_' . basename($_FILES['featured_image']['name']);
-            $target_file = $upload_dir . $file_name;
-            if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
-                $feat_img_url = site_url('/orion-content/uploads/' . $file_name);
+            $allowed_ext = array('jpg', 'jpeg', 'png', 'gif', 'webp');
+            $ext = strtolower( pathinfo($_FILES['featured_image']['name'], PATHINFO_EXTENSION) );
+            if ( !in_array($ext, $allowed_ext) ) {
+                $message = '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">Invalid file type. Allowed: jpg, jpeg, png, gif, webp, svg.</div>';
+            } else {
+            $safe_name = orion_sanitize_upload_name($_FILES['featured_image']['name'], array('jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'));
+            if ($safe_name === false) { $safe_name = ''; }
+            $file_name = time() . '_feat_' . $safe_name;
+                $target_file = $upload_dir . $file_name;
+                if ($safe_name !== '' && move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
+                    $feat_img_url = site_url('/orion-content/uploads/' . $file_name);
+                }
             }
         }
         
@@ -135,6 +150,7 @@ require_once( 'admin-header.php' );
 <?php endif; ?>
 
 <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <?php orion_field_nonce('orion_page_new'); ?>
     <!-- Main Content Area -->
     <div class="md:col-span-2 space-y-6">
         <div class="bg-white p-6 rounded-lg shadow-sm">
@@ -153,7 +169,7 @@ require_once( 'admin-header.php' );
                         <span>Aksara Jawa</span>
                     </button>
                 </div>
-                <textarea name="post_content" id="post_content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-96" placeholder="Start writing..."><?php echo $post ? $post->post_content : ''; ?></textarea>
+                <textarea name="post_content" id="post_content" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-96" placeholder="Start writing..."><?php echo $post ? esc_html($post->post_content) : ''; ?></textarea>
             </div>
         </div>
     </div>
@@ -179,10 +195,10 @@ require_once( 'admin-header.php' );
             ?>
             <div id="featured-image-preview" class="mb-4">
                  <?php if ($thumb_url): ?>
-                    <img src="<?php echo $thumb_url; ?>" class="w-full h-auto mb-2 rounded border">
+                    <img src="<?php echo esc_url($thumb_url); ?>" class="w-full h-auto mb-2 rounded border">
                 <?php endif; ?>
             </div>
-            <input type="hidden" name="featured_image_url" id="featured_image_url" value="<?php echo $thumb_url; ?>">
+            <input type="hidden" name="featured_image_url" id="featured_image_url" value="<?php echo esc_attr($thumb_url); ?>">
             
             <div class="flex flex-col gap-2">
                  <label class="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow text-sm text-center">
@@ -208,6 +224,8 @@ function previewPost() {
     var originalAction = form.action;
     var originalTarget = form.target;
     
+    var nonceInput = document.querySelector('input[name="orion_nonce"]');
+    if (nonceInput) nonceInput.value = '<?php echo esc_attr(orion_create_nonce('orion_preview')); ?>';
     form.action = '../preview.php';
     form.target = '_blank';
     

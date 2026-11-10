@@ -90,9 +90,28 @@
             </span>
         </div>
         <div class="flex items-center space-x-4">
-            <a href="#" class="hover:text-primary-200 transition">Portal Siswa</a>
+            <?php
+            $kaih_active = false;
+            $active_plugins = get_option('active_plugins', array());
+            if (is_array($active_plugins)) {
+                $kaih_active = in_array('orion-kaih/orion-kaih.php', $active_plugins, true);
+            }
+            $kaih_student_page_id = (int) get_option('orion_kaih_page_student_id', 0);
+            $kaih_teacher_page_id = (int) get_option('orion_kaih_page_teacher_id', 0);
+            $kaih_student_url = $kaih_student_page_id ? site_url('/?page_id=' . $kaih_student_page_id) : site_url('/?kaih=siswa');
+            $kaih_teacher_url = $kaih_teacher_page_id ? site_url('/?page_id=' . $kaih_teacher_page_id) : site_url('/?kaih=guru');
+            ?>
+            <?php if ($kaih_active): ?>
+                <a href="<?php echo $kaih_student_url; ?>" class="hover:text-primary-200 transition">KAih Siswa</a>
+            <?php else: ?>
+                <a href="#" class="opacity-60 cursor-not-allowed" title="Aktifkan plugin Orion KAih">KAih Siswa</a>
+            <?php endif; ?>
             <span class="text-primary-700">|</span>
-            <a href="#" class="hover:text-primary-200 transition">Portal Guru</a>
+            <?php if ($kaih_active): ?>
+                <a href="<?php echo $kaih_teacher_url; ?>" class="hover:text-primary-200 transition">KAih Guru</a>
+            <?php else: ?>
+                <a href="#" class="opacity-60 cursor-not-allowed" title="Aktifkan plugin Orion KAih">KAih Guru</a>
+            <?php endif; ?>
             <span class="text-primary-700">|</span>
             <a href="<?php echo site_url('/orion-admin/'); ?>" class="bg-primary-700 hover:bg-primary-600 px-3 py-1 rounded text-xs font-semibold transition">Login Admin</a>
         </div>
@@ -154,6 +173,11 @@
                 <a href="?page=berita" class="text-sm font-semibold text-slate-600 hover:text-primary-600 transition uppercase tracking-wide <?php echo isset($_GET['page']) && $_GET['page'] == 'berita' ? 'text-primary-600' : ''; ?>">Berita</a>
                 <a href="?page=kontak" class="text-sm font-semibold text-slate-600 hover:text-primary-600 transition uppercase tracking-wide <?php echo isset($_GET['page']) && $_GET['page'] == 'kontak' ? 'text-primary-600' : ''; ?>">Kontak</a>
                 
+                <?php if ($kaih_active): ?>
+                    <a href="<?php echo $kaih_student_url; ?>" class="text-sm font-semibold text-slate-600 hover:text-primary-600 transition uppercase tracking-wide">KAih Siswa</a>
+                    <a href="<?php echo $kaih_teacher_url; ?>" class="text-sm font-semibold text-slate-600 hover:text-primary-600 transition uppercase tracking-wide">KAih Guru</a>
+                <?php endif; ?>
+
                 <a href="?page=ppdb" class="px-5 py-2.5 bg-gradient-to-r from-secondary-600 to-secondary-500 hover:from-secondary-700 hover:to-secondary-600 text-white text-sm font-bold rounded-full shadow-lg shadow-secondary-500/30 transition transform hover:-translate-y-0.5">
                     PPDB Online
                 </a>
@@ -177,6 +201,13 @@
                     <a href="?page=guru" class="text-slate-700 font-medium hover:text-primary-600">Guru & Staf</a>
                     <a href="?page=berita" class="text-slate-700 font-medium hover:text-primary-600">Berita</a>
                     <a href="?page=kontak" class="text-slate-700 font-medium hover:text-primary-600">Kontak</a>
+                    <?php if ($kaih_active): ?>
+                        <div class="border-t border-slate-100 pt-2">
+                            <p class="text-xs text-slate-400 font-bold uppercase mb-2">KAih</p>
+                            <a href="<?php echo $kaih_student_url; ?>" class="block pl-4 py-2 text-slate-600 hover:text-primary-600">KAih Siswa</a>
+                            <a href="<?php echo $kaih_teacher_url; ?>" class="block pl-4 py-2 text-slate-600 hover:text-primary-600">KAih Guru</a>
+                        </div>
+                    <?php endif; ?>
                     <a href="?page=ppdb" class="text-center bg-secondary-600 text-white py-2 rounded-lg font-bold">PPDB Online</a>
                 </div>
             </div>

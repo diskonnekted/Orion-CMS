@@ -8,6 +8,8 @@
  */
 function wp_insert_term($term, $taxonomy, $args = array()) {
     global $orion_db, $table_prefix;
+
+    $taxonomy = $orion_db->real_escape_string($taxonomy);
     
     $slug = isset($args['slug']) ? $args['slug'] : strtolower(str_replace(' ', '-', $term));
     $description = isset($args['description']) ? $args['description'] : '';
@@ -46,6 +48,8 @@ function wp_insert_term($term, $taxonomy, $args = array()) {
  */
 function wp_update_term($term_id, $taxonomy, $args = array()) {
     global $orion_db, $table_prefix;
+
+    $taxonomy = $orion_db->real_escape_string($taxonomy);
     
     $term_id = (int) $term_id;
     $defaults = array('name' => '', 'slug' => '', 'description' => '');
@@ -82,6 +86,8 @@ function wp_update_term($term_id, $taxonomy, $args = array()) {
 function wp_delete_term($term_id, $taxonomy, $args = array()) {
     global $orion_db, $table_prefix;
 
+    $taxonomy = $orion_db->real_escape_string($taxonomy);
+
     $term_id = (int) $term_id;
 
     $terms_table = $table_prefix . 'terms';
@@ -113,6 +119,8 @@ function wp_delete_term($term_id, $taxonomy, $args = array()) {
  */
 function get_terms($taxonomy, $args = array()) {
     global $orion_db, $table_prefix;
+
+    $taxonomy = $orion_db->real_escape_string($taxonomy);
     
     $terms_table = $table_prefix . 'terms';
     $term_taxonomy_table = $table_prefix . 'term_taxonomy';
@@ -140,6 +148,8 @@ function get_terms($taxonomy, $args = array()) {
  */
 function get_term($term_id, $taxonomy) {
     global $orion_db, $table_prefix;
+
+    $taxonomy = $orion_db->real_escape_string($taxonomy);
     
     $term_id = (int) $term_id;
     $terms_table = $table_prefix . 'terms';
@@ -162,6 +172,8 @@ function get_term($term_id, $taxonomy) {
  */
 function wp_set_object_terms($object_id, $terms, $taxonomy, $append = false) {
     global $orion_db, $table_prefix;
+
+    $taxonomy = $orion_db->real_escape_string($taxonomy);
 
     $object_id = (int) $object_id;
     $term_relationships_table = $table_prefix . 'term_relationships';
@@ -224,6 +236,8 @@ function wp_set_object_terms($object_id, $terms, $taxonomy, $append = false) {
  */
 function get_the_terms($post_id, $taxonomy) {
     global $orion_db, $table_prefix;
+
+    $taxonomy = $orion_db->real_escape_string($taxonomy);
     
     $post_id = (int) $post_id;
     $terms_table = $table_prefix . 'terms';

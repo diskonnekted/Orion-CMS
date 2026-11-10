@@ -229,6 +229,92 @@ if ($post_id > 0) {
             <?php
             break;
 
+        case 'kontak':
+            $address = get_option('orion_school_address', 'Jl. Pendidikan No. 123, Jakarta Selatan');
+            $phone = get_option('orion_school_phone', '(021) 555-0123');
+            $email = get_option('orion_school_email', 'info@orionschool.sch.id');
+            $maps_query = urlencode($address);
+            $maps_url = 'https://www.google.com/maps/search/?api=1&query=' . $maps_query;
+            ?>
+            <div class="bg-primary-900 py-20 text-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-blue-900/50 mix-blend-multiply"></div>
+                <div class="hero-pattern absolute inset-0 opacity-20"></div>
+                <div class="container mx-auto px-4 text-center relative z-10">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Kontak</h1>
+                    <p class="text-primary-100 text-lg">Hubungi kami untuk informasi pendaftaran dan kegiatan sekolah.</p>
+                </div>
+            </div>
+            <div class="container mx-auto px-4 py-16">
+                <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-primary-50 text-primary-700 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-900 mb-1">Alamat</div>
+                                <div class="text-slate-600"><?php echo nl2br(htmlspecialchars($address)); ?></div>
+                                <a href="<?php echo htmlspecialchars($maps_url); ?>" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-3 text-primary-600 font-bold text-sm hover:text-primary-700">
+                                    Buka di Google Maps
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3h7v7m0-7L10 14m-4 7h7a2 2 0 002-2v-7"></path></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-secondary-50 text-secondary-700 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-900 mb-1">Telepon</div>
+                                <div class="text-slate-600"><?php echo htmlspecialchars($phone); ?></div>
+                                <a href="tel:<?php echo htmlspecialchars(preg_replace('/[^0-9+]/', '', $phone)); ?>" class="inline-flex items-center gap-2 mt-3 text-primary-600 font-bold text-sm hover:text-primary-700">
+                                    Panggil sekarang
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18a2 2 0 002-2V6a2 2 0 00-2-2H3a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-slate-900 mb-1">Email</div>
+                                <div class="text-slate-600"><?php echo htmlspecialchars($email); ?></div>
+                                <a href="mailto:<?php echo htmlspecialchars($email); ?>" class="inline-flex items-center gap-2 mt-3 text-primary-600 font-bold text-sm hover:text-primary-700">
+                                    Kirim email
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="max-w-6xl mx-auto mt-10 bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div class="p-6 md:p-10">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-2">Jam Operasional</h2>
+                        <p class="text-slate-600">Silakan hubungi kami pada jam kerja berikut.</p>
+                        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                                <div class="text-sm font-bold text-slate-900">Senin–Jumat</div>
+                                <div class="text-slate-600 mt-1">07.00 – 16.00</div>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                                <div class="text-sm font-bold text-slate-900">Sabtu</div>
+                                <div class="text-slate-600 mt-1">08.00 – 12.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php
+            break;
+
         case 'ppdb':
             ?>
             <div class="bg-primary-900 py-20 text-white relative overflow-hidden">
@@ -245,6 +331,24 @@ if ($post_id > 0) {
                     <p class="text-slate-600 mb-10 text-lg">Mari menjadi bagian dari komunitas pembelajar di Orion School. Kami berkomitmen untuk membimbing putra-putri anda mencapai potensi terbaiknya.</p>
                     <a href="#" class="inline-block px-10 py-4 bg-primary-600 text-white font-bold rounded-full shadow-lg hover:bg-primary-700 transition transform hover:-translate-y-1">Daftar Sekarang</a>
                 </div>
+            </div>
+            <?php
+            break;
+
+        default:
+            ?>
+            <div class="bg-primary-900 py-20 text-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-blue-900/50 mix-blend-multiply"></div>
+                <div class="hero-pattern absolute inset-0 opacity-20"></div>
+                <div class="container mx-auto px-4 text-center relative z-10">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">Halaman Tidak Ditemukan</h1>
+                    <p class="text-primary-100 text-lg">Halaman yang Anda akses tidak tersedia.</p>
+                </div>
+            </div>
+            <div class="container mx-auto px-4 py-16 text-center">
+                <a href="<?php echo site_url('/'); ?>" class="inline-flex items-center justify-center px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-full shadow-lg transition">
+                    Kembali ke Beranda
+                </a>
             </div>
             <?php
             break;

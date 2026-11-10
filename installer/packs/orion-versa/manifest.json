@@ -1,0 +1,10 @@
+{
+  "slug": "orion-versa",
+  "name": "Orion Versa (IoT + Shop WhatsApp)",
+  "template": "orion-versa",
+  "plugins": [
+    "orion-shop-manager/orion-shop-manager.php"
+  ],
+  "description": "Tema Orion Versa + katalog produk (klik Beli -> WhatsApp). Cocok untuk landing IoT warning/emergency dan shop tanpa checkout."
+}
+

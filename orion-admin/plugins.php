@@ -6,6 +6,12 @@ $error = '';
 
 // Handle Actions
 if (isset($_GET['action']) && isset($_GET['plugin'])) {
+    // CSRF protection
+    if (!isset($_GET['orion_nonce']) || !orion_verify_nonce($_GET['orion_nonce'], 'orion_plugin_toggle')) {
+        header("Location: plugins.php?error=bad_nonce");
+        exit;
+    }
+
     $plugin = $_GET['plugin'];
     $active_plugins = get_option('active_plugins', array());
     if (!is_array($active_plugins)) $active_plugins = array();
@@ -29,6 +35,12 @@ if (isset($_GET['action']) && isset($_GET['plugin'])) {
 
 // Handle Plugin Upload
 if (isset($_POST['upload_plugin']) && !empty($_FILES['plugin_zip'])) {
+    // CSRF protection
+    if (!isset($_POST['orion_nonce']) || !orion_verify_nonce($_POST['orion_nonce'], 'orion_plugin_upload')) {
+        header("Location: plugins.php?error=bad_nonce");
+        exit;
+    }
+
     $file = $_FILES['plugin_zip'];
     $plugins_dir = ABSPATH . 'orion-content/plugins/';
     
@@ -44,8 +56,17 @@ if (isset($_POST['upload_plugin']) && !empty($_FILES['plugin_zip'])) {
                 mkdir($temp_dir, 0755, true);
             }
             
-            $zip->extractTo($temp_dir);
-            $zip->close();
+            if (!orion_zip_entries_are_safe($zip)) {
+                $zip->close();
+                _delete_recursive($temp_dir);
+                $error = 'The ZIP file contains unsafe paths and was rejected.';
+            } else if (!$zip->extractTo($temp_dir)) {
+                $zip->close();
+                _delete_recursive($temp_dir);
+                $error = 'Could not extract the ZIP file.';
+            } else {
+                $zip->close();
+
             
             // Analyze the extracted content
             $extracted_files = scandir($temp_dir);
@@ -89,6 +110,7 @@ if (isset($_POST['upload_plugin']) && !empty($_FILES['plugin_zip'])) {
                 }
             }
             
+            }
         } else {
             $error = "Failed to open ZIP file.";
         }
@@ -215,6 +237,7 @@ $inactive_count = $total_plugins - $active_count;
             <p class="text-slate-500 text-sm mb-4">Upload a .zip file to install a new plugin.</p>
             
             <form action="" method="post" enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-3">
+                <?php echo orion_field_nonce('orion_plugin_upload'); ?>
                 <div class="relative flex-grow group">
                     <input class="block w-full text-sm text-slate-500
                         file:mr-4 file:py-2.5 file:px-4
@@ -299,11 +322,11 @@ $inactive_count = $total_plugins - $active_count;
                 
                 <div class="flex justify-between items-center pt-4 border-t border-slate-100 gap-3">
                     <?php if ($is_active): ?>
-                        <a href="plugins.php?action=deactivate&plugin=<?php echo urlencode($path); ?>" class="w-full bg-white border border-red-200 text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg text-sm font-medium transition text-center">
+                        <a href="plugins.php?action=deactivate&plugin=<?php echo urlencode($path); ?>&orion_nonce=<?php echo urlencode(orion_create_nonce('orion_plugin_toggle')); ?>" class="w-full bg-white border border-red-200 text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg text-sm font-medium transition text-center">
                             Deactivate
                         </a>
                     <?php else: ?>
-                        <a href="plugins.php?action=activate&plugin=<?php echo urlencode($path); ?>" class="w-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-orion-600 px-3 py-2 rounded-lg text-sm font-medium transition text-center">
+                        <a href="plugins.php?action=activate&plugin=<?php echo urlencode($path); ?>&orion_nonce=<?php echo urlencode(orion_create_nonce('orion_plugin_toggle')); ?>" class="w-full bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-orion-600 px-3 py-2 rounded-lg text-sm font-medium transition text-center">
                             Activate
                         </a>
                     <?php endif; ?>

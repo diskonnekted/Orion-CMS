@@ -15,7 +15,7 @@ if (empty($menus) && !empty($_POST['create-menu'])) {
 }
 
 // 1. Create Menu
-if (isset($_POST['create-menu']) && !empty($_POST['menu-name'])) {
+if (isset($_POST['create-menu']) && !empty($_POST['menu-name']) && isset($_POST['orion_nonce']) && orion_verify_nonce($_POST['orion_nonce'], 'orion_menu_action')) {
     $menu_name = trim($_POST['menu-name']);
     $res = wp_insert_term($menu_name, 'nav_menu');
     
@@ -42,7 +42,7 @@ if (isset($_POST['create-menu']) && !empty($_POST['menu-name'])) {
 }
 
 // 2. Add Menu Item
-if (isset($_POST['add-menu-item']) && $current_menu_id > 0) {
+if (isset($_POST['add-menu-item']) && $current_menu_id > 0 && isset($_POST['orion_nonce']) && orion_verify_nonce($_POST['orion_nonce'], 'orion_menu_action')) {
     $type = $_POST['menu-item-type']; // 'post', 'custom'
     
     $items_to_add = array();
@@ -98,7 +98,7 @@ if (isset($_POST['add-menu-item']) && $current_menu_id > 0) {
 }
 
 // 3. Save Menu Structure (Order/Remove) - Simplified for now: just Remove
-if (isset($_GET['action']) && $_GET['action'] == 'delete-item' && isset($_GET['item_id'])) {
+if (isset($_GET['action']) && $_GET['action'] == 'delete-item' && isset($_GET['item_id']) && isset($_GET['orion_nonce']) && orion_verify_nonce($_GET['orion_nonce'], 'orion_menu_action')) {
     $item_id = (int)$_GET['item_id'];
     wp_delete_post($item_id); // Assuming we have this, or use raw query
     // Redirect to avoid resubmission
@@ -107,7 +107,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete-item' && isset($_GET['i
 }
 
 // 4. Save Locations
-if (isset($_POST['save-locations'])) {
+if (isset($_POST['save-locations']) && isset($_POST['orion_nonce']) && orion_verify_nonce($_POST['orion_nonce'], 'orion_menu_action')) {
     $locations = $_POST['menu_locations']; // array(location => term_id)
     update_option('nav_menu_locations', $locations); // Need update_option
     $message = "Locations updated.";
@@ -172,6 +172,7 @@ require_once 'admin-header.php';
                 </button>
                 <div x-show="open" class="p-4">
                     <form action="nav-menus.php?menu=<?php echo $current_menu_id; ?>" method="POST">
+                <?php echo orion_field_nonce('orion_menu_action'); ?>
                         <div class="max-h-60 overflow-y-auto space-y-2 mb-4 border rounded p-2">
                             <?php if (empty($recent_pages)): ?>
                                 <p class="text-sm text-gray-500 p-2">No pages found.</p>
@@ -200,6 +201,7 @@ require_once 'admin-header.php';
                 </button>
                 <div x-show="open" class="p-4">
                     <form action="nav-menus.php?menu=<?php echo $current_menu_id; ?>" method="POST">
+                <?php echo orion_field_nonce('orion_menu_action'); ?>
                         <div class="max-h-60 overflow-y-auto space-y-2 mb-4 border rounded p-2">
                             <?php foreach ($recent_posts as $p): ?>
                             <label class="flex items-center space-x-2">
@@ -224,6 +226,7 @@ require_once 'admin-header.php';
                 </button>
                 <div x-show="open" class="p-4">
                     <form action="nav-menus.php?menu=<?php echo $current_menu_id; ?>" method="POST" class="space-y-3">
+                <?php echo orion_field_nonce('orion_menu_action'); ?>
                         <div>
                             <label class="block text-xs font-medium text-gray-500 mb-1">URL</label>
                             <input type="text" name="custom-link-url" value="http://" class="w-full px-3 py-2 border rounded text-sm focus:outline-none focus:border-blue-500">
@@ -267,6 +270,7 @@ require_once 'admin-header.php';
                 <!-- Create Menu Form (if creating or no menu selected) -->
                 <?php if ($current_menu_id == 0): ?>
                     <form action="nav-menus.php" method="POST" class="flex items-end gap-4 mb-6">
+                <?php echo orion_field_nonce('orion_menu_action'); ?>
                         <div class="flex-1">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Menu Name</label>
                             <input type="text" name="menu-name" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-blue-500">
@@ -281,6 +285,7 @@ require_once 'admin-header.php';
                             <p class="text-sm text-gray-500">Drag each item into the order you prefer.</p>
                         </div>
                         <form action="nav-menus.php?menu=<?php echo $current_menu_id; ?>" method="POST">
+                <?php echo orion_field_nonce('orion_menu_action'); ?>
                             <input type="text" name="menu-name" value="<?php echo get_term($current_menu_id, 'nav_menu')->name; ?>" class="px-2 py-1 border rounded text-sm w-40">
                             <button type="submit" class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">Save Menu</button>
                         </form>
@@ -298,7 +303,7 @@ require_once 'admin-header.php';
                                         <div class="text-xs text-gray-500"><?php echo ucfirst($item->type); ?></div>
                                     </div>
                                     <div class="flex items-center gap-2">
-                                        <a href="nav-menus.php?menu=<?php echo $current_menu_id; ?>&action=delete-item&item_id=<?php echo $item->ID; ?>" class="text-red-400 hover:text-red-600" data-orion-confirm="Remove this item?">Remove</a>
+                                        <a href="nav-menus.php?menu=<?php echo $current_menu_id; ?>&action=delete-item&item_id=<?php echo $item->ID; ?>&orion_nonce=<?php echo urlencode(orion_create_nonce('orion_menu_action')); ?>" class="text-red-400 hover:text-red-600" data-orion-confirm="Remove this item?">Remove</a>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -309,6 +314,7 @@ require_once 'admin-header.php';
                     <div class="border-t pt-6">
                         <h4 class="font-bold text-gray-800 mb-4">Menu Settings</h4>
                         <form action="nav-menus.php?menu=<?php echo $current_menu_id; ?>" method="POST">
+                <?php echo orion_field_nonce('orion_menu_action'); ?>
                             <div class="flex items-start gap-8">
                                 <div class="w-1/3">
                                     <span class="text-sm text-gray-600 block mb-2">Display location</span>

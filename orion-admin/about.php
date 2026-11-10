@@ -18,7 +18,7 @@ require_once( 'admin-header.php' );
         <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-6">
                 <div class="flex items-center gap-4 mb-4">
-                    <img src="<?php echo get_option('site_logo', site_url('/assets/img/orion-light.png')); ?>" alt="Orion CMS Logo" class="h-16 w-auto object-contain">
+                    <img src="<?php echo htmlspecialchars(get_option('site_logo', site_url('/assets/img/orion-light.png'))); ?>" alt="Orion CMS Logo" class="h-16 w-auto object-contain">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-800">Orion CMS <span class="text-sm font-normal text-slate-500 ml-2">Version 0.1</span></h2>
                         <p class="text-slate-500">Built for speed and simplicity.</p>

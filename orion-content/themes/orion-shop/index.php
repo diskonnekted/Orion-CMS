@@ -172,7 +172,7 @@ if (!$is_single && !$search_query && !$category_filter) {
                         </div>
 
                         <div class="prose prose-lg prose-indigo text-gray-600 mb-8">
-                            <?php echo nl2br($post->post_content); ?>
+                            <?php echo get_the_content(null, false, $post->ID); ?>
                         </div>
 
                         <?php if ($specs || $variants): ?>

@@ -11,12 +11,20 @@ require_once( dirname( __FILE__ ) . '/orion-load.php' );
 if ( !is_user_logged_in() ) {
     die('Access Denied: You must be logged in to preview content.');
 }
+if ( !current_user_can('edit_posts') ) {
+    die('Access Denied: You do not have permission to preview content.');
+}
 
 // Only handle POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     // If accessed directly via GET, maybe redirect to home or show error
     wp_redirect(site_url());
     exit;
+}
+
+// CSRF protection: verify nonce
+if ( !isset($_POST['orion_nonce']) || !orion_verify_nonce($_POST['orion_nonce'], 'orion_preview') ) {
+    die('Security check failed. Please try again.');
 }
 
 // Get POST data

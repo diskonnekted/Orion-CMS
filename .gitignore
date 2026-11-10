@@ -1,6 +1,5 @@
 orion-config.php
 debug_cat_log.txt
-orion-content/uploads/
 .vscode/
 *.log
 Thumbs.db
@@ -8,3 +7,32 @@ Thumbs.db
 tmp/
 test_schemes.php
 reset-admin.php
+
+# Uploaded media. Only the hardening rules travel with the repo, so the
+# directory itself must not be excluded (git cannot re-include a file whose
+# parent directory is ignored).
+orion-content/uploads/*
+!orion-content/uploads/.htaccess
+
+# Local SQLite database: password hashes and submitted personal data.
+orion-content/database/
+*.sqlite
+*.sqlite3
+
+# Per-install signing key generated on first run.
+orion-content/orion-secret.php
+
+# Config backups left behind by tooling (they contain DB credentials).
+orion-config.php.*
+
+# Build artefacts and packaged copies of the site.
+download/
+_dist/
+_tmp_guard/
+tools/
+
+# Local diagnostic / lint scripts.
+_diag_*.php
+_lint_*.php
+_*.html
+_t*.php

@@ -59,17 +59,66 @@ function wp_set_auth_cookie($user_id, $remember = false) {
     if ($remember) {
         $expiration = time() + (86400 * 14); // 14 days
     }
-    
-    // Simple cookie implementation for demo
-    $cookie_value = $user_id . '|' . $expiration . '|' . hash_hmac('sha256', $user_id . $expiration, 'orion_secret_key');
-    setcookie('orion_auth', $cookie_value, $expiration, '/');
+
+    $cookie_value = orion_build_auth_cookie((int) $user_id, (int) $expiration);
+    $secure = (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off')
+        || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443);
+
+    if (PHP_VERSION_ID >= 70300) {
+        setcookie('orion_auth', $cookie_value, array(
+            'expires'  => $expiration,
+            'path'     => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+            'secure'   => $secure,
+        ));
+    } else {
+        setcookie('orion_auth', $cookie_value, $expiration, '/; samesite=Lax', '', $secure, true);
+    }
 }
+
+/**
+ * Secret used to sign authentication cookies.
+ *
+ * Derived from the per-install key so a published source tree does not
+ * expose a fixed signing key to anyone who can read the code.
+ */
+function orion_auth_secret() {
+    if (function_exists('orion_nonce_secret')) {
+        return orion_nonce_secret();
+    }
+    return '';
+}
+
+/**
+ * Builds the signed auth cookie payload for a user.
+ *
+ * The signature covers the password hash, so changing a password
+ * invalidates every previously issued cookie.
+ */
+function orion_build_auth_cookie($user_id, $expiration) {
+    $user = get_user_by('id', $user_id);
+    $pass = $user ? (string) $user->user_pass : '';
+
+    return $user_id . '|' . $expiration . '|' . hash_hmac('sha256', $user_id . '|' . $expiration . '|' . $pass, orion_auth_secret());
+}
+
 
 /**
  * Clears the authentication cookie.
  */
 function wp_logout() {
-    setcookie('orion_auth', '', time() - 3600, '/');
+    if (PHP_VERSION_ID >= 70300) {
+        setcookie('orion_auth', '', array(
+            'expires'  => time() - 3600,
+            'path'     => '/',
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ));
+    } else {
+        setcookie('orion_auth', '', time() - 3600, '/');
+    }
+    unset($_COOKIE['orion_auth']);
 }
 
 /**
@@ -89,23 +138,29 @@ function is_user_logged_in() {
  */
 function wp_get_current_user() {
     global $current_user;
-    
+
     if (isset($current_user) && ($current_user instanceof WP_User)) {
         return $current_user;
     }
-    
+
     if (isset($_COOKIE['orion_auth'])) {
-        list($user_id, $expiration, $hash) = explode('|', $_COOKIE['orion_auth']);
-        
-        if ($expiration > time() && hash_hmac('sha256', $user_id . $expiration, 'orion_secret_key') === $hash) {
-            $user = get_user_by('id', $user_id);
+        $parts = explode('|', (string) $_COOKIE['orion_auth']);
+
+        if (count($parts) === 3) {
+            list($user_id, $expiration, $hash) = $parts;
+            $user = ((int) $user_id > 0 && $expiration > time()) ? get_user_by('id', (int) $user_id) : false;
+
             if ($user) {
-                $current_user = $user;
-                return $current_user;
+                $expected = hash_hmac('sha256', (int) $user_id . '|' . $expiration . '|' . (string) $user->user_pass, orion_auth_secret());
+
+                if (hash_equals($expected, $hash)) {
+                    $current_user = $user;
+                    return $current_user;
+                }
             }
         }
     }
-    
+
     // Return empty user object if not logged in
     $current_user = new WP_User();
     return $current_user;
@@ -178,6 +233,9 @@ function wp_create_user($username, $password, $email = '') {
     $users_table = $table_prefix . 'users';
     $user_pass = password_hash($password, PASSWORD_DEFAULT);
     $user_nicename = strtolower(str_replace(' ', '-', $username));
+    $username = $orion_db->real_escape_string($username);
+    $user_nicename = $orion_db->real_escape_string($user_nicename);
+    $email = $orion_db->real_escape_string($email);
     
     $sql = "INSERT INTO $users_table (user_login, user_pass, user_nicename, user_email, display_name) VALUES ('$username', '$user_pass', '$user_nicename', '$email', '$username')";
     
@@ -314,6 +372,8 @@ function get_user_meta($user_id, $key = '', $single = false) {
     $usermeta_table = $table_prefix . 'usermeta';
     
     if ($key) {
+        $user_id = (int) $user_id;
+        $key = $orion_db->real_escape_string($key);
         $sql = "SELECT meta_value FROM $usermeta_table WHERE user_id = $user_id AND meta_key = '$key'";
         $result = $orion_db->query($sql);
         
@@ -341,6 +401,9 @@ function get_user_meta($user_id, $key = '', $single = false) {
 function update_user_meta($user_id, $meta_key, $meta_value, $prev_value = '') {
     global $orion_db, $table_prefix;
     $usermeta_table = $table_prefix . 'usermeta';
+    $user_id = (int) $user_id;
+    $meta_key = $orion_db->real_escape_string($meta_key);
+    $meta_value = $orion_db->real_escape_string($meta_value);
     
     $existing = get_user_meta($user_id, $meta_key, true);
     
@@ -360,6 +423,7 @@ function wp_delete_user($id) {
     global $orion_db, $table_prefix;
     $users_table = $table_prefix . 'users';
     $usermeta_table = $table_prefix . 'usermeta';
+    $id = (int) $id;
     
     $orion_db->query("DELETE FROM $users_table WHERE ID = $id");
     $orion_db->query("DELETE FROM $usermeta_table WHERE user_id = $id");

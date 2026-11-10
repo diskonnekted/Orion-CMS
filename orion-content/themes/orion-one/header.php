@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orion CMS - News Site</title>
+    <?php $orion_one_site_title = html_entity_decode(get_option('blogname', 'Orion CMS'), ENT_QUOTES, 'UTF-8'); ?>
+    <title><?php echo htmlspecialchars($orion_one_site_title); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,11 +28,15 @@
     <div class="container mx-auto px-4">
         <div class="flex justify-between items-center py-4">
             <div class="text-2xl font-bold text-orion-600">
+                <?php
+                $orion_one_brand = html_entity_decode(get_option('orion_one_brand_name', 'Orion One'), ENT_QUOTES, 'UTF-8');
+                $orion_one_logo = get_option('orion_one_logo_url', site_url('/assets/img/logo.png'));
+                ?>
                 <a href="<?php echo site_url(); ?>" class="flex items-center gap-3">
                     <div class="h-10 w-10 rounded-full bg-white p-1 flex items-center justify-center shadow-sm">
-                        <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-full w-full object-contain rounded-full">
+                        <img src="<?php echo esc_url($orion_one_logo); ?>" alt="<?php echo htmlspecialchars($orion_one_brand); ?>" class="h-full w-full object-contain rounded-full">
                     </div>
-                    <span class="tracking-tight">Orion One</span>
+                    <span class="tracking-tight"><?php echo htmlspecialchars($orion_one_brand); ?></span>
                 </a>
             </div>
             <div class="hidden md:flex">

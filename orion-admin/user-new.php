@@ -27,7 +27,11 @@ if ($is_edit) {
 }
 
 // Handle Form Submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_user'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_user']) && (!isset($_POST['orion_nonce']) || !orion_verify_nonce($_POST['orion_nonce'], 'orion_user_new'))) {
+    $error_msg = 'Security check failed. Please refresh the page and try again.';
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_user']) && isset($_POST['orion_nonce']) && orion_verify_nonce($_POST['orion_nonce'], 'orion_user_new')) {
     $username = isset($_POST['user_login']) ? trim($_POST['user_login']) : '';
     $email = isset($_POST['email']) ? trim($_POST['email']) : '';
     $first_name = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
@@ -150,6 +154,7 @@ if ($is_edit && isset($user_id)) {
 
 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden p-6">
     <form method="POST" enctype="multipart/form-data">
+                <?php echo orion_field_nonce('orion_user_new'); ?>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Left Column: Account Info -->
             <div>

@@ -6,6 +6,11 @@ require_once 'orion-load.php';
 
 // Handle Logout
 if (isset($_GET['action']) && $_GET['action'] == 'logout') {
+    if (!isset($_GET['orion_nonce']) || !orion_verify_nonce($_GET['orion_nonce'], 'orion_logout')) {
+        header('Location: login.php');
+        exit;
+    }
+
     wp_logout();
     header('Location: login.php?loggedout=true');
     exit;
@@ -94,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wp-submit'])) {
 <body class="bg-slate-50 flex items-center justify-center min-h-screen">
     <div class="w-full max-w-md p-6">
         <div class="text-center mb-8">
-            <img src="<?php echo get_option('site_logo', site_url('/assets/img/orion-logo.png')); ?>" alt="Orion CMS" class="h-16 mx-auto mb-4 object-contain">
+            <img src="<?php echo htmlspecialchars(get_option('site_logo', site_url('/assets/img/orion-logo.png'))); ?>" alt="Orion CMS" class="h-16 mx-auto mb-4 object-contain">
             <h1 class="text-2xl font-bold text-slate-800">Sign in to Orion</h1>
         </div>
         

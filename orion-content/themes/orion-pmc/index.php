@@ -1,10 +1,12 @@
 <?php get_header(); ?>
 
+<?php $pmc_img_base = get_template_directory_uri() . '/img'; ?>
+
 <!-- Hero Section -->
 <section class="relative bg-pmc-dark h-[600px] flex items-center overflow-hidden">
     <!-- Background Image -->
     <div class="absolute inset-0 z-0 opacity-40">
-        <img src="orion1.jpeg" alt="Tactical Ops" class="w-full h-full object-cover">
+        <img src="<?php echo esc_url($pmc_img_base . '/orion1.jpeg'); ?>" alt="Tactical Ops" class="w-full h-full object-cover">
     </div>
     
     <!-- Overlay Pattern -->
@@ -68,7 +70,7 @@
             <!-- Service 1 -->
             <div class="bg-white border-b-4 border-pmc-green shadow-lg group hover:-translate-y-2 transition-transform duration-300">
                 <div class="h-48 overflow-hidden relative">
-                    <img src="close.jpeg" alt="Close Protection" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                    <img src="<?php echo esc_url($pmc_img_base . '/close.jpeg'); ?>" alt="Close Protection" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
                     <div class="absolute top-0 right-0 bg-pmc-green text-white text-xs font-bold px-3 py-1">SEC-01</div>
                 </div>
                 <div class="p-8">
@@ -85,7 +87,7 @@
             <!-- Service 2 -->
             <div class="bg-white border-b-4 border-pmc-khaki shadow-lg group hover:-translate-y-2 transition-transform duration-300">
                 <div class="h-48 overflow-hidden relative">
-                    <img src="logistic.jpeg" alt="Logistics" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                    <img src="<?php echo esc_url($pmc_img_base . '/logistic.jpeg'); ?>" alt="Logistics" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
                     <div class="absolute top-0 right-0 bg-pmc-khaki text-pmc-dark text-xs font-bold px-3 py-1">LOG-02</div>
                 </div>
                 <div class="p-8">
@@ -102,7 +104,7 @@
             <!-- Service 3 -->
             <div class="bg-white border-b-4 border-pmc-dark shadow-lg group hover:-translate-y-2 transition-transform duration-300">
                 <div class="h-48 overflow-hidden relative">
-                    <img src="intel.jpeg" alt="Cyber" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
+                    <img src="<?php echo esc_url($pmc_img_base . '/intel.jpeg'); ?>" alt="Cyber" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 grayscale group-hover:grayscale-0">
                     <div class="absolute top-0 right-0 bg-pmc-dark text-white text-xs font-bold px-3 py-1">CYB-03</div>
                 </div>
                 <div class="p-8">
@@ -147,7 +149,7 @@
             </div>
             <div class="relative">
                 <div class="absolute -inset-4 border-2 border-pmc-khaki/30"></div>
-                <img src="pmc.jpeg" alt="Team Briefing" class="w-full grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl relative z-10">
+                <img src="<?php echo esc_url($pmc_img_base . '/pmc.jpeg'); ?>" alt="Team Briefing" class="w-full grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl relative z-10">
             </div>
         </div>
     </div>

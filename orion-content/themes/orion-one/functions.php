@@ -22,15 +22,26 @@ function orion_one_track_visitor() {
     $table_name = $table_prefix . 'visitor_log';
     
     // Auto-create table if not exists to prevent errors
-    $sql_create = "CREATE TABLE IF NOT EXISTS $table_name (
-        id bigint(20) NOT NULL AUTO_INCREMENT,
-        ip_address varchar(50) NOT NULL,
-        visit_date datetime DEFAULT CURRENT_TIMESTAMP,
-        user_agent varchar(255) DEFAULT NULL,
-        PRIMARY KEY (id),
-        KEY visit_date (visit_date)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
-    $orion_db->query($sql_create);
+    $db_type = defined('DB_TYPE') ? strtolower((string) DB_TYPE) : 'mysql';
+    if ($db_type === 'sqlite') {
+        $orion_db->query("CREATE TABLE IF NOT EXISTS $table_name (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ip_address TEXT NOT NULL,
+            visit_date TEXT DEFAULT CURRENT_TIMESTAMP,
+            user_agent TEXT DEFAULT NULL
+        )");
+        $orion_db->query("CREATE INDEX IF NOT EXISTS {$table_name}_visit_date ON $table_name(visit_date)");
+    } else {
+        $sql_create = "CREATE TABLE IF NOT EXISTS $table_name (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            ip_address varchar(50) NOT NULL,
+            visit_date datetime DEFAULT CURRENT_TIMESTAMP,
+            user_agent varchar(255) DEFAULT NULL,
+            PRIMARY KEY (id),
+            KEY visit_date (visit_date)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+        $orion_db->query($sql_create);
+    }
     
     if (!isset($_COOKIE['orion_visitor_tracked'])) {
         $ip = $_SERVER['REMOTE_ADDR'];
@@ -56,7 +67,12 @@ function orion_one_get_stats() {
     $stats = array('today' => 0, 'total' => 0);
     
     // Check if table exists first
-    $check = $orion_db->query("SHOW TABLES LIKE '$table_name'");
+    $db_type = defined('DB_TYPE') ? strtolower((string) DB_TYPE) : 'mysql';
+    if ($db_type === 'sqlite') {
+        $check = $orion_db->query("SELECT name FROM sqlite_master WHERE type='table' AND name = '$table_name' LIMIT 1");
+    } else {
+        $check = $orion_db->query("SHOW TABLES LIKE '$table_name'");
+    }
     if ($check && $check->num_rows > 0) {
         // Total
         $res_total = $orion_db->query("SELECT COUNT(*) as count FROM $table_name");

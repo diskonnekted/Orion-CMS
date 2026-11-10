@@ -1,10 +1,37 @@
+<?php
+$promo_hero_badge = html_entity_decode(get_option('orion_promo_hero_badge', 'Orion CMS v1.0 Resmi Dirilis'), ENT_QUOTES, 'UTF-8');
+$promo_hero_title_line1 = html_entity_decode(get_option('orion_promo_hero_title_line1', 'Bangun Web'), ENT_QUOTES, 'UTF-8');
+$promo_hero_title_highlight = html_entity_decode(get_option('orion_promo_hero_title_highlight', 'Tanpa Batas'), ENT_QUOTES, 'UTF-8');
+$promo_hero_subtitle = html_entity_decode(get_option('orion_promo_hero_subtitle', 'Platform manajemen konten modern yang menggabungkan performa tinggi, keamanan tingkat lanjut, dan kemudahan penggunaan untuk developer maupun pemula.'), ENT_QUOTES, 'UTF-8');
+$promo_primary_cta_text = html_entity_decode(get_option('orion_promo_primary_cta_text', 'Download Gratis'), ENT_QUOTES, 'UTF-8');
+$promo_primary_cta_url = get_option('orion_promo_primary_cta_url', site_url('/download/'));
+$promo_secondary_cta_text = html_entity_decode(get_option('orion_promo_secondary_cta_text', 'Coba Gratis'), ENT_QUOTES, 'UTF-8');
+$promo_secondary_cta_url = get_option('orion_promo_secondary_cta_url', site_url('/?page=coba-gratis'));
+$promo_hero_visual_url = get_option('orion_promo_hero_visual_url', site_url('/assets/img/CMS-ORION-ONE.png'));
+if (trim($promo_secondary_cta_text) === 'Pelajari Fitur') {
+    $promo_secondary_cta_text = 'Coba Gratis';
+}
+if (trim((string) $promo_secondary_cta_url) === '#features') {
+    $promo_secondary_cta_url = site_url('/?page=coba-gratis');
+}
+if ($promo_primary_cta_url && !preg_match('#^https?://#', $promo_primary_cta_url) && strpos($promo_primary_cta_url, '/') === 0) {
+    $promo_primary_cta_url = site_url($promo_primary_cta_url);
+}
+if ($promo_secondary_cta_url && !preg_match('#^https?://#', $promo_secondary_cta_url) && strpos($promo_secondary_cta_url, '/') === 0) {
+    $promo_secondary_cta_url = site_url($promo_secondary_cta_url);
+}
+if ($promo_hero_visual_url && !preg_match('#^https?://#', $promo_hero_visual_url) && strpos($promo_hero_visual_url, '/') === 0) {
+    $promo_hero_visual_url = site_url($promo_hero_visual_url);
+}
+?>
+
 <!-- Hero Section -->
 <section class="pt-32 pb-20 bg-gradient-to-br from-brand-50 via-white to-blue-50 overflow-hidden relative">
     <!-- Background Elements -->
     <div class="absolute inset-0 z-0">
         <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-brand-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <img src="<?php echo get_template_directory_uri(); ?>/assets/img/hero-bg.svg" alt="Pattern" class="absolute inset-0 w-full h-full object-cover opacity-40">
+        <img src="<?php echo site_url('/assets/img/hero-bg.svg'); ?>" alt="Pattern" class="absolute inset-0 w-full h-full object-cover opacity-40">
     </div>
 
     <div class="container mx-auto px-6 relative z-10">
@@ -16,25 +43,26 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
                     </span>
-                    Orion CMS v1.0 Resmi Dirilis
+                    <?php echo htmlspecialchars($promo_hero_badge); ?>
                 </div>
                 
                 <h1 class="text-5xl lg:text-7xl font-bold text-slate-900 mb-6 leading-tight tracking-tight">
-                    Bangun Web <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-purple-600">Tanpa Batas</span>
+                    <?php echo htmlspecialchars($promo_hero_title_line1); ?> <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-purple-600"><?php echo htmlspecialchars($promo_hero_title_highlight); ?></span>
                 </h1>
                 
                 <p class="text-xl text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                    Platform manajemen konten modern yang menggabungkan performa tinggi, keamanan tingkat lanjut, dan kemudahan penggunaan untuk developer maupun pemula.
+                    <?php echo htmlspecialchars($promo_hero_subtitle); ?>
                 </p>
                 
                 <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
-                    <a href="<?php echo site_url('/download/'); ?>" class="px-8 py-4 bg-brand-600 text-white rounded-full font-bold text-lg hover:bg-brand-700 transition shadow-xl shadow-brand-500/20 transform hover:-translate-y-1 flex items-center justify-center">
+                    <a href="<?php echo esc_url($promo_primary_cta_url); ?>" class="px-8 py-4 bg-white text-slate-800 border border-slate-200 rounded-full font-bold text-lg hover:bg-slate-50 transition hover:border-slate-300 flex items-center justify-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        Download Gratis
+                        <?php echo htmlspecialchars($promo_primary_cta_text); ?>
                     </a>
-                    <a href="#features" class="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-full font-bold text-lg hover:bg-slate-50 transition hover:border-slate-300 flex items-center justify-center">
-                        Pelajari Fitur
+                    <a href="<?php echo esc_url($promo_secondary_cta_url); ?>" class="px-9 py-4 bg-gradient-to-r from-brand-600 to-purple-600 text-white rounded-full font-extrabold text-lg hover:from-brand-700 hover:to-purple-700 transition shadow-2xl shadow-brand-500/30 transform hover:-translate-y-1 flex items-center justify-center ring-4 ring-brand-200/50">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <?php echo htmlspecialchars($promo_secondary_cta_text); ?>
                     </a>
                 </div>
                 
@@ -63,7 +91,7 @@
                     </div>
                     <div class="mt-8 rounded-lg overflow-hidden border border-slate-100">
                          <!-- Fallback visual using available asset -->
-                        <img src="<?php echo site_url('/assets/img/CMS-ORION-ONE.png'); ?>" alt="Orion Dashboard" class="w-full h-auto object-cover">
+                        <img src="<?php echo esc_url($promo_hero_visual_url); ?>" alt="Orion Dashboard" class="w-full h-auto object-cover">
                     </div>
                 </div>
                 
@@ -214,7 +242,7 @@
             </div>
             <!-- Theme Card PMC -->
             <div class="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer">
-                <img src="pmc.jpeg" alt="Orion PMC" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/img/pmc.jpeg'); ?>" alt="Orion PMC" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-700">
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex items-end p-6">
                     <div>
                         <h3 class="text-white font-bold text-xl mb-1">Orion PMC</h3>

@@ -140,12 +140,20 @@
 </head>
 <body <?php body_class('bg-white text-slate-800 antialiased'); ?>>
 
+<?php
+$promo_brand_name = html_entity_decode(get_option('orion_promo_brand_name', 'Orion Promo'), ENT_QUOTES, 'UTF-8');
+$promo_logo_url = get_option('orion_promo_logo_url', site_url('/assets/img/logo.png'));
+if ($promo_logo_url && !preg_match('#^https?://#', $promo_logo_url) && strpos($promo_logo_url, '/') === 0) {
+    $promo_logo_url = site_url($promo_logo_url);
+}
+?>
+
 <!-- Navigation -->
 <nav class="fixed top-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <a href="<?php echo site_url(); ?>" class="text-2xl font-bold text-brand-700 flex items-center gap-3">
-            <img src="<?php echo site_url('/assets/img/logo.png'); ?>" alt="Orion CMS" class="h-10 w-auto">
-            <span class="tracking-tight">Orion Promo</span>
+            <img src="<?php echo esc_url($promo_logo_url); ?>" alt="<?php echo htmlspecialchars($promo_brand_name); ?>" class="h-10 w-auto">
+            <span class="tracking-tight"><?php echo htmlspecialchars($promo_brand_name); ?></span>
         </a>
         
         <div class="hidden md:flex space-x-8 items-center">

@@ -10,7 +10,9 @@ $editing_term = null;
 
 // Handle Add/Update Category
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['action']) && $_POST['action'] == 'add_category') {
+    if (!isset($_POST['orion_nonce']) || !orion_verify_nonce($_POST['orion_nonce'], 'orion_category_action')) {
+        $error_msg = 'Invalid security token.';
+    } elseif (isset($_POST['action']) && $_POST['action'] == 'add_category') {
         $name = isset($_POST['tag-name']) ? trim($_POST['tag-name']) : '';
         $slug = isset($_POST['tag-slug']) ? trim($_POST['tag-slug']) : '';
         $desc = isset($_POST['tag-description']) ? trim($_POST['tag-description']) : '';
@@ -44,14 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Handle Delete Category
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['term_id'])) {
+    if (!isset($_GET['orion_nonce']) || !orion_verify_nonce($_GET['orion_nonce'], 'orion_category_action')) {
+        $error_msg = 'Invalid security token.';
+    } else {
     $term_id = (int)$_GET['term_id'];
-    // Security check usually goes here (nonce)
     
     if (wp_delete_term($term_id, 'category')) {
         $message = 'Category deleted.';
     } else {
         $error_msg = 'Error deleting category.';
     }
+}
 }
 
 // Handle Edit Action
@@ -123,6 +128,7 @@ require_once( 'admin-header.php' );
             </div>
             
             <form method="POST" action="categories.php" class="p-6">
+                <?php echo orion_field_nonce('orion_category_action'); ?>
                 <input type="hidden" name="action" value="<?php echo $editing_term ? 'update_category' : 'add_category'; ?>">
                 <?php if($editing_term): ?>
                 <input type="hidden" name="term_id" value="<?php echo $editing_term->term_id; ?>">
@@ -226,7 +232,7 @@ require_once( 'admin-header.php' );
                                         <a href="categories.php?action=edit&term_id=<?php echo $cat->term_id; ?>" class="text-gray-400 hover:text-orion-600 transition-colors" title="Edit">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                         </a>
-                                        <a href="categories.php?action=delete&term_id=<?php echo $cat->term_id; ?>" data-orion-confirm="Are you sure you want to delete this category?" class="text-gray-400 hover:text-red-600 transition-colors" title="Delete">
+                                        <a href="categories.php?action=delete&term_id=<?php echo $cat->term_id; ?>&orion_nonce=<?php echo urlencode(orion_create_nonce('orion_category_action')); ?>" data-orion-confirm="Are you sure you want to delete this category?" class="text-gray-400 hover:text-red-600 transition-colors" title="Delete">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                             </svg>
                                         </a>

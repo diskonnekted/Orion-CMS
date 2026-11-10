@@ -3,6 +3,10 @@ require_once '../orion-load.php';
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+    // Verify nonce
+    if (!isset($_POST['orion_nonce']) || !orion_verify_nonce($_POST['orion_nonce'], 'orion_settings_save')) {
+        $error = "Invalid security token.";
+    } else {
     // Update options
     update_option('blogname', isset($_POST['blogname']) ? trim($_POST['blogname']) : '');
     update_option('blogdescription', isset($_POST['blogdescription']) ? trim($_POST['blogdescription']) : '');
@@ -25,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         $file_name = basename($_FILES['site_logo']['name']);
         $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
         
-        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'];
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
         
         if (in_array($file_ext, $allowed)) {
             $new_file_name = 'logo-' . time() . '.' . $file_ext;
@@ -47,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         header("Location: settings.php?updated=true");
         exit;
     }
+    }
 }
 
 require_once 'admin-header.php';
@@ -58,7 +63,7 @@ if (isset($_GET['updated']) && $_GET['updated'] === 'true') {
 
 // Retrieve current options
 $blogname = get_option('blogname', 'Orion Site');
-$blogdescription = get_option('blogdescription', 'Just another Orion CMS site');
+$blogdescription = get_option('blogdescription', 'fast.flexible.free');
 $site_lang = get_option('site_lang', 'en_US');
 $timezone_string = get_option('timezone_string', 'UTC');
 $admin_color_scheme = get_option('admin_color_scheme', 'default');
@@ -81,6 +86,7 @@ $site_meta_keywords = get_option('site_meta_keywords', '');
 
 <div class="bg-white rounded-lg shadow p-6">
     <form id="settings-form" method="POST" action="settings.php" enctype="multipart/form-data">
+        <?php echo orion_field_nonce('orion_settings_save'); ?>
         <div class="grid grid-cols-1 gap-6">
             
             <!-- Logo Settings -->

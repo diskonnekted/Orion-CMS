@@ -21,7 +21,7 @@ class Orion_Security {
         // Protect tmp directory
         $htaccess = dirname($this->log_file) . '/.htaccess';
         if (!file_exists($htaccess)) {
-            file_put_contents($htaccess, "Order Deny,Allow\nDeny from all");
+            file_put_contents($htaccess, "Order Deny,Allow\nDeny from all\nRequire all denied");
         }
     }
 
@@ -52,43 +52,73 @@ class Orion_Security {
     private function sanitize_request_globals() {
         $_GET     = $this->clean_input($_GET);
         $_POST    = $this->clean_input($_POST);
-        $_COOKIE  = $this->clean_input($_COOKIE);
         $_REQUEST = $this->clean_input($_REQUEST);
+
+        // Cookies are transmitted as opaque tokens, never rendered as HTML.
+        // Entity encoding them corrupts signed values such as the auth cookie.
+    }
+
+    /**
+     * Keys that must keep their exact bytes.
+     *
+     * Passwords are compared against a hash, so a single entity-encoded
+     * character here locks the user out of their own account.
+     */
+    private function is_raw_key($key) {
+        static $raw = array(
+            'pwd', 'pass', 'password', 'pass1', 'pass2',
+            'user_password', 'user_pass', 'new_password', 'confirm_password',
+            'log', 'user_login', 'username',
+        );
+
+        return in_array(strtolower((string) $key), $raw, true);
     }
 
     /**
      * Recursive cleaner
      */
-    private function clean_input($data) {
+    private function clean_input($data, $key = null) {
         if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $data[$key] = $this->clean_input($value);
+            foreach ($data as $k => $inner) {
+                $data[$k] = $this->clean_input($inner, $k);
             }
-        } else {
-            // Remove NULL bytes
-            $data = str_replace(chr(0), '', $data);
-            
-            // Basic SQL Injection filters (if not using prepared statements everywhere)
-            // Note: This is a fallback defense. Prepared statements are always better.
-            $sql_patterns = array(
-                '/union\s+select/i',
-                '/union\s+all\s+select/i',
-                '/information_schema/i',
-                '/--\s/',
-                '/\/\*/'
-            );
-            
-            // XSS Filters
-            $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
-            
-            // Check for SQLi attempts and log/block
-            foreach ($sql_patterns as $pattern) {
-                if (preg_match($pattern, $data)) {
-                    $this->log_event("Potential SQL Injection detected: " . $pattern);
-                    // die("Security Violation Detected."); // Optional: block request immediately
-                }
+            return $data;
+        }
+
+        if ($data === null || $data === true || $data === false) {
+            return $data;
+        }
+
+        $data = (string) $data;
+
+        if ($key !== null && $this->is_raw_key($key)) {
+            return $data;
+        }
+
+        // Remove NULL bytes
+        $data = str_replace(chr(0), '', $data);
+
+        // Basic SQL Injection filters (if not using prepared statements everywhere)
+        // Note: This is a fallback defense. Prepared statements are always better.
+        $sql_patterns = array(
+            '/union\s+select/i',
+            '/union\s+all\s+select/i',
+            '/information_schema/i',
+            '/--\s/',
+            '/\/\*/'
+        );
+
+        // XSS Filters
+        $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+
+        // Check for SQLi attempts and log/block
+        foreach ($sql_patterns as $pattern) {
+            if (preg_match($pattern, $data)) {
+                $this->log_event("Potential SQL Injection detected: " . $pattern);
+                // die("Security Violation Detected."); // Optional: block request immediately
             }
         }
+
         return $data;
     }
 
@@ -96,8 +126,12 @@ class Orion_Security {
      * DDoS Protection: Rate Limiting
      * Limit requests per minute per IP
      */
+    private function get_client_ip() {
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    }
+
     private function ddos_protection() {
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = $this->get_client_ip();
         $limit = 100; // Max requests per minute
         $window = 60; // Time window in seconds
         
@@ -108,6 +142,7 @@ class Orion_Security {
         
         if (file_exists($file)) {
             $data = json_decode(file_get_contents($file), true);
+            if (!is_array($data)) { $data = array('attempts' => 0, 'last_attempt' => 0); }
             if (!$data) $data = array('count' => 0, 'start_time' => $current_time);
         }
         
@@ -140,6 +175,7 @@ class Orion_Security {
         
         if (file_exists($file)) {
             $data = json_decode(file_get_contents($file), true);
+            if (!is_array($data)) { $data = array('attempts' => 0, 'last_attempt' => 0); }
             
             // Check if locked out
             if ($data['attempts'] >= $limit) {
@@ -167,6 +203,7 @@ class Orion_Security {
         
         if (file_exists($file)) {
             $existing = json_decode(file_get_contents($file), true);
+            if (!is_array($existing)) { $existing = array('attempts' => 0, 'last_attempt' => 0); }
             if ($existing) {
                 $data['attempts'] = $existing['attempts'];
             }
@@ -189,17 +226,17 @@ class Orion_Security {
     }
 
     private function check_ban() {
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = $this->get_client_ip();
         if (file_exists($this->ban_file)) {
             $banned = json_decode(file_get_contents($this->ban_file), true);
-            if (in_array($ip, $banned)) {
+            if (is_array($banned) && in_array($ip, $banned, true)) {
                 die("Your IP has been banned due to suspicious activity.");
             }
         }
     }
 
     private function log_event($message) {
-        $entry = date('Y-m-d H:i:s') . " - [" . $_SERVER['REMOTE_ADDR'] . "] " . $message . PHP_EOL;
+        $entry = date('Y-m-d H:i:s') . " - [" . $this->get_client_ip() . "] " . $message . PHP_EOL;
         file_put_contents($this->log_file, $entry, FILE_APPEND);
     }
 }

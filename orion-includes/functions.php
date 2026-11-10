@@ -8,8 +8,160 @@
 /**
  * Connect to the database
  */
+/**
+ * Resolve the base URL path (e.g. "/orion") for this installation.
+ *
+ * Primary source is the DOCUMENT_ROOT <-> ABSPATH comparison. Only when that
+ * is unavailable do we fall back to SCRIPT_NAME, and only if it is a real
+ * URL-style path (starts with "/" and is not an absolute filesystem path).
+ *
+ * @return string Base path, always "" or starting with "/".
+ */
+function orion_resolve_base_path() {
+    $basePath = '';
+
+    // Primary: derive from DOCUMENT_ROOT vs ABSPATH.
+    if (!empty($_SERVER['DOCUMENT_ROOT'])) {
+        $docRoot = @realpath($_SERVER['DOCUMENT_ROOT']);
+        $absPath = @realpath(ABSPATH);
+        if ($docRoot !== false && $absPath !== false) {
+            $docRoot = rtrim(str_replace('\\', '/', $docRoot), '/');
+            $absPath = rtrim(str_replace('\\', '/', $absPath), '/');
+            if ($docRoot !== '' && strpos($absPath, $docRoot) === 0) {
+                $sub = trim(substr($absPath, strlen($docRoot)), '/');
+                $basePath = $sub === '' ? '' : '/' . $sub;
+            }
+        }
+    }
+
+    // Fallback: infer from SCRIPT_NAME, but only for URL-style relative paths.
+    if ($basePath === '') {
+        $script_name = isset($_SERVER['SCRIPT_NAME']) ? (string) $_SERVER['SCRIPT_NAME'] : '';
+        if ($script_name !== '' && $script_name[0] === '/' && strpos($script_name, ':') === false) {
+            $dir = dirname($script_name);
+            $dir = str_replace('\\', '/', $dir);
+            $dir = rtrim($dir, '/');
+            if ($dir === '.') $dir = '';
+
+            $strip = array('/orion-admin', '/installer');
+            foreach ($strip as $needle) {
+                $len = strlen($needle);
+                if ($dir !== '' && substr($dir, -$len) === $needle) {
+                    $dir = substr($dir, 0, -$len);
+                } elseif (($pos = strpos($dir, $needle . '/')) !== false) {
+                    $dir = substr($dir, 0, $pos);
+                }
+            }
+            if ($dir !== '' && $dir !== '/') $basePath = $dir;
+        }
+    }
+
+    if ($basePath !== '' && $basePath[0] !== '/') {
+        $basePath = '/' . $basePath;
+    }
+
+    return $basePath;
+}
+
+/**
+ * Resolve the site protocol and host.
+ */
+function orion_resolve_site_origin() {
+    $protocol = "http://";
+    if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) {
+        $protocol = "https://";
+    }
+    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+    $host = rtrim($host, '/');
+    if ($host === '') $host = 'localhost';
+    return $protocol . $host;
+}
+
+function orion_guess_root_url() {
+    return rtrim(orion_resolve_site_origin() . orion_resolve_base_path(), '/');
+}
+
+function orion_render_installation_error($title, $message, $details = array()) {
+    $root = orion_guess_root_url();
+    $installer = $root . '/installer/';
+    $reinstall = $installer . '?force=1';
+    $admin = $root . '/orion-admin/';
+    $home = $root . '/';
+
+    http_response_code(500);
+    header('Content-Type: text/html; charset=UTF-8');
+    ?>
+    <!doctype html>
+    <html lang="id">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title><?php echo htmlspecialchars($title); ?></title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+        <div class="max-w-3xl mx-auto p-6">
+            <div class="mb-8">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-700 text-sm font-extrabold shadow-sm">
+                    <span class="h-2 w-2 rounded-full bg-rose-600"></span>
+                    Orion
+                </div>
+                <h1 class="mt-5 text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight"><?php echo htmlspecialchars($title); ?></h1>
+                <p class="mt-3 text-slate-600 leading-relaxed"><?php echo htmlspecialchars($message); ?></p>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-900/5 overflow-hidden">
+                <div class="p-7 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+                    <div class="text-xs font-extrabold uppercase tracking-widest text-slate-500">Langkah Cepat</div>
+                    <div class="mt-2 text-xl font-extrabold text-slate-900">Perbaiki instalasi</div>
+                </div>
+                <div class="p-7 space-y-5">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a href="<?php echo htmlspecialchars($installer); ?>" class="flex-1 inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold transition">Buka Installer</a>
+                        <a href="<?php echo htmlspecialchars($reinstall); ?>" class="flex-1 inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold transition">Reinstall (force=1)</a>
+                        <a href="<?php echo htmlspecialchars($admin); ?>" class="flex-1 inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-900 font-extrabold hover:bg-slate-50 transition">Coba Admin</a>
+                        <a href="<?php echo htmlspecialchars($home); ?>" class="flex-1 inline-flex items-center justify-center px-6 py-4 rounded-2xl bg-white border border-slate-200 text-slate-900 font-extrabold hover:bg-slate-50 transition">Coba Home</a>
+                    </div>
+
+                    <?php if (!empty($details)): ?>
+                        <details class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <summary class="cursor-pointer font-extrabold text-slate-900">Detail teknis</summary>
+                            <div class="mt-3 space-y-2 text-sm text-slate-700">
+                                <?php foreach ($details as $k => $v): ?>
+                                    <div class="flex gap-2">
+                                        <div class="w-32 text-slate-500 font-bold"><?php echo htmlspecialchars((string) $k); ?></div>
+                                        <div class="flex-1 font-mono break-all"><?php echo htmlspecialchars((string) $v); ?></div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </details>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    <?php
+}
+
 function orion_db_connect() {
     global $orion_db;
+    $GLOBALS['orion_db_connect_error'] = '';
+
+    $db_type = defined('DB_TYPE') ? (string) DB_TYPE : 'mysql';
+    if (strtolower($db_type) === 'sqlite') {
+        require_once ABSPATH . 'orion-includes/db-sqlite.php';
+        $db_file = defined('DB_FILE') ? (string) DB_FILE : (ABSPATH . 'orion-content/database/orion.sqlite');
+        if (strpos($db_file, 'ABSPATH') !== false) {
+            $db_file = ABSPATH . 'orion-content/database/orion.sqlite';
+        }
+        $orion_db = new OrionSQLiteDB($db_file);
+        if ($orion_db->connect_error) {
+            $GLOBALS['orion_db_connect_error'] = (string) $orion_db->connect_error;
+            return false;
+        }
+        return true;
+    }
     
     // Suppress warning for initial connection attempt and handle manually
     $driver = new mysqli_driver();
@@ -26,7 +178,8 @@ function orion_db_connect() {
         if ($orion_db->connect_errno == 1049 && defined('ORION_DEBUG') && ORION_DEBUG) {
              $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD);
              if ($conn->connect_error) {
-                 die("Connection failed: " . $conn->connect_error);
+                 $GLOBALS['orion_db_connect_error'] = (string) $conn->connect_error;
+                 return false;
              }
              // Create database
              if ($conn->query("CREATE DATABASE IF NOT EXISTS " . DB_NAME)) {
@@ -34,14 +187,17 @@ function orion_db_connect() {
                  // Retry connection
                  $orion_db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
              } else {
-                 die("Failed to create database: " . $conn->error);
+                 $GLOBALS['orion_db_connect_error'] = (string) $conn->error;
+                 return false;
              }
         }
         
         if ($orion_db->connect_error) {
-            die("Connection failed: " . $orion_db->connect_error);
+            $GLOBALS['orion_db_connect_error'] = (string) $orion_db->connect_error;
+            return false;
         }
     }
+    return true;
 }
 
 /**
@@ -175,6 +331,7 @@ function load_template( $_template_file, $require_once = true ) {
 function get_option($option, $default = false) {
     global $orion_db, $table_prefix;
     $table = $table_prefix . 'options';
+    $option = $orion_db->real_escape_string($option);
     
     $result = $orion_db->query("SELECT option_value FROM $table WHERE option_name = '$option' LIMIT 1");
     if ($result && $result->num_rows > 0) {
@@ -200,6 +357,7 @@ function get_option($option, $default = false) {
 function update_option($option, $value) {
     global $orion_db, $table_prefix;
     $table = $table_prefix . 'options';
+    $option = $orion_db->real_escape_string($option);
     
     // Check if exists
     $existing = get_option($option, null);
@@ -301,46 +459,8 @@ function site_url($path = '') {
         return rtrim($db_url, '/') . $path;
     }
 
-    $protocol = "http://";
-    if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) {
-        $protocol = "https://";
-    }
+    $base = orion_resolve_site_origin() . orion_resolve_base_path();
 
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-    
-    $basePath = '';
-
-    if (!empty($_SERVER['DOCUMENT_ROOT'])) {
-        $docRoot = rtrim(str_replace('\\', '/', realpath($_SERVER['DOCUMENT_ROOT'])), '/');
-        $absPath = rtrim(str_replace('\\', '/', realpath(ABSPATH)), '/');
-        if ($docRoot && $absPath && strpos($absPath, $docRoot) === 0) {
-            $sub = trim(substr($absPath, strlen($docRoot)), '/');
-            if ($sub !== '') {
-                $basePath = '/' . $sub;
-            }
-        }
-    }
-
-    if ($basePath === '') {
-        $script_name = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
-        $dir = rtrim(str_replace('\\', '/', dirname($script_name)), '/');
-
-        // Fix: If we are inside orion-admin, strip it to find the root
-        // Check if path ends with /orion-admin or contains /orion-admin/
-        $orion_admin = '/orion-admin';
-        $len = strlen($orion_admin);
-        if (substr($dir, -$len) === $orion_admin) {
-             $dir = substr($dir, 0, -$len);
-        } elseif (($pos = strpos($dir, $orion_admin . '/')) !== false) {
-             $dir = substr($dir, 0, $pos);
-        }
-
-        if ($dir && $dir !== '/') {
-            $basePath = $dir;
-        }
-    }
-
-    $base = $protocol . $host . $basePath;
 
     return rtrim($base, '/') . $path;
 }
@@ -442,6 +562,192 @@ function orion_normalize_html_output($html) {
     );
 
     return $html;
+}
+
+function orion_seo_current_url() {
+    $root = function_exists('orion_guess_root_url') ? orion_guess_root_url() : rtrim(site_url(), '/');
+    $uri = isset($_SERVER['REQUEST_URI']) ? (string) $_SERVER['REQUEST_URI'] : '/';
+    return $root . $uri;
+}
+
+function orion_seo_canonical_url() {
+    $url = orion_seo_current_url();
+    $parts = parse_url($url);
+    if (!is_array($parts) || !isset($parts['scheme'], $parts['host'])) return $url;
+
+    $path = isset($parts['path']) ? $parts['path'] : '/';
+    $query = '';
+    if (isset($parts['query']) && $parts['query'] !== '') {
+        parse_str($parts['query'], $params);
+        $drop = array('utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'fbclid', 'gclid');
+        foreach ($drop as $k) {
+            if (isset($params[$k])) unset($params[$k]);
+        }
+        if (!empty($params)) {
+            ksort($params);
+            $query = http_build_query($params);
+        }
+    }
+
+    $out = $parts['scheme'] . '://' . $parts['host'];
+    if (isset($parts['port'])) $out .= ':' . $parts['port'];
+    $out .= $path;
+    if ($query !== '') $out .= '?' . $query;
+    return $out;
+}
+
+function orion_seo_text_excerpt($text, $limit) {
+    $text = trim((string) $text);
+    if ($text === '') return '';
+    $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+    $text = preg_replace('/\s+/', ' ', strip_tags($text));
+    if ($limit <= 0 || strlen($text) <= $limit) return $text;
+    $cut = substr($text, 0, $limit);
+    $space = strrpos($cut, ' ');
+    if ($space !== false && $space > 40) {
+        $cut = substr($cut, 0, $space);
+    }
+    return rtrim($cut, " \t\n\r\0\x0B") . '...';
+}
+
+function orion_seo_meta_pack() {
+    $site_title = (string) get_option('blogname', 'Orion CMS');
+    $tagline = (string) get_option('blogdescription', '');
+    $site_desc = (string) get_option('site_meta_description', '');
+    $site_keys = (string) get_option('site_meta_keywords', '');
+    if (trim($site_keys) === '') {
+        $site_keys = 'website gratis, buat website gratis, bikin website gratis, cara membuat website gratis, website gratis tanpa coding, website builder, website builder gratis, builder website tanpa coding, cms gratis, free cms, fre cms, free website, web gratis, web gr4atis, web developer profesional, website developer pro, jasa pembuatan website, jasa bikin website, landing page builder, orion cms, orion cms free';
+    }
+
+    $canonical = orion_seo_canonical_url();
+    $image = (string) get_option('site_logo', site_url('/assets/img/orion-light.png'));
+    $type = 'website';
+    $title = $site_title;
+    $desc = $site_desc !== '' ? $site_desc : ($tagline !== '' ? $tagline : $site_title);
+
+    if (function_exists('is_single') && is_single()) {
+        global $post;
+        if (is_object($post)) {
+            $type = 'article';
+            $title = trim((string) $post->post_title) !== '' ? ((string) $post->post_title . ' - ' . $site_title) : $site_title;
+            $desc = orion_seo_text_excerpt($post->post_content, 160);
+            $thumb = function_exists('get_the_post_thumbnail_url') ? get_the_post_thumbnail_url($post) : '';
+            if (!$thumb) {
+                $thumb = function_exists('get_first_image_from_content') ? get_first_image_from_content(html_entity_decode((string) $post->post_content, ENT_QUOTES, 'UTF-8')) : '';
+            }
+            if ($thumb) $image = $thumb;
+        }
+    } elseif (function_exists('is_page') && is_page()) {
+        global $post;
+        if (is_object($post)) {
+            $type = 'website';
+            $title = trim((string) $post->post_title) !== '' ? ((string) $post->post_title . ' - ' . $site_title) : $site_title;
+            $desc = orion_seo_text_excerpt($post->post_content, 160);
+            $thumb = function_exists('get_the_post_thumbnail_url') ? get_the_post_thumbnail_url($post) : '';
+            if (!$thumb) {
+                $thumb = function_exists('get_first_image_from_content') ? get_first_image_from_content(html_entity_decode((string) $post->post_content, ENT_QUOTES, 'UTF-8')) : '';
+            }
+            if ($thumb) $image = $thumb;
+        }
+    } else {
+        if ($tagline !== '') {
+            $title = $site_title . ' - ' . $tagline;
+        }
+    }
+
+    return array(
+        'title' => $title,
+        'description' => $desc,
+        'keywords' => $site_keys,
+        'canonical' => $canonical,
+        'image' => $image,
+        'type' => $type,
+        'site_name' => $site_title
+    );
+}
+
+function orion_seo_render_meta_tags() {
+    $p = orion_seo_meta_pack();
+    $title = htmlspecialchars((string) $p['title'], ENT_QUOTES, 'UTF-8');
+    $desc = htmlspecialchars((string) $p['description'], ENT_QUOTES, 'UTF-8');
+    $keys = htmlspecialchars((string) $p['keywords'], ENT_QUOTES, 'UTF-8');
+    $canon = htmlspecialchars((string) $p['canonical'], ENT_QUOTES, 'UTF-8');
+    $img = htmlspecialchars((string) $p['image'], ENT_QUOTES, 'UTF-8');
+    $type = htmlspecialchars((string) $p['type'], ENT_QUOTES, 'UTF-8');
+    $site = htmlspecialchars((string) $p['site_name'], ENT_QUOTES, 'UTF-8');
+
+    $schema = array(
+        '@context' => 'https://schema.org',
+        '@type' => ($type === 'article') ? 'Article' : 'WebSite',
+        'name' => html_entity_decode((string) $p['title'], ENT_QUOTES, 'UTF-8'),
+        'url' => (string) $p['canonical'],
+        'description' => html_entity_decode((string) $p['description'], ENT_QUOTES, 'UTF-8')
+    );
+    if ($type === 'article') {
+        global $post;
+        if (is_object($post)) {
+            $schema['headline'] = html_entity_decode((string) $post->post_title, ENT_QUOTES, 'UTF-8');
+            $schema['datePublished'] = isset($post->post_date) ? (string) $post->post_date : '';
+            $schema['dateModified'] = isset($post->post_modified) ? (string) $post->post_modified : '';
+            $schema['mainEntityOfPage'] = (string) $p['canonical'];
+            $schema['image'] = (string) $p['image'];
+        }
+    }
+
+    $jsonld = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    $favicon = htmlspecialchars((string) site_url('/assets/img/favicon.png'), ENT_QUOTES, 'UTF-8');
+
+    $out = "";
+    $out .= "<meta name=\"orion-seo\" content=\"1\" />\n";
+    $out .= "<meta name=\"generator\" content=\"Orion CMS\" />\n";
+    $out .= "<link rel=\"icon\" type=\"image/png\" href=\"{$favicon}\" />\n";
+    $out .= "<link rel=\"apple-touch-icon\" href=\"{$favicon}\" />\n";
+    $out .= "<title>{$title}</title>\n";
+    $out .= "<meta name=\"description\" content=\"{$desc}\" />\n";
+    $out .= "<meta name=\"keywords\" content=\"{$keys}\" />\n";
+    $out .= "<link rel=\"canonical\" href=\"{$canon}\" />\n";
+    $out .= "<meta property=\"og:title\" content=\"{$title}\" />\n";
+    $out .= "<meta property=\"og:description\" content=\"{$desc}\" />\n";
+    $out .= "<meta property=\"og:image\" content=\"{$img}\" />\n";
+    $out .= "<meta property=\"og:url\" content=\"{$canon}\" />\n";
+    $out .= "<meta property=\"og:type\" content=\"{$type}\" />\n";
+    $out .= "<meta property=\"og:site_name\" content=\"{$site}\" />\n";
+    $out .= "<meta name=\"twitter:card\" content=\"summary_large_image\" />\n";
+    $out .= "<meta name=\"twitter:title\" content=\"{$title}\" />\n";
+    $out .= "<meta name=\"twitter:description\" content=\"{$desc}\" />\n";
+    $out .= "<meta name=\"twitter:image\" content=\"{$img}\" />\n";
+    if ($jsonld) {
+        $out .= "<script type=\"application/ld+json\">{$jsonld}</script>\n";
+    }
+    return $out;
+}
+
+function orion_seo_inject_into_html_head($html) {
+    if (!is_string($html) || $html === '') return $html;
+    if (stripos($html, 'name="orion-seo"') !== false || stripos($html, "name='orion-seo'") !== false) return $html;
+    $pos = stripos($html, '</head>');
+    if ($pos === false) return $html;
+    $meta = orion_seo_render_meta_tags();
+    $head_end = substr($html, 0, $pos);
+    $rest = substr($html, $pos);
+    return $head_end . $meta . $rest;
+}
+
+function orion_seo_should_inject() {
+    if (php_sapi_name() === 'cli') return false;
+    $script = isset($_SERVER['SCRIPT_NAME']) ? (string) $_SERVER['SCRIPT_NAME'] : '';
+    if (strpos($script, '/orion-admin/') !== false) return false;
+    if (strpos($script, '/installer/') !== false) return false;
+    $base = strtolower(basename($script));
+    if (in_array($base, array('sitemap.php', 'robots.php', 'download.php', 'ajax.php'), true)) return false;
+    return true;
+}
+
+function orion_seo_start_output_buffer() {
+    if (!orion_seo_should_inject()) return;
+    if (!empty($GLOBALS['orion_seo_ob_started'])) return;
+    $GLOBALS['orion_seo_ob_started'] = true;
+    ob_start('orion_seo_inject_into_html_head');
 }
 
 /**
@@ -658,4 +964,157 @@ function get_taxonomy($taxonomy) {
         return $wp_taxonomies[$taxonomy];
     }
     return null;
+}
+
+/**
+ * Helper nonce (anti-CSRF) — stateless HMAC berbasis waktu.
+ * Tidak bergantung pada session, hanya user id + action + window waktu 2 jam.
+ */
+function orion_nonce_secret() {
+    static $secret = null;
+    if ($secret !== null) {
+        return $secret;
+    }
+
+    $stored = function_exists('get_option') ? get_option('orion_secret_key') : '';
+    if (!is_string($stored) || strlen($stored) < 32) {
+        $stored = '';
+    }
+
+    // Fall back to a per-install secret file when the option table is not
+    // writable yet (fresh install, DB offline). Without this every request
+    // would mint a new secret and no nonce or auth cookie would survive.
+    // The file returns the key from PHP so a direct HTTP request prints nothing.
+    $secret_file = defined('ABSPATH') ? ABSPATH . 'orion-content/orion-secret.php' : '';
+
+    if ($stored === '' && $secret_file !== '' && is_readable($secret_file)) {
+        $file_secret = @include $secret_file;
+        if (is_string($file_secret) && strlen($file_secret) >= 32) {
+            $stored = $file_secret;
+        }
+    }
+
+    if ($stored === '') {
+        if (function_exists('random_bytes')) {
+            $stored = bin2hex(random_bytes(32));
+        } else {
+            $stored = hash('sha256', uniqid('orion', true) . mt_rand());
+        }
+
+        if (function_exists('update_option')) {
+            update_option('orion_secret_key', $stored);
+        }
+
+        if ($secret_file !== '' && is_dir(dirname($secret_file))) {
+            @file_put_contents($secret_file, "<?php\n// Auto-generated install key. Do not edit.\nreturn '" . $stored . "';\n", LOCK_EX);
+        }
+    }
+
+    $secret = $stored;
+    return $secret;
+}
+
+function orion_create_nonce($action = -1) {
+    $user_id = function_exists('get_current_user_id') ? (int) get_current_user_id() : 0;
+    $tick = (int) ceil(time() / 7200); // jendela 2 jam
+    $nonce = hash_hmac('sha256', (string) $action . '|' . $user_id . '|' . $tick, orion_nonce_secret());
+    return substr($nonce, 0, 16);
+}
+
+
+/**
+ * Extensions upload yang diizinkan. Skrip server tidak pernah termasuk,
+ * karena file yang bisa dieksekusi di folder upload berarti remote code execution.
+ */
+function orion_allowed_upload_exts() {
+    return array(
+        'jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'ico',
+        'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx',
+        'txt', 'csv', 'zip', 'rar', '7z',
+        'mp3', 'wav', 'mp4', 'webm', 'ogg',
+    );
+}
+
+/**
+ * Membersihkan nama file upload.
+ *
+ * Mengembalikan nama file yang aman, atau false bila ekstensinya tidak
+ * diizinkan.
+ */
+function orion_sanitize_upload_name($name, $allowed = null) {
+    $name = basename((string) $name);
+    $name = preg_replace('/[^A-Za-z0-9._-]/', '_', $name);
+    $name = preg_replace('/\.{2,}/', '.', (string) $name);
+    $name = ltrim((string) $name, '.');
+
+    if ($name === '') {
+        return false;
+    }
+
+    $ext = strtolower((string) pathinfo($name, PATHINFO_EXTENSION));
+    if ($allowed === null) {
+        $allowed = orion_allowed_upload_exts();
+    }
+
+    if ($ext === '' || !in_array($ext, (array) $allowed, true)) {
+        return false;
+    }
+
+    return $name;
+}
+
+/**
+ * Memastikan semua entri ZIP tetap berada di dalam folder tujuan.
+ *
+ * Tanpa ini, ZIP berisi entri "..\\..\\orion-config.php" bisa menulis file
+ * di luar folder plugin/theme (zip-slip) dan mengambil alih instalasi.
+ */
+function orion_zip_entries_are_safe($zip) {
+    if (!is_object($zip) || !isset($zip->numFiles)) {
+        return false;
+    }
+
+    for ($i = 0; $i < (int) $zip->numFiles; $i++) {
+        $name = $zip->getNameIndex($i);
+        if ($name === false) {
+            return false;
+        }
+
+        $name = str_replace('\\', '/', (string) $name);
+
+        if ($name === '') {
+            continue;
+        }
+
+        // Absolute path, drive letter, or any ".." segment.
+        if ($name[0] === '/' || preg_match('#^[A-Za-z]:#', $name) || preg_match('#(^|/)\.\.(/|$)#', $name)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+function orion_verify_nonce($nonce, $action = -1) {
+    // A crafted ?orion_nonce[]= request would otherwise reach hash_equals()
+    // with an array and raise a TypeError.
+    $nonce = is_string($nonce) ? $nonce : '';
+
+    if ($nonce === '') {
+        return false;
+    }
+    // Terima nonce dari jendela waktu sekarang & sebelumnya (toleransi 2 jam)
+    for ($i = 0; $i < 2; $i++) {
+        $expected = substr(hash_hmac('sha256', (string) $action . '|' . (int) get_current_user_id() . '|' . ((int) ceil(time() / 7200) - $i), orion_nonce_secret()), 0, 16);
+        if (hash_equals($expected, $nonce)) {
+            return 1;
+        }
+    }
+    return false;
+}
+
+/**
+ * Output hidden field nonce untuk form.
+ */
+function orion_field_nonce($action = -1) {
+    echo '<input type="hidden" name="orion_nonce" value="' . esc_attr(orion_create_nonce($action)) . '" />';
 }

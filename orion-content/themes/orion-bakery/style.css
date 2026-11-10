@@ -1,0 +1,62 @@
+/*
+Theme Name: Orion Bakery
+Theme URI: https://orion-cms.com/themes/bakery
+Description: A delicious, modern, and eye-catching theme for bakery and cake shops. Integrated with Easy Digital Downloads for online ordering.
+Author: Orion Team
+Author URI: https://orion-cms.com
+Version: 1.0.0
+Tags: bakery, food, cake, shop, ecommerce, modern, warm
+*/
+
+/* 
+   Orion Bakery Theme 
+   Built with Tailwind CSS (CDN)
+   Color Palette:
+   - Primary: #d97706 (Amber 600) - Crust/Baked Gold
+   - Secondary: #78350f (Amber 900) - Chocolate/Dark Bread
+   - Accent: #fcd34d (Amber 300) - Pastry/Butter
+   - Background: #fffbeb (Amber 50) - Flour/Cream
+*/
+
+body {
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    background-color: #fffbeb;
+    color: #451a03;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'DM Serif Display', serif;
+}
+
+.font-serif {
+    font-family: 'DM Serif Display', serif;
+}
+
+.font-sans {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #fef3c7;
+}
+::-webkit-scrollbar-thumb {
+    background: #d97706;
+    border-radius: 5px;
+    border: 2px solid #fef3c7;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #b45309;
+}
+
+/* Product Card Hover Effect */
+.product-card {
+    transition: all 0.3s ease;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}

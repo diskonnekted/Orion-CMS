@@ -32,7 +32,21 @@ require_once ABSPATH . 'orion-includes/user.php';
 require_once ABSPATH . 'orion-includes/wp-compat.php';
 
 // Initialize the database connection
-orion_db_connect();
+$db_ok = orion_db_connect();
+if (!$db_ok) {
+    $db_type = defined('DB_TYPE') ? (string) DB_TYPE : 'mysql';
+    $details = array(
+        'db_type' => $db_type,
+        'error' => isset($GLOBALS['orion_db_connect_error']) ? (string) $GLOBALS['orion_db_connect_error'] : 'Unknown'
+    );
+    if (strtolower($db_type) === 'sqlite' && defined('DB_FILE')) {
+        $details['db_file'] = (string) DB_FILE;
+        $details['db_file_exists'] = file_exists((string) DB_FILE) ? 'yes' : 'no';
+        $details['db_file_dir_writable'] = is_writable(dirname((string) DB_FILE)) ? 'yes' : 'no';
+    }
+    orion_render_installation_error('Koneksi database gagal', 'Konfigurasi database ada, tapi database tidak bisa dipakai. Jalankan installer atau periksa file DB.', $details);
+    exit;
+}
 
 /**
  * Load Post API
@@ -49,8 +63,43 @@ require_once ABSPATH . 'orion-includes/taxonomy.php';
  */
 require_once ABSPATH . 'orion-includes/schema.php';
 if ( !orion_is_installed() ) {
-    orion_install();
+    $ok = orion_install();
+    if (!$ok) {
+        $details = array(
+            'db_type' => defined('DB_TYPE') ? (string) DB_TYPE : 'mysql',
+            'install_error' => isset($GLOBALS['orion_install_error']) ? (string) $GLOBALS['orion_install_error'] : '',
+            'db_error' => isset($orion_db) && isset($orion_db->error) ? (string) $orion_db->error : ''
+        );
+        orion_render_installation_error('Database belum siap', 'orion-config.php sudah ada, tetapi tabel Orion belum siap atau gagal dibuat. Jalankan installer (force) untuk setup ulang.', $details);
+        exit;
+    }
 }
+
+if (function_exists('orion_seo_start_output_buffer')) {
+    orion_seo_start_output_buffer();
+}
+
+function orion_migrate_tagline_default() {
+    $flag = get_option('orion_tagline_migrated_v1', '0');
+    if ($flag === '1') return;
+
+    $current = (string) get_option('blogdescription', '');
+    $current_trim = trim($current);
+    $defaults = array(
+        '',
+        'Just another Orion CMS site',
+        'Just another Orion CMS site ',
+        'Just another Orion CMS Site',
+        'Just another Orion CMS',
+    );
+
+    if (in_array($current_trim, $defaults, true)) {
+        update_option('blogdescription', 'fast.flexible.free');
+    }
+
+    update_option('orion_tagline_migrated_v1', '1');
+}
+orion_migrate_tagline_default();
 
 /**
  * Ensure default information pages exist (About, Manual, Privacy, Terms)
@@ -234,6 +283,9 @@ $active_theme_dir = get_template_directory();
 if ( file_exists( $active_theme_dir . '/functions.php' ) ) {
     include_once( $active_theme_dir . '/functions.php' );
 }
+
+// Fire init Hook
+do_action( 'init' );
 
 // Fire Theme Setup Hook
 do_action( 'after_setup_theme' );

@@ -24,8 +24,11 @@ $message = '';
 
 // Handle Form Submission (PRG)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Check if POST is empty (likely max_post_size exceeded)
-    if (empty($_POST) && $_SERVER['CONTENT_LENGTH'] > 0) {
+    // Verify nonce
+    if (!isset($_POST['orion_nonce']) || !orion_verify_nonce($_POST['orion_nonce'], 'orion_post_save')) {
+        $message = "Error: Invalid security token.";
+    } elseif (empty($_POST) && $_SERVER['CONTENT_LENGTH'] > 0) {
+        // Check if POST is empty (likely max_post_size exceeded)
         $message = "Error: Submission failed. The file you are trying to upload might be too large (exceeds post_max_size).";
     } else {
         // Double check permission on save (in case of direct POST manipulation)
@@ -111,9 +114,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             if (!empty($_FILES['featured_image']['name'])) {
-                $file_name = time() . '_feat_' . basename($_FILES['featured_image']['name']);
+                $safe_name = orion_sanitize_upload_name($_FILES['featured_image']['name'], array('jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'));
+                if ($safe_name === false) { $safe_name = ''; }
+                $file_name = time() . '_feat_' . $safe_name;
                 $target_file = $upload_dir . $file_name;
-                if (move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
+                if ($safe_name !== '' && move_uploaded_file($_FILES['featured_image']['tmp_name'], $target_file)) {
                     $feat_img_url = site_url('/orion-content/uploads/' . $file_name);
                 }
             }
@@ -135,7 +140,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!empty($_FILES['gallery_images']['name'][0])) {
                 foreach($_FILES['gallery_images']['name'] as $key => $val){
                     if ($_FILES['gallery_images']['name'][$key]) {
-                         $file_name = time() . '_gal_' . basename($_FILES['gallery_images']['name'][$key]);
+                         $safe_name = orion_sanitize_upload_name($_FILES['gallery_images']['name'][$key], array('jpg', 'jpeg', 'png', 'gif', 'webp', 'avif'));
+                         if ($safe_name === false) { continue; }
+                         $file_name = time() . '_gal_' . $safe_name;
                          $target_file = $upload_dir . $file_name;
                          if (move_uploaded_file($_FILES['gallery_images']['tmp_name'][$key], $target_file)) {
                              $gallery_urls[] = site_url('/orion-content/uploads/' . $file_name);
@@ -172,7 +179,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!empty($_FILES['attachments']['name'][0])) {
                 foreach($_FILES['attachments']['name'] as $key => $val){
                      if ($_FILES['attachments']['name'][$key]) {
-                         $file_name = time() . '_att_' . basename($_FILES['attachments']['name'][$key]);
+                         $safe_name = orion_sanitize_upload_name($_FILES['attachments']['name'][$key]);
+                         if ($safe_name === false) { continue; }
+                         $file_name = time() . '_att_' . $safe_name;
                          $target_file = $upload_dir . $file_name;
                          if (move_uploaded_file($_FILES['attachments']['tmp_name'][$key], $target_file)) {
                              $attachment_urls[] = array(
@@ -286,6 +295,7 @@ require_once( 'admin-header.php' );
 <?php endif; ?>
 
 <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <?php echo orion_field_nonce('orion_post_save'); ?>
     <!-- Main Content Area -->
     <div class="md:col-span-2 space-y-6">
         <div class="bg-white p-6 rounded-lg shadow-sm">
@@ -457,6 +467,7 @@ document.getElementById('btn-add-cat-submit').addEventListener('click', function
     const formData = new FormData();
     formData.append('action', 'add_category');
     formData.append('cat_name', catName);
+    formData.append('orion_nonce', '<?php echo orion_create_nonce('orion_ajax_add_category'); ?>');
     
     fetch('ajax.php', {
         method: 'POST',

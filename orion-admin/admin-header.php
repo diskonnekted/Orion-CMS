@@ -93,7 +93,7 @@ $current_user = wp_get_current_user();
     <aside class="w-64 bg-slate-900 text-white flex-shrink-0 hidden md:flex flex-col border-r border-slate-800 shadow-xl z-20">
         <div class="h-20 flex items-center px-6 border-b border-slate-800 bg-slate-900">
             <a href="<?php echo site_url('/orion-admin/index.php'); ?>" class="flex items-center gap-3">
-                <img src="<?php echo get_option('site_logo', site_url('/assets/img/orion-light.png')); ?>" alt="<?php echo htmlspecialchars(get_option('blogname', 'Orion CMS')); ?>" class="h-12 w-auto object-contain max-w-[150px]">
+                <img src="<?php echo htmlspecialchars(get_option('site_logo', site_url('/assets/img/orion-light.png'))); ?>" alt="<?php echo htmlspecialchars(get_option('blogname', 'Orion CMS')); ?>" class="h-12 w-auto object-contain max-w-[150px]">
                 <span class="font-bold text-lg tracking-tight">V.01</span>
             </a>
         </div>
@@ -165,9 +165,17 @@ $current_user = wp_get_current_user();
                 <span class="font-medium">Pages</span>
             </a>
 
+            <!-- Coba Gratis Submissions -->
+            <?php if (file_exists(ABSPATH . 'orion-admin/coba-gratis-submissions.php')): ?>
+            <a href="<?php echo site_url('/orion-admin/coba-gratis-submissions.php'); ?>" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'coba-gratis-submissions.php' ? 'active' : ''; ?>">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h2m4 0a2 2 0 11-4 0 2 2 0 014 0zM9 17H7a2 2 0 01-2-2V7a2 2 0 012-2h10a2 2 0 012 2v4"></path></svg>
+                <span class="font-medium">Coba Gratis</span>
+            </a>
+            <?php endif; ?>
+
             <!-- Appearance Dropdown -->
             <?php if (current_user_can('administrator')): ?>
-            <div x-data="{ open: <?php echo (in_array(basename($_SERVER['PHP_SELF']), ['themes.php', 'nav-menus.php', 'theme-settings.php'])) ? 'true' : 'false'; ?> }">
+            <div x-data="{ open: <?php echo (in_array(basename($_SERVER['PHP_SELF']), ['themes.php', 'nav-menus.php', 'theme-settings.php', 'theme-catalog.php'])) ? 'true' : 'false'; ?> }">
                 <button @click="open = !open" class="w-full sidebar-link focus:outline-none justify-between group">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-3 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path></svg>
@@ -177,6 +185,7 @@ $current_user = wp_get_current_user();
                 </button>
                 <div x-show="open" class="bg-slate-800/50 py-1">
                     <a href="<?php echo site_url('/orion-admin/themes.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'themes.php' ? 'active' : ''; ?>">Themes</a>
+                    <a href="<?php echo site_url('/orion-admin/theme-catalog.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'theme-catalog.php' ? 'active' : ''; ?>">Theme Catalog</a>
                     <a href="<?php echo site_url('/orion-admin/nav-menus.php'); ?>" class="submenu-link <?php echo basename($_SERVER['PHP_SELF']) == 'nav-menus.php' ? 'active' : ''; ?>">Menus</a>
                     <?php
                     $current_theme = get_option('template', 'orion-default');
@@ -197,6 +206,13 @@ $current_user = wp_get_current_user();
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path></svg>
                 <span class="font-medium">Plugins</span>
             </a>
+
+            <?php if (file_exists(ABSPATH . 'orion-admin/installer-creator.php')): ?>
+            <a href="<?php echo site_url('/orion-admin/installer-creator.php'); ?>" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'installer-creator.php' ? 'active' : ''; ?>">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                <span class="font-medium">Installer Creator</span>
+            </a>
+            <?php endif; ?>
 
             <?php 
             $active_plugins = get_option('active_plugins', array());
@@ -235,7 +251,7 @@ $current_user = wp_get_current_user();
             ?>
 
             <!-- Users -->
-            <a href="users.php" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'users.php' ? 'active' : ''; ?>">
+            <a href="<?php echo site_url('/orion-admin/users.php'); ?>" class="sidebar-link <?php echo basename($_SERVER['PHP_SELF']) == 'users.php' ? 'active' : ''; ?>">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span class="font-medium">Users</span>
             </a>
@@ -307,7 +323,7 @@ $current_user = wp_get_current_user();
                         <div class="flex justify-end gap-2 text-xs text-slate-500">
                             <a href="profile.php" class="hover:text-orion-600">Edit Profile</a>
                             <span>|</span>
-                            <a href="<?php echo site_url('/login.php?action=logout'); ?>" class="hover:text-orion-600">Log Out</a>
+                            <a href="<?php echo site_url('/login.php?action=logout&orion_nonce=') . urlencode(orion_create_nonce('orion_logout')); ?>" class="hover:text-orion-600">Log Out</a>
                         </div>
                     </div>
                 </div>

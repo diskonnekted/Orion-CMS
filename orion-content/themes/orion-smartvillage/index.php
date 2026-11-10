@@ -215,7 +215,7 @@ if ($is_single):
                                 Sejarah & Profil
                             </h2>
                             <div class="prose prose-lg prose-emerald text-slate-600">
-                                <?php echo nl2br($post->post_content); ?>
+                                <?php echo get_the_content(null, false, $post->ID); ?>
                             </div>
                         </div>
 
@@ -331,7 +331,7 @@ if ($is_single):
     <div class="container mx-auto px-4 -mt-24 relative z-20">
         <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 p-8 md:p-12">
             <div class="prose prose-lg prose-emerald max-w-none text-slate-700 leading-relaxed">
-                <?php echo nl2br($post->post_content); ?>
+                <?php echo get_the_content(null, false, $post->ID); ?>
             </div>
 
             <!-- Back Button -->

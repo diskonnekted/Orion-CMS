@@ -138,11 +138,7 @@
 
                         <div class="prose prose-lg prose-blue max-w-none text-gray-700 leading-loose mb-10">
                             <?php 
-                            if (function_exists('apply_filters')) {
-                                echo apply_filters('the_content', $post->post_content);
-                            } else {
-                                echo $post->post_content;
-                            }
+                            echo get_the_content(null, false, $post->ID);
                             ?>
                         </div>
 

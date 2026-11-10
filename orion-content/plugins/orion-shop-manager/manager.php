@@ -106,6 +106,9 @@ $products_query = $orion_db->query("SELECT * FROM $table_products ORDER BY creat
                 <h1 class="text-xl font-bold text-gray-900">Shop Manager</h1>
             </div>
             <div class="flex items-center gap-4">
+                <a href="<?php echo site_url('/orion-admin/users.php'); ?>" class="text-sm text-gray-500 hover:text-gray-900 transition font-medium">
+                    Users
+                </a>
                 <span class="text-sm text-gray-500">Logged in as <b><?php echo $current_user->user_login; ?></b></span>
             </div>
         </div>

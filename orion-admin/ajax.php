@@ -9,9 +9,20 @@ if (ob_get_length()) ob_clean();
 
 header('Content-Type: application/json');
 
-$action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+if (!is_user_logged_in() || !current_user_can('edit_posts')) {
+    echo json_encode(['success' => false, 'message' => 'Authentication required.']);
+    exit;
+}
+
+$action = isset($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) ? $_GET['action'] : '');
 
 if ($action === 'add_category') {
+    $nonce = isset($_POST['orion_nonce']) ? $_POST['orion_nonce'] : '';
+    if (!orion_verify_nonce($nonce, 'orion_ajax_add_category')) {
+        echo json_encode(['success' => false, 'message' => 'Security check failed. Please refresh the page.']);
+        exit;
+    }
+
     $cat_name = isset($_POST['cat_name']) ? trim($_POST['cat_name']) : '';
     
     if (empty($cat_name)) {

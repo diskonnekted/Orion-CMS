@@ -19,11 +19,100 @@ $core_file = 'orion-default.zip';
 $core_path = $download_dir . $core_file;
 $has_core = file_exists($core_path);
 
+$one_core_file = 'orion-one-core.zip';
+$one_core_path = $download_dir . $one_core_file;
+$has_one_core = file_exists($one_core_path);
+
+if (!function_exists('orion_create_zip_filtered')) {
+    function orion_create_zip_filtered($source, $destination, $include_cb) {
+        if (!extension_loaded('zip') || !file_exists($source)) return false;
+        if (!is_callable($include_cb)) return false;
+
+        $zip = new ZipArchive();
+        if (!$zip->open($destination, ZipArchive::CREATE | ZipArchive::OVERWRITE)) return false;
+
+        $base = str_replace('\\', '/', realpath($source));
+        if (!$base) return false;
+        $base = rtrim($base, '/') . '/';
+
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($it as $fileinfo) {
+            $full = str_replace('\\', '/', $fileinfo->getPathname());
+            $real = realpath($full);
+            if (!$real) continue;
+            $real = str_replace('\\', '/', $real);
+            if (strpos($real, $base) !== 0) continue;
+            $rel = substr($real, strlen($base));
+            if ($rel === '' || $rel === false) continue;
+
+            $is_dir = is_dir($real);
+            if (!$include_cb($rel, $real, $is_dir)) continue;
+            if ($is_dir) continue;
+            $zip->addFile($real, $rel);
+        }
+
+        return $zip->close();
+    }
+}
+
+if (!$has_one_core && is_dir($download_dir)) {
+    $source_root = ABSPATH;
+    $one_theme_dir = ABSPATH . 'orion-content/themes/orion-one/';
+    if (is_dir($one_theme_dir)) {
+        $exclude_prefixes = array(
+            'download/',
+            'tmp/',
+            '_dist/',
+            '_tmp_guard/',
+            'orion-content/uploads/',
+            'orion-content/database/',
+            'orion-content/themes/',
+            'orion-content/plugins/',
+            '.git/',
+            'node_modules/',
+        );
+
+        $has_one_core = orion_create_zip_filtered($source_root, $one_core_path, function ($rel, $abs, $is_dir) use ($exclude_prefixes) {
+            $rel = str_replace('\\', '/', ltrim((string) $rel, '/'));
+
+            if ($rel === 'orion-config.php' || $rel === 'orion-config.php.bak' || strpos($rel, 'orion-config.php.bak_') === 0) {
+                return false;
+            }
+
+            foreach ($exclude_prefixes as $pfx) {
+                if (strpos($rel, $pfx) === 0) {
+                    if ($pfx === 'orion-content/themes/') {
+                        return (strpos($rel, 'orion-content/themes/orion-one/') === 0) || ($rel === 'orion-content/themes/orion-one');
+                    }
+                    if ($pfx === 'orion-content/plugins/') {
+                        return $rel === 'orion-content/plugins/index.php';
+                    }
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }
+}
+
 if ($has_core):
     $core_size_bytes = filesize($core_path);
     $core_size = ($core_size_bytes > 1024 * 1024) 
             ? round($core_size_bytes / (1024 * 1024), 2) . ' MB' 
             : round($core_size_bytes / 1024, 2) . ' KB';
+
+    $one_core_size = '';
+    if ($has_one_core) {
+        $one_core_bytes = filesize($one_core_path);
+        $one_core_size = ($one_core_bytes > 1024 * 1024)
+                ? round($one_core_bytes / (1024 * 1024), 2) . ' MB'
+                : round($one_core_bytes / 1024, 2) . ' KB';
+    }
 ?>
 <section class="py-12 bg-white border-b border-slate-100">
     <div class="container mx-auto px-6">
@@ -62,11 +151,19 @@ if ($has_core):
             </div>
             
             <div class="relative z-10 flex flex-col items-center gap-3 min-w-[200px]">
-                <a href="<?php echo site_url('/download/' . $core_file); ?>" class="w-full px-8 py-4 bg-white text-brand-600 rounded-xl font-bold text-lg hover:bg-brand-50 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center flex items-center justify-center">
+                <a href="<?php echo site_url('/download.php?file=' . rawurlencode($core_file)); ?>" class="w-full px-8 py-4 bg-white text-brand-600 rounded-xl font-bold text-lg hover:bg-brand-50 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center flex items-center justify-center">
                     Download Orion
                     <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 </a>
                 <span class="text-brand-200 text-sm font-medium"><?php echo $core_size; ?> • ZIP Archive</span>
+
+                <?php if ($has_one_core): ?>
+                    <a href="<?php echo site_url('/download.php?file=' . rawurlencode($one_core_file)); ?>" class="w-full px-8 py-4 bg-gradient-to-r from-white to-brand-50 text-brand-700 rounded-xl font-extrabold text-lg hover:from-brand-50 hover:to-white transition shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center flex items-center justify-center border border-white/40">
+                        Download Orion One
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </a>
+                    <span class="text-brand-200 text-sm font-medium"><?php echo $one_core_size; ?> • Core + Theme orion-one</span>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -119,10 +216,57 @@ if ($has_core):
             }
         }
 
+        if (!function_exists('orion_dir_latest_mtime')) {
+            function orion_dir_latest_mtime($path) {
+                $path = (string) $path;
+                if ($path === '' || !file_exists($path)) return 0;
+                if (is_file($path)) {
+                    $t = @filemtime($path);
+                    return $t ? (int) $t : 0;
+                }
+                $max = 0;
+                $it = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
+                    RecursiveIteratorIterator::SELF_FIRST
+                );
+                foreach ($it as $fi) {
+                    if ($fi->isDir()) continue;
+                    $t = $fi->getMTime();
+                    if ($t > $max) $max = $t;
+                }
+                $root_t = @filemtime($path);
+                if ($root_t && $root_t > $max) $max = (int) $root_t;
+                return (int) $max;
+            }
+        }
+
+        if (!function_exists('orion_zip_needs_rebuild')) {
+            function orion_zip_needs_rebuild($zip_path, $source_path) {
+                $zip_path = (string) $zip_path;
+                if ($zip_path === '' || !file_exists($zip_path)) return true;
+                $zip_mtime = @filemtime($zip_path);
+                if (!$zip_mtime) return true;
+                $src_mtime = orion_dir_latest_mtime($source_path);
+                return $src_mtime > (int) $zip_mtime;
+            }
+        }
+
         $items = [];
         $themes = [];
         $plugins = [];
         $themes_path = ABSPATH . 'orion-content/themes/';
+        $download_detail_data = array();
+        $download_plugins_catalog = array();
+        $theme_details_path = ABSPATH . 'orion-admin/theme-details.php';
+        if (file_exists($theme_details_path)) {
+            require_once $theme_details_path;
+            if (function_exists('orion_admin_theme_details_data')) {
+                $download_detail_data = orion_admin_theme_details_data();
+                if (isset($download_detail_data['_plugins_catalog']) && is_array($download_detail_data['_plugins_catalog'])) {
+                    $download_plugins_catalog = $download_detail_data['_plugins_catalog'];
+                }
+            }
+        }
 
         // 1. Scan Installed Themes
         if (is_dir($themes_path)) {
@@ -135,8 +279,7 @@ if ($has_core):
                 $zip_filename = $dir . '.zip';
                 $zip_path = $download_dir . $zip_filename;
                 
-                // Try to create ZIP if it doesn't exist
-                if (!file_exists($zip_path)) {
+                if (orion_zip_needs_rebuild($zip_path, $themes_path . $dir)) {
                     orion_create_zip_recursively($themes_path . $dir, $zip_path);
                 }
                 
@@ -153,6 +296,16 @@ if ($has_core):
                         $img_url = site_url('/orion-content/themes/' . $dir . '/' . $sf);
                         $is_icon = false;
                         break;
+                    }
+                }
+
+                $theme_card_dir = ABSPATH . 'assets/img/theme-card/';
+                $theme_card_url = site_url('/assets/img/theme-card/');
+                if (is_dir($theme_card_dir)) {
+                    $matches = glob($theme_card_dir . $dir . '.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', GLOB_BRACE);
+                    if (is_array($matches) && !empty($matches)) {
+                        $img_url = $theme_card_url . rawurlencode(basename($matches[0]));
+                        $is_icon = false;
                     }
                 }
                 
@@ -214,8 +367,7 @@ if ($has_core):
                 $zip_filename = $slug . '.zip';
                 $zip_path = $download_dir . $zip_filename;
                 
-                // Try to create ZIP if it doesn't exist
-                if (!file_exists($zip_path)) {
+                if (orion_zip_needs_rebuild($zip_path, $full_path)) {
                     orion_create_zip_recursively($full_path, $zip_path);
                 }
                 
@@ -260,6 +412,20 @@ if ($has_core):
                     'category' => $category,
                     'description' => 'Plugin fungsionalitas untuk sistem Orion CMS.'
                 ];
+
+                if ($is_icon) {
+                    $plugin_image_map = array(
+                        'orion-form' => 'form-plugin.png',
+                        'orion-shop-manager' => 'shop-plugin.png',
+                        'orion-pdf-reader' => 'pdf-plugin.png',
+                        'hello-orion' => 'hello-plugin.png',
+                    );
+                    $asset_file = isset($plugin_image_map[$slug]) ? $plugin_image_map[$slug] : '';
+                    if ($asset_file !== '' && file_exists(ABSPATH . 'assets/img/' . $asset_file)) {
+                        $plugins[$slug]['img_url'] = site_url('/assets/img/' . $asset_file);
+                        $plugins[$slug]['is_icon'] = false;
+                    }
+                }
             }
         }
 
@@ -363,6 +529,7 @@ if ($has_core):
         
         // Function to render grid
         function render_download_grid($items) {
+            global $download_detail_data, $download_plugins_catalog;
             $icons = [
                 'shop'      => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>',
                 'form'      => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>',
@@ -400,14 +567,44 @@ if ($has_core):
                 }
 
                 $svg_path = isset($icons[$cat]) ? $icons[$cat] : $icons[$is_theme ? 'theme' : 'plugin'];
+
+                $detail_slug = $slug;
+                $detail = isset($download_detail_data[$detail_slug]) ? $download_detail_data[$detail_slug] : null;
+                if ($detail === null && strpos($detail_slug, 'orion-') === 0) {
+                    $alt = substr($detail_slug, 6);
+                    $detail = isset($download_detail_data[$alt]) ? $download_detail_data[$alt] : null;
+                }
+                $detail_title = $detail && isset($detail['title']) ? (string) $detail['title'] : (string) $item['name'];
+                $detail_summary = $detail && isset($detail['summary']) ? (string) $detail['summary'] : (string) $item['description'];
+                $detail_highlights = $detail && isset($detail['highlights']) && is_array($detail['highlights']) ? $detail['highlights'] : array();
+                $detail_ideal_for = $detail && isset($detail['ideal_for']) && is_array($detail['ideal_for']) ? $detail['ideal_for'] : array();
+                $detail_plugins = $detail && isset($detail['plugins']) && is_array($detail['plugins']) ? $detail['plugins'] : array();
+
+                $plugin_catalog_key = $slug;
+                if (!isset($download_plugins_catalog[$plugin_catalog_key])) {
+                    if (strpos($plugin_catalog_key, 'classic-editor') !== false && isset($download_plugins_catalog['orion-classic-editor'])) {
+                        $plugin_catalog_key = 'orion-classic-editor';
+                    } elseif (strpos($plugin_catalog_key, 'orion-kaih') !== false && isset($download_plugins_catalog['orion-kaih'])) {
+                        $plugin_catalog_key = 'orion-kaih';
+                    } elseif (strpos($plugin_catalog_key, 'orion-form') !== false && isset($download_plugins_catalog['orion-form'])) {
+                        $plugin_catalog_key = 'orion-form';
+                    } elseif (strpos($plugin_catalog_key, 'orion-shop-manager') !== false && isset($download_plugins_catalog['orion-shop-manager'])) {
+                        $plugin_catalog_key = 'orion-shop-manager';
+                    }
+                }
+                $plugin_detail = isset($download_plugins_catalog[$plugin_catalog_key]) ? $download_plugins_catalog[$plugin_catalog_key] : null;
+                if (!$is_theme && $plugin_detail) {
+                    $detail_title = isset($plugin_detail['name']) ? (string) $plugin_detail['name'] : $detail_title;
+                    $detail_summary = isset($plugin_detail['desc']) ? (string) $plugin_detail['desc'] : $detail_summary;
+                }
             ?>
             <!-- Modern Download Card -->
             <div class="group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
                 <!-- Image Container -->
-                <div class="relative h-48 overflow-hidden bg-slate-100">
+                <div class="relative overflow-hidden bg-slate-100 aspect-[4/3]">
                     <?php if ($is_icon): ?>
                         <!-- Aesthetic Icon Background -->
-                        <div class="w-full h-full bg-gradient-to-br <?php echo $grad_class; ?> flex items-center justify-center relative">
+                        <div class="absolute inset-0 bg-gradient-to-br <?php echo $grad_class; ?> flex items-center justify-center relative">
                             <!-- Large background icon (aesthetic) -->
                             <svg class="absolute w-48 h-48 opacity-10 transform -rotate-12 scale-125 pointer-events-none" fill="none" stroke="white" viewBox="0 0 24 24">
                                 <?php echo $svg_path; ?>
@@ -420,7 +617,7 @@ if ($has_core):
                             </div>
                         </div>
                     <?php else: ?>
-                        <img src="<?php echo $item['img_url']; ?>" alt="<?php echo $item['name']; ?>" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                        <img src="<?php echo $item['img_url']; ?>" alt="<?php echo $item['name']; ?>" class="absolute inset-0 w-full h-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500">
                     <?php endif; ?>
 
                     <div class="absolute top-4 right-4">
@@ -457,16 +654,135 @@ if ($has_core):
                             <?php endif; ?>
                         </div>
                         
-                        <?php if ($item['has_zip']): ?>
-                        <a href="<?php echo site_url('/download/' . $item['zip_file']); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700 transition shadow-md shadow-brand-500/20 group-hover:shadow-brand-500/40">
-                            Download
-                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                        </a>
-                        <?php else: ?>
-                        <button disabled class="inline-flex items-center justify-center px-4 py-2 bg-slate-100 text-slate-400 text-sm font-semibold rounded-lg cursor-not-allowed">
-                            Download
-                        </button>
-                        <?php endif; ?>
+                        <div class="flex items-center gap-2">
+                            <button type="button" data-detail-open="<?php echo htmlspecialchars($slug); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition">
+                                Detail
+                            </button>
+                            <?php if ($item['has_zip']): ?>
+                            <a href="<?php echo site_url('/download.php?file=' . rawurlencode($item['zip_file'])); ?>" class="inline-flex items-center justify-center px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-lg hover:bg-brand-700 transition shadow-md shadow-brand-500/20 group-hover:shadow-brand-500/40">
+                                Download
+                                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            </a>
+                            <?php else: ?>
+                            <button disabled class="inline-flex items-center justify-center px-4 py-2 bg-slate-100 text-slate-400 text-sm font-semibold rounded-lg cursor-not-allowed">
+                                Download
+                            </button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div data-detail-modal="<?php echo htmlspecialchars($slug); ?>" class="fixed inset-0 z-50 hidden">
+                <div data-detail-close class="absolute inset-0 bg-slate-900/60"></div>
+                <div class="absolute inset-0 flex items-center justify-center p-4">
+                    <div class="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200" role="dialog" aria-modal="true">
+                        <div class="flex items-start justify-between gap-4 p-6 border-b border-slate-200">
+                            <div>
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest"><?php echo htmlspecialchars($item['type']); ?> Detail</div>
+                                <div class="mt-2 text-2xl font-extrabold text-slate-900"><?php echo htmlspecialchars($detail_title); ?></div>
+                                <div class="mt-2 text-slate-600"><?php echo htmlspecialchars($detail_summary); ?></div>
+                            </div>
+                            <button type="button" data-detail-close class="h-10 w-10 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 p-6">
+                            <div class="lg:col-span-6">
+                                <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50">
+                                    <?php if (!$is_icon && isset($item['img_url']) && $item['img_url']): ?>
+                                        <img src="<?php echo htmlspecialchars($item['img_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" class="w-full aspect-[4/3] object-cover object-top">
+                                    <?php else: ?>
+                                        <div class="aspect-[4/3] bg-gradient-to-br <?php echo $grad_class; ?> flex items-center justify-center relative">
+                                            <svg class="absolute w-56 h-56 opacity-10 transform -rotate-12 scale-110 pointer-events-none" fill="none" stroke="white" viewBox="0 0 24 24">
+                                                <?php echo $svg_path; ?>
+                                            </svg>
+                                            <div class="relative z-10 w-24 h-24 bg-white/10 backdrop-blur-md rounded-3xl p-5 shadow-inner border border-white/20 flex items-center justify-center">
+                                                <svg class="w-full h-full text-white drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <?php echo $svg_path; ?>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="mt-4 rounded-2xl border border-slate-200 p-5 bg-white">
+                                    <div class="text-sm font-extrabold text-slate-900 mb-3">Unduh</div>
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <?php if ($item['has_zip']): ?>
+                                            <a href="<?php echo site_url('/download.php?file=' . rawurlencode($item['zip_file'])); ?>" class="flex-1 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold transition">
+                                                Download
+                                            </a>
+                                        <?php else: ?>
+                                            <button disabled class="flex-1 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-slate-100 text-slate-400 font-extrabold cursor-not-allowed">
+                                                Download
+                                            </button>
+                                        <?php endif; ?>
+                                        <a href="<?php echo htmlspecialchars(site_url('/orion-admin/themes.php')); ?>" class="flex-1 inline-flex items-center justify-center px-5 py-3 rounded-xl bg-white border border-slate-200 font-extrabold text-slate-900 hover:bg-slate-50 transition">
+                                            Buka Admin
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-6 space-y-6">
+                                <?php if (!empty($detail_highlights)): ?>
+                                    <div class="rounded-2xl border border-slate-200 p-5 bg-white">
+                                        <div class="text-sm font-extrabold text-slate-900 mb-3">Manfaat Utama</div>
+                                        <ul class="space-y-2 text-sm text-slate-700">
+                                            <?php foreach ($detail_highlights as $h): ?>
+                                                <li class="flex gap-2">
+                                                    <span class="mt-1 h-2 w-2 rounded-full bg-brand-600 flex-shrink-0"></span>
+                                                    <span><?php echo htmlspecialchars((string) $h); ?></span>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (!empty($detail_ideal_for)): ?>
+                                    <div class="rounded-2xl border border-slate-200 p-5 bg-slate-50">
+                                        <div class="text-sm font-extrabold text-slate-900 mb-3">Cocok Untuk</div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <?php foreach ($detail_ideal_for as $x): ?>
+                                                <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-xs font-bold text-slate-700"><?php echo htmlspecialchars((string) $x); ?></span>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($is_theme && !empty($detail_plugins)): ?>
+                                    <div class="rounded-2xl border border-slate-200 p-5 bg-white">
+                                        <div class="text-sm font-extrabold text-slate-900 mb-3">Plugin Relevan</div>
+                                        <div class="space-y-3">
+                                            <?php foreach ($detail_plugins as $pid): ?>
+                                                <?php $p = isset($download_plugins_catalog[$pid]) ? $download_plugins_catalog[$pid] : null; ?>
+                                                <?php if ($p): ?>
+                                                    <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
+                                                        <div class="font-extrabold text-slate-900"><?php echo htmlspecialchars((string) $p['name']); ?></div>
+                                                        <div class="mt-1 text-sm text-slate-600"><?php echo htmlspecialchars((string) $p['desc']); ?></div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                <?php elseif (!$is_theme && $plugin_detail && isset($plugin_detail['links']) && is_array($plugin_detail['links']) && !empty($plugin_detail['links'])): ?>
+                                    <div class="rounded-2xl border border-slate-200 p-5 bg-white">
+                                        <div class="text-sm font-extrabold text-slate-900 mb-3">Link Cepat</div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <?php foreach ($plugin_detail['links'] as $lnk): ?>
+                                                <?php
+                                                $url = isset($lnk['url']) ? (string) $lnk['url'] : '';
+                                                $label = isset($lnk['label']) ? (string) $lnk['label'] : 'Buka';
+                                                ?>
+                                                <a href="<?php echo htmlspecialchars($url); ?>" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-xs font-extrabold text-slate-700 hover:bg-slate-50"><?php echo htmlspecialchars($label); ?></a>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -503,3 +819,36 @@ if ($has_core):
 
     </div>
 </section>
+
+<script>
+    (function () {
+        function closeModal(modal) {
+            if (!modal) return;
+            modal.classList.add('hidden');
+            document.documentElement.classList.remove('overflow-hidden');
+        }
+        function openModal(slug) {
+            var modal = document.querySelector('[data-detail-modal="' + slug + '"]');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            document.documentElement.classList.add('overflow-hidden');
+        }
+        document.addEventListener('click', function (e) {
+            var openBtn = e.target.closest('[data-detail-open]');
+            if (openBtn) {
+                openModal(openBtn.getAttribute('data-detail-open'));
+                return;
+            }
+            var closeBtn = e.target.closest('[data-detail-close]');
+            if (closeBtn) {
+                var modal = closeBtn.closest('[data-detail-modal]');
+                closeModal(modal);
+            }
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            var modal = document.querySelector('[data-detail-modal]:not(.hidden)');
+            closeModal(modal);
+        });
+    })();
+</script>

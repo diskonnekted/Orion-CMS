@@ -1,0 +1,25 @@
+# Uploaded media must never be executed as code.
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# Drop the PHP handler for anything inside this directory.
+<FilesMatch "\.(php|phtml|php[0-9]?|phar|pht|phps|pl|py|cgi|sh|asp|aspx|jsp)$">
+    SetHandler default-handler
+    <IfModule mod_access_compat.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+# Disable directory listings.
+Options -Indexes

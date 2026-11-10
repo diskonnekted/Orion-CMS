@@ -1,6 +1,8 @@
 <?php 
 get_header(); 
 
+$pmc_img_base = get_template_directory_uri() . '/img';
+
 // Define Services Data (In a real app, this would be from the database)
 $services = [
     'close-protection' => [
@@ -15,7 +17,7 @@ $services = [
             'Route Analysis & Threat Assessment',
             'Emergency Medical Support (TCCC certified)'
         ],
-        'image' => 'close.jpeg'
+        'image' => $pmc_img_base . '/close.jpeg'
     ],
     'secure-logistics' => [
         'title' => 'Secure Logistics',
@@ -29,7 +31,7 @@ $services = [
             'Real-time GPS Tracking & Telemetry',
             'Cross-border Customs Clearance Support'
         ],
-        'image' => 'logistic.jpeg'
+        'image' => $pmc_img_base . '/logistic.jpeg'
     ],
     'intelligence' => [
         'title' => 'Intelligence',
@@ -43,7 +45,7 @@ $services = [
             'Cyber Threat Intelligence',
             'Political Risk Analysis'
         ],
-        'image' => 'intel.jpeg'
+        'image' => $pmc_img_base . '/intel.jpeg'
     ],
     'rapid-response' => [
         'title' => 'Rapid Response',

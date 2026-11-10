@@ -1,0 +1,51 @@
+# Root web-server rules for Orion CMS.
+
+# Development and diagnostic scripts are never meant to be reachable over HTTP.
+# They expose file paths, internal state and (in some cases) write to the database.
+<FilesMatch "^(_.*|test_schemes)\.php$">
+    <IfModule mod_access_compat.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+# Configuration and generated secrets are only ever read by PHP includes.
+# The pattern also catches timestamped backups such as
+# orion-config.php.bak_20260322_034738, which would otherwise be served as
+# plain text and leak the database credentials.
+<FilesMatch "^orion-config|^orion-secret\.php$">
+    <IfModule mod_access_compat.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+# Backup, editor and dump files.
+<FilesMatch "\.(bak|backup|old|orig|save|swp|swo|tmp)(_.*)?$|^_.*\.html?$">
+    <IfModule mod_access_compat.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+# Never hand out raw database files or logs.
+<FilesMatch "\.(sqlite|sqlite3|db|log|ini)$">
+    <IfModule mod_access_compat.c>
+        Order Deny,Allow
+        Deny from all
+    </IfModule>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
+
+Options -Indexes

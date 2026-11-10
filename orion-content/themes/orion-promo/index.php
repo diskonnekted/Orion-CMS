@@ -242,6 +242,14 @@ switch ($page) {
             echo '<div class="container mx-auto py-20 text-center">Error: Template documentation-content.php missing.</div>';
         }
         break;
+
+    case 'coba-gratis':
+        if (file_exists(get_template_directory() . '/coba-gratis-content.php')) {
+            include get_template_directory() . '/coba-gratis-content.php';
+        } else {
+            echo '<div class="container mx-auto py-20 text-center">Error: Template coba-gratis-content.php missing.</div>';
+        }
+        break;
         
     case 'home':
         // Load home page
